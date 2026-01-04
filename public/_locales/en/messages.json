@@ -1,0 +1,50 @@
+{
+  "extensionName": {
+    "message": "YouTube Speakify",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Overlay Speaki character on YouTube thumbnails",
+    "description": "Extension description"
+  },
+  "settingsTitle": {
+    "message": "Settings",
+    "description": "Settings page title"
+  },
+  "enableExtension": {
+    "message": "Enable Extension",
+    "description": "Enable extension toggle"
+  },
+  "appearChance": {
+    "message": "Appear Chance",
+    "description": "Speaki appear probability"
+  },
+  "flipChance": {
+    "message": "Flip Chance",
+    "description": "Image flip probability"
+  },
+  "overlayPosition": {
+    "message": "Position",
+    "description": "Overlay position"
+  },
+  "overlaySize": {
+    "message": "Size",
+    "description": "Overlay size"
+  },
+  "overlayOpacity": {
+    "message": "Opacity",
+    "description": "Overlay opacity"
+  },
+  "positionCenter": {
+    "message": "Center",
+    "description": "Center position"
+  },
+  "positionBottomRight": {
+    "message": "Bottom Right",
+    "description": "Bottom right position"
+  },
+  "positionBottomLeft": {
+    "message": "Bottom Left",
+    "description": "Bottom left position"
+  }
+}

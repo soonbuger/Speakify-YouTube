@@ -1,0 +1,65 @@
+# ============================================
+# JS/TS Project - Universal .gitignore
+# + WXT Specific Patterns
+# ============================================
+
+# User Custom Settings
+docs/
+scripts/
+project_context.md
+
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Build Outputs
+dist/
+out/
+build/
+release/
+*.app
+*.exe
+*.dmg
+
+# WXT Specific
+.wxt/
+.output/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime Data
+pids/
+*.pid
+*.seed
+
+# IDE & Editor Settings
+.vscode/
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/project.code-snippets
+.idea/
+*.iml
+*.iws
+
+# OS Generated
+.DS_Store
+Thumbs.db
+
+# Test Coverage
+coverage/
+
+# Cache
+.cache/
+.parcel-cache/
+.turbo/

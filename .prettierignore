@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# Config files (use their own formatting)
+eslint.config.js
+
+# Lock files (auto-generated)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
