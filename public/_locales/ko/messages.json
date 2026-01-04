@@ -1,0 +1,50 @@
+{
+  "extensionName": {
+    "message": "YouTube Speakify",
+    "description": "확장 프로그램 이름"
+  },
+  "extensionDescription": {
+    "message": "YouTube 썸네일에 Speaki 캐릭터를 오버레이합니다",
+    "description": "확장 프로그램 설명"
+  },
+  "settingsTitle": {
+    "message": "설정",
+    "description": "설정 페이지 제목"
+  },
+  "enableExtension": {
+    "message": "확장 활성화",
+    "description": "확장 활성화 토글"
+  },
+  "appearChance": {
+    "message": "등장 확률",
+    "description": "Speaki 등장 확률"
+  },
+  "flipChance": {
+    "message": "좌우 반전 확률",
+    "description": "이미지 좌우 반전 확률"
+  },
+  "overlayPosition": {
+    "message": "위치",
+    "description": "오버레이 위치"
+  },
+  "overlaySize": {
+    "message": "크기",
+    "description": "오버레이 크기"
+  },
+  "overlayOpacity": {
+    "message": "투명도",
+    "description": "오버레이 투명도"
+  },
+  "positionCenter": {
+    "message": "중앙",
+    "description": "중앙 위치"
+  },
+  "positionBottomRight": {
+    "message": "우하단",
+    "description": "우하단 위치"
+  },
+  "positionBottomLeft": {
+    "message": "좌하단",
+    "description": "좌하단 위치"
+  }
+}

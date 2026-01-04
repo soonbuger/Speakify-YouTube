@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="settingsTitle">설정</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>🎤 <span data-i18n="settingsTitle">Speakify 설정</span></h1>
+
+    <!-- 기본 설정 섹션 -->
+    <div class="section">
+      <div class="section-title">Basic</div>
+
+      <div class="setting-row">
+        <div class="toggle-row">
+          <label class="toggle" for="enableExtension" title="Enable Extension">
+            <input type="checkbox" id="enableExtension" />
+            <span class="slider"></span>
+          </label>
+          <span data-i18n="enableExtension">확장 프로그램 활성화</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <span data-i18n="appearChance">등장 확률</span>
+          <span class="setting-value" id="appearChanceValue">100%</span>
+        </div>
+        <input
+          type="range"
+          id="appearChance"
+          class="range-slider"
+          min="0"
+          max="100"
+          step="5"
+          value="100"
+          title="Appear Chance"
+        />
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <span data-i18n="flipChance">좌우 반전 확률</span>
+          <span class="setting-value" id="flipChanceValue">25%</span>
+        </div>
+        <input
+          type="range"
+          id="flipChance"
+          class="range-slider"
+          min="0"
+          max="100"
+          step="5"
+          value="25"
+          title="Flip Chance"
+        />
+      </div>
+    </div>
+
+    <!-- 오버레이 설정 섹션 -->
+    <div class="section">
+      <div class="section-title">Overlay</div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <span data-i18n="overlayPosition">위치</span>
+        </div>
+        <select id="overlayPosition" class="select-input" title="Overlay Position">
+          <option value="center" data-i18n="positionCenter">중앙</option>
+          <option value="bottom-right" data-i18n="positionBottomRight">우하단</option>
+          <option value="bottom-left" data-i18n="positionBottomLeft">좌하단</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <span data-i18n="overlaySize">크기</span>
+          <span class="setting-value" id="overlaySizeValue">100%</span>
+        </div>
+        <input
+          type="range"
+          id="overlaySize"
+          class="range-slider"
+          min="20"
+          max="150"
+          step="10"
+          value="100"
+          title="Overlay Size"
+        />
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <span data-i18n="overlayOpacity">투명도</span>
+          <span class="setting-value" id="overlayOpacityValue">100%</span>
+        </div>
+        <input
+          type="range"
+          id="overlayOpacity"
+          class="range-slider"
+          min="30"
+          max="100"
+          step="10"
+          value="100"
+          title="Overlay Opacity"
+        />
+      </div>
+    </div>
+
+    <div class="footer">Settings are saved automatically</div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
