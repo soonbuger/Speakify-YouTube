@@ -1,6 +1,6 @@
 # YouTube Speakify
 
-> 유튜브 썸네일에 스피키를 출몰시키는 Chrome 기반 Extension
+> 유튜브 썸네일에 스피키가 출몰하는 Chrome 기반 Extension
 
 ## 📜 Credits
 
