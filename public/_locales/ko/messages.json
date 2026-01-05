@@ -50,5 +50,17 @@
   "positionRandom": {
     "message": "랜덤",
     "description": "랜덤 위치 (가중치 적용)"
+  },
+  "positionSmart": {
+    "message": "스마트",
+    "description": "이미지 분석 기반 스마트 위치"
+  },
+  "debugMode": {
+    "message": "디버그 모드",
+    "description": "디버그 모드 토글"
+  },
+  "debugModeDesc": {
+    "message": "분석 위치를 빨간 점으로 표시",
+    "description": "디버그 모드 설명"
   }
 }

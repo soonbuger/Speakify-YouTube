@@ -50,5 +50,17 @@
   "positionRandom": {
     "message": "Random",
     "description": "Random position (weighted)"
+  },
+  "positionSmart": {
+    "message": "Smart",
+    "description": "Image analysis based smart position"
+  },
+  "debugMode": {
+    "message": "Debug Mode",
+    "description": "Debug mode toggle"
+  },
+  "debugModeDesc": {
+    "message": "Show analyzed position as red dot",
+    "description": "Debug mode description"
   }
 }
