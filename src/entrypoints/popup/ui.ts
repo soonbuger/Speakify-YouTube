@@ -8,6 +8,7 @@ import type { SpeakifySettings } from '@/lib/storage';
  */
 export const elements = {
   enableExtension: document.getElementById('enableExtension') as HTMLInputElement,
+  languageSelector: document.getElementById('languageSelector') as HTMLSelectElement,
   appearChance: document.getElementById('appearChance') as HTMLInputElement,
   appearChanceValue: document.getElementById('appearChanceValue') as HTMLSpanElement,
   flipChance: document.getElementById('flipChance') as HTMLInputElement,
@@ -24,17 +25,44 @@ export const elements = {
 /**
  * Update value display for a slider
  */
-export function updateValueDisplay(input: HTMLInputElement, display: HTMLSpanElement, suffix: string = '%'): void {
+export function updateValueDisplay(
+  input: HTMLInputElement,
+  display: HTMLSpanElement,
+  suffix: string = '%'
+): void {
   display.textContent = `${input.value}${suffix}`;
+
+  // Single Slider Track Fill
+  // Dual slider inputs should be skipped as they use a shared track element
+  if (!input.parentElement?.classList.contains('range-slider-dual')) {
+    const min = parseFloat(input.min) || 0;
+    const max = parseFloat(input.max) || 100;
+    const val = parseFloat(input.value);
+    const percentage = ((val - min) / (max - min)) * 100;
+    input.style.background = `linear-gradient(to right, #ff9f43 ${percentage}%, #e0e0e0 ${percentage}%)`;
+  }
 }
 
 /**
  * Update size range display
  */
 export function updateSizeRangeDisplay(): void {
-  const min = elements.overlaySizeMin.value;
-  const max = elements.overlaySizeMax.value;
-  elements.overlaySizeValue.textContent = `${min}% ~ ${max}%`;
+  const minVal = parseInt(elements.overlaySizeMin.value, 10);
+  const maxVal = parseInt(elements.overlaySizeMax.value, 10);
+  elements.overlaySizeValue.textContent = `${minVal}% ~ ${maxVal}%`;
+
+  // Dual Slider Track Fill (Update CSS Variables)
+  const minLimit = parseFloat(elements.overlaySizeMin.min) || 25;
+  const maxLimit = parseFloat(elements.overlaySizeMax.max) || 200;
+
+  const rangeStart = ((minVal - minLimit) / (maxLimit - minLimit)) * 100;
+  const rangeEnd = ((maxVal - minLimit) / (maxLimit - minLimit)) * 100;
+
+  const container = elements.overlaySizeMin.parentElement;
+  if (container) {
+    container.style.setProperty('--start', `${rangeStart}%`);
+    container.style.setProperty('--end', `${rangeEnd}%`);
+  }
 }
 
 /**

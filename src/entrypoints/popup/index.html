@@ -7,20 +7,30 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <h1><span data-i18n="settingsTitle">Speakify 설정</span></h1>
+    <h1><span data-i18n="settingsTitle">Settings</span></h1>
 
     <!-- 기본 설정 섹션 -->
     <div class="section">
       <div class="section-title">Basic</div>
 
+      <!-- 언어 설정 -->
       <div class="setting-row">
-        <div class="toggle-row">
+        <div class="setting-label">Language</div>
+        <div class="select-wrapper">
+          <select id="languageSelector" class="select-input">
+            <option value="en">English</option>
+            <option value="ko">한국어</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 확장 프로그램 활성화 -->
+      <div class="setting-row toggle-row">
           <label class="toggle" for="enableExtension" title="Enable Extension">
             <input type="checkbox" id="enableExtension" />
             <span class="slider"></span>
           </label>
           <span data-i18n="enableExtension">확장 프로그램 활성화</span>
-        </div>
       </div>
 
       <div class="setting-row">

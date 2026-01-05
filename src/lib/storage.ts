@@ -8,11 +8,13 @@
  * Overlay position options
  */
 export type OverlayPosition = 'center' | 'random' | 'smart';
+export type Language = 'en' | 'ko';
 
 /**
  * Extension settings interface
  */
 export interface SpeakifySettings {
+  language: Language;
   extensionEnabled: boolean;
   appearChance: number;
   flipChance: number;
@@ -27,11 +29,12 @@ export interface SpeakifySettings {
  * Default settings values
  */
 export const DEFAULT_SETTINGS: SpeakifySettings = {
+  language: 'en',
   extensionEnabled: true,
   appearChance: 1.0,
-  flipChance: 0.25,
+  flipChance: 0.5,
   overlayPosition: 'random',
-  overlaySizeMin: 20,
+  overlaySizeMin: 25,
   overlaySizeMax: 100,
   overlayOpacity: 1.0,
   debugMode: false,

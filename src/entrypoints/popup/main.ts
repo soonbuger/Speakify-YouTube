@@ -33,21 +33,44 @@ async function handleSettingsChange(): Promise<void> {
 }
 
 /**
+ * Initialize popup settings and UI
+ */
+async function initSettings(): Promise<void> {
+  const settings = await loadAllSettings();
+
+  // 1. UI 상태 업데이트
+  updateUI(settings);
+
+  // 2. 언어 적용 (초기 로딩)
+  await applyI18n(settings.language);
+}
+
+/**
  * Initialize popup
  */
 async function init(): Promise<void> {
-  // Apply i18n
-  applyI18n();
-
   // Load and display current settings
-  const settings = await loadAllSettings();
-  updateUI(settings);
+  await initSettings();
 
   // Add event listeners
+  // 확장 프로그램 활성화 토글
   if (elements.enableExtension) {
     elements.enableExtension.addEventListener('change', handleSettingsChange);
   }
 
+  // 언어 변경
+  if (elements.languageSelector) {
+    elements.languageSelector.addEventListener('change', async () => {
+      const newLang = elements.languageSelector.value as 'en' | 'ko';
+      await saveAllSettings({ language: newLang });
+      await applyI18n(newLang); // 즉시 적용
+      // Re-apply other settings to ensure UI reflects potential language-dependent changes
+      const currentSettings = await loadAllSettings();
+      updateUI(currentSettings);
+    });
+  }
+
+  // 등장 확률
   if (elements.appearChance) {
     elements.appearChance.addEventListener('input', () => {
       updateValueDisplay(elements.appearChance, elements.appearChanceValue);
@@ -98,4 +121,3 @@ async function init(): Promise<void> {
 
 // Run initialization
 init();
-
