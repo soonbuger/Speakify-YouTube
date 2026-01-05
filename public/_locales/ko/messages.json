@@ -8,7 +8,7 @@
     "description": "확장 프로그램 설명"
   },
   "settingsTitle": {
-    "message": "Speakify 설정",
+    "message": "Speakify YouTube 설정",
     "description": "설정 페이지 제목"
   },
   "enableExtension": {
@@ -58,5 +58,25 @@
   "debugMode": {
     "message": "디버그 모드",
     "description": "디버그 모드 토글"
+  },
+  "language": {
+    "message": "언어",
+    "description": "언어 선택 라벨"
+  },
+  "sectionBasic": {
+    "message": "기본",
+    "description": "기본 설정 섹션 타이틀"
+  },
+  "sectionOverlay": {
+    "message": "오버레이",
+    "description": "오버레이 설정 섹션 타이틀"
+  },
+  "sectionDeveloper": {
+    "message": "개발자",
+    "description": "개발자 설정 섹션 타이틀"
+  },
+  "footerAutoSave": {
+    "message": "설정이 자동 저장됩니다",
+    "description": "Footer 자동 저장 메시지"
   }
 }
