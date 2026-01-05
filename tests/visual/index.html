@@ -1,466 +1,478 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Overlay Position - Visual Test</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: #fff;
-    }
-    
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #f39c12, #e74c3c);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .subtitle {
-      text-align: center;
-      color: #8b8b8b;
-      margin-bottom: 30px;
-    }
-    
-    .description {
-      max-width: 800px;
-      margin: 0 auto 30px;
-      padding: 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      border-left: 4px solid #f39c12;
-    }
-    
-    .description h3 {
-      color: #f39c12;
-      margin-bottom: 10px;
-    }
-    
-    .description ul {
-      margin-left: 20px;
-      color: #ccc;
-    }
-    
-    .test-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 30px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .test-card {
-      background: rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .test-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-    
-    .test-card h3 {
-      margin-bottom: 15px;
-      color: #fff;
-    }
-    
-    .thumbnail-container {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #000;
-      margin-bottom: 15px;
-    }
-    
-    .thumbnail-container canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    /* 분석 결과 표시 점 */
-    .analysis-dot {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: #e74c3c;
-      border: 3px solid #fff;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
-      z-index: 10;
-      animation: pulse 1.5s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.2); }
-    }
-    
-    /* 그리드 오버레이 */
-    .grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      opacity: 0.3;
-    }
-    
-    .result-info {
-      background: rgba(0,0,0,0.3);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    
-    .result-info .label {
-      color: #8b8b8b;
-    }
-    
-    .result-info .value {
-      color: #3498db;
-      font-weight: bold;
-    }
-    
-    .result-info .position {
-      color: #2ecc71;
-      font-size: 16px;
-    }
-    
-    .legend {
-      max-width: 800px;
-      margin: 40px auto 0;
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .legend-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid #fff;
-    }
-    
-    .legend-dot.red { background: #e74c3c; }
-    .legend-dot.green { background: #2ecc71; }
-  </style>
-</head>
-<body>
-  <h1>🔬 Smart Overlay Position Visualizer</h1>
-  <p class="subtitle">canvasAnalyzer 알고리즘 시각적 검증 도구</p>
-  
-  <div class="description">
-    <h3>📋 테스트 방법</h3>
-    <ul>
-      <li><strong>빨간 점</strong> = 알고리즘이 찾은 "가장 빈 공간" (복잡도 최저)</li>
-      <li>각 테스트 이미지에서 빨간 점이 <strong>밋밋한 영역</strong>에 있으면 성공</li>
-      <li>4x4 그리드로 분할 → 16칸 중 복잡도가 가장 낮은 셀 선택</li>
-    </ul>
-  </div>
-  
-  <div class="test-grid" id="testGrid">
-    <!-- 테스트 카드들이 JavaScript로 생성됩니다 -->
-  </div>
-  
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot red"></div>
-      <span>분석된 최적 위치 (빈 공간)</span>
-    </div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Overlay Position - Visual Test</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-  <script>
-    // ============================================
-    // canvasAnalyzer 알고리즘 (브라우저용 복사본)
-    // ============================================
-    
-    /**
-     * ITU-R BT.601 표준 밝기 계산
-     */
-    function calculateBrightness(r, g, b) {
-      return 0.299 * r + 0.587 * g + 0.114 * b;
-    }
-    
-    /**
-     * 밝기 값 배열의 분산(복잡도) 계산
-     */
-    function calculateComplexity(values) {
-      if (values.length === 0) return 0;
-      const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
-      return variance;
-    }
-    
-    /**
-     * ImageData를 4x4 그리드로 분할하고 각 셀의 복잡도 계산
-     */
-    function analyzeGrid(imageData, gridSize = 4) {
-      const { width, height, data } = imageData;
-      const cellWidth = Math.floor(width / gridSize);
-      const cellHeight = Math.floor(height / gridSize);
-      const grid = [];
-      
-      for (let gy = 0; gy < gridSize; gy++) {
-        for (let gx = 0; gx < gridSize; gx++) {
-          const startX = gx * cellWidth;
-          const startY = gy * cellHeight;
-          const brightnessValues = [];
-          
-          for (let y = startY; y < startY + cellHeight; y++) {
-            for (let x = startX; x < startX + cellWidth; x++) {
-              const idx = (y * width + x) * 4;
-              const brightness = calculateBrightness(data[idx], data[idx + 1], data[idx + 2]);
-              brightnessValues.push(brightness);
-            }
-          }
-          
-          grid.push({
-            x: gx,
-            y: gy,
-            complexity: calculateComplexity(brightnessValues)
-          });
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #fff;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #f39c12, #e74c3c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #8b8b8b;
+        margin-bottom: 30px;
+      }
+
+      .description {
+        max-width: 800px;
+        margin: 0 auto 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        border-left: 4px solid #f39c12;
+      }
+
+      .description h3 {
+        color: #f39c12;
+        margin-bottom: 10px;
+      }
+
+      .description ul {
+        margin-left: 20px;
+        color: #ccc;
+      }
+
+      .test-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .test-card {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+
+      .test-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .test-card h3 {
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .thumbnail-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #000;
+        margin-bottom: 15px;
+      }
+
+      .thumbnail-container canvas {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* 분석 결과 표시 점 */
+      .analysis-dot {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #e74c3c;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+        z-index: 10;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.2);
         }
       }
-      
-      return grid;
-    }
-    
-    /**
-     * 가장 복잡도가 낮은 셀의 중앙 위치 반환
-     */
-    function findBestPosition(grid, gridSize = 4) {
-      const sorted = [...grid].sort((a, b) => a.complexity - b.complexity);
-      const bestCell = sorted[0];
-      
-      const cellWidthPercent = 100 / gridSize;
-      const cellHeightPercent = 100 / gridSize;
-      
-      const x = bestCell.x * cellWidthPercent + cellWidthPercent / 2;
-      const y = bestCell.y * cellHeightPercent + cellHeightPercent / 2;
-      
-      return { x, y, cell: bestCell };
-    }
-    
-    // ============================================
-    // 테스트 이미지 생성기
-    // ============================================
-    
-    const testCases = [
-      {
-        name: "1. 왼쪽 단색, 오른쪽 복잡",
-        description: "왼쪽 절반은 검정색, 오른쪽은 색상 노이즈",
-        expected: "왼쪽 영역 (x < 50%)",
-        generator: (ctx, w, h) => {
-          // 왼쪽 = 검정 (단순)
-          ctx.fillStyle = '#000';
-          ctx.fillRect(0, 0, w/2, h);
-          
-          // 오른쪽 = 노이즈 (복잡)
-          for (let x = w/2; x < w; x += 4) {
-            for (let y = 0; y < h; y += 4) {
-              ctx.fillStyle = `hsl(${Math.random()*360}, 70%, 50%)`;
-              ctx.fillRect(x, y, 4, 4);
-            }
-          }
-        }
-      },
-      {
-        name: "2. 상단 복잡, 하단 단색",
-        description: "상단은 그라디언트, 하단은 흰색",
-        expected: "하단 영역 (y > 50%)",
-        generator: (ctx, w, h) => {
-          // 상단 = 그라디언트 + 노이즈
-          const gradient = ctx.createLinearGradient(0, 0, w, 0);
-          gradient.addColorStop(0, '#e74c3c');
-          gradient.addColorStop(0.5, '#3498db');
-          gradient.addColorStop(1, '#2ecc71');
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, w, h/2);
-          
-          // 상단에 노이즈 추가
-          for (let i = 0; i < 100; i++) {
-            ctx.fillStyle = `rgba(255,255,255,0.3)`;
-            ctx.fillRect(Math.random()*w, Math.random()*h/2, 5, 5);
-          }
-          
-          // 하단 = 흰색 (단순)
-          ctx.fillStyle = '#fff';
-          ctx.fillRect(0, h/2, w, h/2);
-        }
-      },
-      {
-        name: "3. 좌상단만 단색",
-        description: "좌상단 1/4만 파란색, 나머지는 노이즈",
-        expected: "좌상단 (x=12.5%, y=12.5%)",
-        generator: (ctx, w, h) => {
-          // 전체 = 노이즈
-          for (let x = 0; x < w; x += 3) {
-            for (let y = 0; y < h; y += 3) {
-              ctx.fillStyle = `hsl(${Math.random()*360}, 60%, 40%)`;
-              ctx.fillRect(x, y, 3, 3);
-            }
-          }
-          
-          // 좌상단 = 단색 파랑
-          ctx.fillStyle = '#3498db';
-          ctx.fillRect(0, 0, w/4, h/4);
-        }
-      },
-      {
-        name: "4. 전체 단색",
-        description: "전체가 동일한 회색",
-        expected: "첫 번째 셀 (x=12.5%, y=12.5%)",
-        generator: (ctx, w, h) => {
-          ctx.fillStyle = '#666';
-          ctx.fillRect(0, 0, w, h);
-        }
-      },
-      {
-        name: "5. 우하단만 단색",
-        description: "우하단 1/4만 녹색, 나머지는 복잡",
-        expected: "우하단 (x=87.5%, y=87.5%)",
-        generator: (ctx, w, h) => {
-          // 전체 = 노이즈
-          for (let x = 0; x < w; x += 4) {
-            for (let y = 0; y < h; y += 4) {
-              ctx.fillStyle = `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
-              ctx.fillRect(x, y, 4, 4);
-            }
-          }
-          
-          // 우하단 = 단색 녹색
-          ctx.fillStyle = '#2ecc71';
-          ctx.fillRect(w*3/4, h*3/4, w/4, h/4);
-        }
-      },
-      {
-        name: "6. 중앙만 단색",
-        description: "중앙에 원형 단색 영역",
-        expected: "중앙 근처 (x≈50%, y≈50%)",
-        generator: (ctx, w, h) => {
-          // 전체 = 노이즈
-          for (let x = 0; x < w; x += 3) {
-            for (let y = 0; y < h; y += 3) {
-              ctx.fillStyle = `hsl(${y/h*360}, 70%, 50%)`;
-              ctx.fillRect(x, y, 3, 3);
-            }
-          }
-          
-          // 중앙 = 단색 원
-          ctx.fillStyle = '#f39c12';
-          ctx.beginPath();
-          ctx.arc(w/2, h/2, Math.min(w, h)/4, 0, Math.PI*2);
-          ctx.fill();
-        }
+
+      /* 그리드 오버레이 */
+      .grid-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0.3;
       }
-    ];
-    
-    // ============================================
-    // 테스트 실행
-    // ============================================
-    
-    function runTests() {
-      const grid = document.getElementById('testGrid');
-      
-      testCases.forEach((testCase, index) => {
-        const card = document.createElement('div');
-        card.className = 'test-card';
-        
-        // 썸네일 컨테이너
-        const container = document.createElement('div');
-        container.className = 'thumbnail-container';
-        
-        // Canvas 생성 및 테스트 이미지 그리기
-        const canvas = document.createElement('canvas');
-        canvas.width = 320;
-        canvas.height = 180;
-        const ctx = canvas.getContext('2d');
-        
-        // 테스트 이미지 생성
-        testCase.generator(ctx, canvas.width, canvas.height);
-        
-        // 분석 실행
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const analyzedGrid = analyzeGrid(imageData, 4);
-        const result = findBestPosition(analyzedGrid, 4);
-        
-        container.appendChild(canvas);
-        
-        // 4x4 그리드 오버레이 (선택적)
-        const gridOverlay = document.createElement('canvas');
-        gridOverlay.className = 'grid-overlay';
-        gridOverlay.width = 320;
-        gridOverlay.height = 180;
-        const gridCtx = gridOverlay.getContext('2d');
-        gridCtx.strokeStyle = 'rgba(255,255,255,0.5)';
-        gridCtx.lineWidth = 1;
-        for (let i = 1; i < 4; i++) {
-          gridCtx.beginPath();
-          gridCtx.moveTo(i * 80, 0);
-          gridCtx.lineTo(i * 80, 180);
-          gridCtx.stroke();
-          gridCtx.beginPath();
-          gridCtx.moveTo(0, i * 45);
-          gridCtx.lineTo(320, i * 45);
-          gridCtx.stroke();
+
+      .result-info {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .result-info .label {
+        color: #8b8b8b;
+      }
+
+      .result-info .value {
+        color: #3498db;
+        font-weight: bold;
+      }
+
+      .result-info .position {
+        color: #2ecc71;
+        font-size: 16px;
+      }
+
+      .legend {
+        max-width: 800px;
+        margin: 40px auto 0;
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .legend-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+      }
+
+      .legend-dot.red {
+        background: #e74c3c;
+      }
+      .legend-dot.green {
+        background: #2ecc71;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔬 Smart Overlay Position Visualizer</h1>
+    <p class="subtitle">canvasAnalyzer 알고리즘 시각적 검증 도구</p>
+
+    <div class="description">
+      <h3>📋 테스트 방법</h3>
+      <ul>
+        <li><strong>빨간 점</strong> = 알고리즘이 찾은 "가장 빈 공간" (복잡도 최저)</li>
+        <li>각 테스트 이미지에서 빨간 점이 <strong>밋밋한 영역</strong>에 있으면 성공</li>
+        <li>4x4 그리드로 분할 → 16칸 중 복잡도가 가장 낮은 셀 선택</li>
+      </ul>
+    </div>
+
+    <div class="test-grid" id="testGrid">
+      <!-- 테스트 카드들이 JavaScript로 생성됩니다 -->
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot red"></div>
+        <span>분석된 최적 위치 (빈 공간)</span>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // canvasAnalyzer 알고리즘 (브라우저용 복사본)
+      // ============================================
+
+      /**
+       * ITU-R BT.601 표준 밝기 계산
+       */
+      function calculateBrightness(r, g, b) {
+        return 0.299 * r + 0.587 * g + 0.114 * b;
+      }
+
+      /**
+       * 밝기 값 배열의 분산(복잡도) 계산
+       */
+      function calculateComplexity(values) {
+        if (values.length === 0) return 0;
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const variance =
+          values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+        return variance;
+      }
+
+      /**
+       * ImageData를 4x4 그리드로 분할하고 각 셀의 복잡도 계산
+       */
+      function analyzeGrid(imageData, gridSize = 4) {
+        const { width, height, data } = imageData;
+        const cellWidth = Math.floor(width / gridSize);
+        const cellHeight = Math.floor(height / gridSize);
+        const grid = [];
+
+        for (let gy = 0; gy < gridSize; gy++) {
+          for (let gx = 0; gx < gridSize; gx++) {
+            const startX = gx * cellWidth;
+            const startY = gy * cellHeight;
+            const brightnessValues = [];
+
+            for (let y = startY; y < startY + cellHeight; y++) {
+              for (let x = startX; x < startX + cellWidth; x++) {
+                const idx = (y * width + x) * 4;
+                const brightness = calculateBrightness(data[idx], data[idx + 1], data[idx + 2]);
+                brightnessValues.push(brightness);
+              }
+            }
+
+            grid.push({
+              x: gx,
+              y: gy,
+              complexity: calculateComplexity(brightnessValues),
+            });
+          }
         }
-        container.appendChild(gridOverlay);
-        
-        // 분석 결과 점 표시
-        const dot = document.createElement('div');
-        dot.className = 'analysis-dot';
-        dot.style.left = `${result.x}%`;
-        dot.style.top = `${result.y}%`;
-        container.appendChild(dot);
-        
-        // 결과 정보
-        const resultInfo = document.createElement('div');
-        resultInfo.className = 'result-info';
-        resultInfo.innerHTML = `
+
+        return grid;
+      }
+
+      /**
+       * 가장 복잡도가 낮은 셀의 중앙 위치 반환
+       */
+      function findBestPosition(grid, gridSize = 4) {
+        const sorted = [...grid].sort((a, b) => a.complexity - b.complexity);
+        const bestCell = sorted[0];
+
+        const cellWidthPercent = 100 / gridSize;
+        const cellHeightPercent = 100 / gridSize;
+
+        const x = bestCell.x * cellWidthPercent + cellWidthPercent / 2;
+        const y = bestCell.y * cellHeightPercent + cellHeightPercent / 2;
+
+        return { x, y, cell: bestCell };
+      }
+
+      // ============================================
+      // 테스트 이미지 생성기
+      // ============================================
+
+      const testCases = [
+        {
+          name: '1. 왼쪽 단색, 오른쪽 복잡',
+          description: '왼쪽 절반은 검정색, 오른쪽은 색상 노이즈',
+          expected: '왼쪽 영역 (x < 50%)',
+          generator: (ctx, w, h) => {
+            // 왼쪽 = 검정 (단순)
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, w / 2, h);
+
+            // 오른쪽 = 노이즈 (복잡)
+            for (let x = w / 2; x < w; x += 4) {
+              for (let y = 0; y < h; y += 4) {
+                ctx.fillStyle = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                ctx.fillRect(x, y, 4, 4);
+              }
+            }
+          },
+        },
+        {
+          name: '2. 상단 복잡, 하단 단색',
+          description: '상단은 그라디언트, 하단은 흰색',
+          expected: '하단 영역 (y > 50%)',
+          generator: (ctx, w, h) => {
+            // 상단 = 그라디언트 + 노이즈
+            const gradient = ctx.createLinearGradient(0, 0, w, 0);
+            gradient.addColorStop(0, '#e74c3c');
+            gradient.addColorStop(0.5, '#3498db');
+            gradient.addColorStop(1, '#2ecc71');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, w, h / 2);
+
+            // 상단에 노이즈 추가
+            for (let i = 0; i < 100; i++) {
+              ctx.fillStyle = `rgba(255,255,255,0.3)`;
+              ctx.fillRect(Math.random() * w, (Math.random() * h) / 2, 5, 5);
+            }
+
+            // 하단 = 흰색 (단순)
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, h / 2, w, h / 2);
+          },
+        },
+        {
+          name: '3. 좌상단만 단색',
+          description: '좌상단 1/4만 파란색, 나머지는 노이즈',
+          expected: '좌상단 (x=12.5%, y=12.5%)',
+          generator: (ctx, w, h) => {
+            // 전체 = 노이즈
+            for (let x = 0; x < w; x += 3) {
+              for (let y = 0; y < h; y += 3) {
+                ctx.fillStyle = `hsl(${Math.random() * 360}, 60%, 40%)`;
+                ctx.fillRect(x, y, 3, 3);
+              }
+            }
+
+            // 좌상단 = 단색 파랑
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(0, 0, w / 4, h / 4);
+          },
+        },
+        {
+          name: '4. 전체 단색',
+          description: '전체가 동일한 회색',
+          expected: '첫 번째 셀 (x=12.5%, y=12.5%)',
+          generator: (ctx, w, h) => {
+            ctx.fillStyle = '#666';
+            ctx.fillRect(0, 0, w, h);
+          },
+        },
+        {
+          name: '5. 우하단만 단색',
+          description: '우하단 1/4만 녹색, 나머지는 복잡',
+          expected: '우하단 (x=87.5%, y=87.5%)',
+          generator: (ctx, w, h) => {
+            // 전체 = 노이즈
+            for (let x = 0; x < w; x += 4) {
+              for (let y = 0; y < h; y += 4) {
+                ctx.fillStyle = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
+                ctx.fillRect(x, y, 4, 4);
+              }
+            }
+
+            // 우하단 = 단색 녹색
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillRect((w * 3) / 4, (h * 3) / 4, w / 4, h / 4);
+          },
+        },
+        {
+          name: '6. 중앙만 단색',
+          description: '중앙에 원형 단색 영역',
+          expected: '중앙 근처 (x≈50%, y≈50%)',
+          generator: (ctx, w, h) => {
+            // 전체 = 노이즈
+            for (let x = 0; x < w; x += 3) {
+              for (let y = 0; y < h; y += 3) {
+                ctx.fillStyle = `hsl(${(y / h) * 360}, 70%, 50%)`;
+                ctx.fillRect(x, y, 3, 3);
+              }
+            }
+
+            // 중앙 = 단색 원
+            ctx.fillStyle = '#f39c12';
+            ctx.beginPath();
+            ctx.arc(w / 2, h / 2, Math.min(w, h) / 4, 0, Math.PI * 2);
+            ctx.fill();
+          },
+        },
+      ];
+
+      // ============================================
+      // 테스트 실행
+      // ============================================
+
+      function runTests() {
+        const grid = document.getElementById('testGrid');
+
+        testCases.forEach((testCase, index) => {
+          const card = document.createElement('div');
+          card.className = 'test-card';
+
+          // 썸네일 컨테이너
+          const container = document.createElement('div');
+          container.className = 'thumbnail-container';
+
+          // Canvas 생성 및 테스트 이미지 그리기
+          const canvas = document.createElement('canvas');
+          canvas.width = 320;
+          canvas.height = 180;
+          const ctx = canvas.getContext('2d');
+
+          // 테스트 이미지 생성
+          testCase.generator(ctx, canvas.width, canvas.height);
+
+          // 분석 실행
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const analyzedGrid = analyzeGrid(imageData, 4);
+          const result = findBestPosition(analyzedGrid, 4);
+
+          container.appendChild(canvas);
+
+          // 4x4 그리드 오버레이 (선택적)
+          const gridOverlay = document.createElement('canvas');
+          gridOverlay.className = 'grid-overlay';
+          gridOverlay.width = 320;
+          gridOverlay.height = 180;
+          const gridCtx = gridOverlay.getContext('2d');
+          gridCtx.strokeStyle = 'rgba(255,255,255,0.5)';
+          gridCtx.lineWidth = 1;
+          for (let i = 1; i < 4; i++) {
+            gridCtx.beginPath();
+            gridCtx.moveTo(i * 80, 0);
+            gridCtx.lineTo(i * 80, 180);
+            gridCtx.stroke();
+            gridCtx.beginPath();
+            gridCtx.moveTo(0, i * 45);
+            gridCtx.lineTo(320, i * 45);
+            gridCtx.stroke();
+          }
+          container.appendChild(gridOverlay);
+
+          // 분석 결과 점 표시
+          const dot = document.createElement('div');
+          dot.className = 'analysis-dot';
+          dot.style.left = `${result.x}%`;
+          dot.style.top = `${result.y}%`;
+          container.appendChild(dot);
+
+          // 결과 정보
+          const resultInfo = document.createElement('div');
+          resultInfo.className = 'result-info';
+          resultInfo.innerHTML = `
           <div><span class="label">분석 위치:</span> <span class="position">x=${result.x.toFixed(1)}%, y=${result.y.toFixed(1)}%</span></div>
           <div><span class="label">선택된 셀:</span> <span class="value">(${result.cell.x}, ${result.cell.y})</span></div>
           <div><span class="label">복잡도:</span> <span class="value">${result.cell.complexity.toFixed(2)}</span></div>
           <div style="margin-top:8px;color:#888;font-size:12px;">예상: ${testCase.expected}</div>
         `;
-        
-        card.innerHTML = `<h3>${testCase.name}</h3><p style="color:#888;margin-bottom:15px;font-size:13px;">${testCase.description}</p>`;
-        card.appendChild(container);
-        card.appendChild(resultInfo);
-        
-        grid.appendChild(card);
-      });
-    }
-    
-    // 페이지 로드 시 테스트 실행
-    window.onload = runTests;
-  </script>
-</body>
+
+          card.innerHTML = `<h3>${testCase.name}</h3><p style="color:#888;margin-bottom:15px;font-size:13px;">${testCase.description}</p>`;
+          card.appendChild(container);
+          card.appendChild(resultInfo);
+
+          grid.appendChild(card);
+        });
+      }
+
+      // 페이지 로드 시 테스트 실행
+      window.onload = runTests;
+    </script>
+  </body>
 </html>

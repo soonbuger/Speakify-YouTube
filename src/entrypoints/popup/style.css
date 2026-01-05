@@ -1,9 +1,9 @@
 :root {
   /* Character Identity Colors (Refined) */
-  --bg-cream: #F9F7F5; /* 조금 더 밝고 깨끗한 크림색 */
-  --text-purple: #3D2C42; /* 훨씬 진하고 깊은 보라색 (가독성 UP) */
-  --point-orange: #FF9F43; /* 채도 높고 선명한 오렌지 (생동감 UP) */
-  --white: #FFFFFF;
+  --bg-cream: #f3f0ea; /* 조금 더 밝고 깨끗한 크림색 */
+  --text-purple: #3d2c42; /* 훨씬 진하고 깊은 보라색 (가독성 UP) */
+  --point-orange: #df7513; /* 채도 높고 선명한 오렌지 (생동감 UP) */
+  --white: #ffffff;
 
   /* Semantic Mapping */
   --primary-color: var(--point-orange);
@@ -11,11 +11,11 @@
   --text-primary: var(--text-purple);
   --text-secondary: #746279; /* 기존 보라색을 서브 텍스트로 활용 */
   --text-muted: rgba(116, 98, 121, 0.5);
-  
+
   --glass-bg: rgba(255, 255, 255, 0.6);
   --glass-border: rgba(255, 255, 255, 0.8);
   --glass-shadow: 0 8px 32px rgba(104, 84, 102, 0.08); /* Warm purple shadow */
-  
+
   --radius-lg: 16px;
   --radius-md: 10px;
   --radius-sm: 6px;
@@ -28,7 +28,13 @@
 }
 
 body {
-  font-family: 'Pretendard', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-family:
+    'Pretendard',
+    'Segoe UI',
+    -apple-system,
+    BlinkMacSystemFont,
+    Roboto,
+    sans-serif;
   width: 320px;
   padding: 20px;
   background-color: var(--bg-color);
@@ -55,16 +61,13 @@ h1 {
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 4px 20px rgba(104, 84, 102, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(104, 84, 102, 0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .section-title {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -86,14 +89,15 @@ h1 {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  color: var(--text-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .setting-value {
-  color: var(--primary-color);
+  color: var(--text-secondary); /* Changed to neutral color to reduce visual distraction */
   font-weight: 600;
-  font-feature-settings: "tnum";
+  font-feature-settings: 'tnum';
 }
 
 /* Toggle Switch */
@@ -101,6 +105,10 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
+  /* Ensure text matches setting-label style */
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .toggle {
@@ -147,38 +155,41 @@ input:checked + .slider:before {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
+  box-shadow: none; /* Removed glow effect as requested */
 }
 
-/* Range Slider */
+/* Range Slider (Common) */
 .range-slider {
   width: 100%;
-  height: 8px; /* Slightly thicker for better visibility */
+  height: 8px;
   -webkit-appearance: none;
   appearance: none;
-  background: #EAE0F0; /* Visible lilac color */
+  background: #e0e0e0; /* Neutral Gray as requested */
   border-radius: 4px;
   outline: none;
   cursor: pointer;
   transition: background 0.2s;
+  margin: 0; /* Reset margin */
+  vertical-align: middle;
 }
 
 .range-slider:hover {
-  background: #D8CCE0; /* Darker on hover */
+  background: #d0d0d0; /* Slightly darker gray on hover */
 }
 
+/* Thumb Style */
 .range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
   background: var(--white);
-  border: 2px solid var(--point-orange); /* Orange border for thumb */
+  border: 2px solid var(--point-orange);
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  margin-top: -6px; /* Thumb position adjustment */
+  transition: transform 0.1s ease;
+  margin-top: -6px; /* Center thumb vertically (8px height track - 20px thumb) / 2 = -6px */
 }
 
 .range-slider::-webkit-slider-thumb:hover {
@@ -187,58 +198,76 @@ input:focus + .slider {
 
 .range-slider::-webkit-slider-runnable-track {
   width: 100%;
-  height: 6px;
+  height: 8px;
   cursor: pointer;
   background: transparent;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 /* Dual Range Slider Container */
 .range-slider-dual {
   position: relative;
-  height: 24px;
+  height: 24px; /* Sufficient height for thumbs */
   display: flex;
   align-items: center;
 }
 
-.range-slider-dual .range-slider {
-  position: absolute;
-  width: 100%;
-  pointer-events: none;
-  background: transparent;
-  height: auto;
-}
-
-.range-slider-dual .range-slider::-webkit-slider-runnable-track {
-  height: 6px;
-}
-
-.range-slider-dual .range-slider::-webkit-slider-thumb {
-  pointer-events: all;
-  position: relative;
-  z-index: 2;
-  margin-top: -6px;
-}
-
-/* Track background for dual slider */
+/* Track Background for Dual Slider */
 .range-slider-dual::before {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    #e0e0e0 var(--start, 0%),
+    #ff9f43 var(--start, 0%),
+    #ff9f43 var(--end, 100%),
+    #e0e0e0 var(--end, 100%)
+  ); /* Dynamic fill using CSS variables */
+  border-radius: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+/* Input elements in Dual Slider */
+.range-slider-dual .range-slider {
+  position: absolute;
+  width: 100%;
+  pointer-events: none; /* Allow clicks to pass through */
+  background: transparent; /* Transparent background to show the track below */
+  height: auto; /* Let it fit container */
+  appearance: none;
+  -webkit-appearance: none;
   top: 50%;
   transform: translateY(-50%);
 }
 
+.range-slider-dual .range-slider::-webkit-slider-thumb {
+  pointer-events: all; /* Re-enable pointer events for thumbs */
+  position: relative;
+  z-index: 2;
+  margin-top: -6px; /* Center thumb vertically relative to track */
+}
+
+.range-slider-dual .range-slider::-webkit-slider-runnable-track {
+  background: transparent; /* Ensure invisible track */
+  height: 8px;
+}
+
 .range-slider-dual .range-min {
-  z-index: 1;
+  z-index: 2;
 }
 
 .range-slider-dual .range-max {
   z-index: 2;
+}
+
+/* Hides the default track background for inputs inside dual slider */
+.range-slider-dual .range-slider:hover {
+  background: transparent;
 }
 
 /* Select Dropdown */
@@ -249,7 +278,7 @@ input:focus + .slider {
 .select-wrapper::after {
   content: '▼';
   font-size: 10px;
-  color: var(--point-orange); /* Changed to orange */
+  color: var(--text-secondary); /* Changed to neutral color as requested */
   position: absolute;
   right: 12px;
   top: 50%;
@@ -273,7 +302,7 @@ input:focus + .slider {
 
 .select-input:hover {
   border-color: var(--point-orange);
-  background: #FFFBF5; /* Very light orange tint */
+  background: #fffbf5;
 }
 
 .select-input:focus {

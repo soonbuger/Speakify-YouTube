@@ -12,6 +12,13 @@ export default defineConfig({
     default_locale: 'ko',
     version: '1.0.0',
     permissions: ['storage'],
+    icons: {
+      16: '/icon/16.png',
+      32: '/icon/32.png',
+      48: '/icon/48.png',
+      96: '/icon/96.png',
+      128: '/icon/128.png',
+    },
     web_accessible_resources: [
       {
         resources: ['images/*.png'],
