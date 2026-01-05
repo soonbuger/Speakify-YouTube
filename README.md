@@ -1,6 +1,6 @@
 # YouTube Speakify
 
-> YouTube 썸네일에 Speaki 캐릭터를 오버레이하는 Chrome 확장 프로그램
+> 유튜브 썸네일에 스피키를 출몰시키는 Chrome 기반 Extension
 
 ## 📜 Credits
 
