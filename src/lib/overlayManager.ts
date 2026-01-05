@@ -14,12 +14,18 @@ export interface OverlayOptions {
   position?: OverlayPosition;
   size?: number;
   opacity?: number;
+  /** 스마트 분석으로 계산된 위치 (% 단위) */
+  smartPosition?: { x: number; y: number };
 }
 
 /**
  * Gets CSS styles based on position setting
  */
-function getPositionStyles(position: OverlayPosition, size: number = 100): Record<string, string> {
+function getPositionStyles(
+  position: OverlayPosition,
+  size: number = 100,
+  smartPosition?: { x: number; y: number }
+): Record<string, string> {
   const base = {
     position: 'absolute',
     zIndex: '0',
@@ -27,24 +33,28 @@ function getPositionStyles(position: OverlayPosition, size: number = 100): Recor
   };
 
   switch (position) {
-    case 'bottom-right':
+    case 'smart': {
+      // 스마트 분석 결과가 있으면 해당 위치 사용, 없으면 center fallback
+      if (smartPosition) {
+        return {
+          ...base,
+          top: `${smartPosition.y}%`,
+          left: `${smartPosition.x}%`,
+          bottom: 'auto',
+          right: 'auto',
+          transform: 'translate(-50%, -50%)',
+        };
+      }
+      // Fallback to center (디버깅 용이)
       return {
         ...base,
-        bottom: '8px',
-        right: '8px',
-        top: 'auto',
-        left: 'auto',
-        transform: '',
-      };
-    case 'bottom-left':
-      return {
-        ...base,
-        bottom: '8px',
-        left: '8px',
-        top: 'auto',
+        top: '50%',
+        left: '50%',
+        bottom: 'auto',
         right: 'auto',
-        transform: '',
+        transform: 'translate(-50%, -50%)',
       };
+    }
     case 'random': {
       // 가중치 기반 랜덤 위치 생성 (하단 선호, 좌하단 회피)
       const randomPos = generateRandomPosition(size);
@@ -80,19 +90,17 @@ export function applyOverlay(
 ): HTMLImageElement | null {
   if (!overlayImageURL) return null;
 
-  const { flip = false, position = 'center', size = 100, opacity = 1 } = options;
+  const { flip = false, position = 'center', size = 100, opacity = 1, smartPosition } = options;
 
   const overlayImage = document.createElement('img');
   overlayImage.id = EXTENSION_NAME;
   overlayImage.src = overlayImageURL;
 
   // Get position-specific styles
-  const posStyles = getPositionStyles(position, size);
+  const posStyles = getPositionStyles(position, size, smartPosition);
 
-  // Calculate size based on position
-  // center와 random은 전체 크기, 고정 위치(bottom-right/left)는 축소된 크기
-  const sizeStyle =
-    position === 'center' || position === 'random' ? `${size}%` : `${Math.max(20, size * 0.5)}%`;
+  // Calculate size (center와 random 모두 전체 크기 사용)
+  const sizeStyle = `${size}%`;
 
   // Build transform with flip if needed
   let transformStyle = posStyles.transform || '';

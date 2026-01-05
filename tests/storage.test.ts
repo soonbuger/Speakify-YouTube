@@ -43,14 +43,14 @@ describe('Storage', () => {
     it('should save settings to storage', async () => {
       const newSettings: Partial<SpeakifySettings> = {
         extensionEnabled: false,
-        overlayPosition: 'bottom-right',
+        overlayPosition: 'random',
       };
 
       await saveAllSettings(newSettings);
 
       const result = await fakeBrowser.storage.local.get(['extensionEnabled', 'overlayPosition']);
       expect(result.extensionEnabled).toBe(false);
-      expect(result.overlayPosition).toBe('bottom-right');
+      expect(result.overlayPosition).toBe('random');
     });
   });
 });

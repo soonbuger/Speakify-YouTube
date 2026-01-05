@@ -68,9 +68,8 @@
         </div>
         <select id="overlayPosition" class="select-input" title="Overlay Position">
           <option value="center" data-i18n="positionCenter">중앙</option>
-          <option value="bottom-right" data-i18n="positionBottomRight">우하단</option>
-          <option value="bottom-left" data-i18n="positionBottomLeft">좌하단</option>
           <option value="random" data-i18n="positionRandom">랜덤</option>
+          <option value="smart" data-i18n="positionSmart">스마트</option>
         </select>
       </div>
 
@@ -118,6 +117,22 @@
           value="100"
           title="Overlay Opacity"
         />
+      </div>
+    </div>
+
+    <!-- 개발자 옵션 섹션 -->
+    <div class="section developer-section">
+      <div class="section-title">Developer</div>
+
+      <div class="setting-row">
+        <div class="toggle-row">
+          <label class="toggle" for="debugMode" title="Debug Mode">
+            <input type="checkbox" id="debugMode" />
+            <span class="slider"></span>
+          </label>
+          <span data-i18n="debugMode">디버그 모드</span>
+        </div>
+        <div class="setting-description" data-i18n="debugModeDesc">분석 위치를 빨간 점으로 표시</div>
       </div>
     </div>
 

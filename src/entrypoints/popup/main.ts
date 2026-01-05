@@ -21,6 +21,7 @@ const elements = {
   overlaySizeValue: document.getElementById('overlaySizeValue') as HTMLSpanElement,
   overlayOpacity: document.getElementById('overlayOpacity') as HTMLInputElement,
   overlayOpacityValue: document.getElementById('overlayOpacityValue') as HTMLSpanElement,
+  debugMode: document.getElementById('debugMode') as HTMLInputElement,
 };
 
 /**
@@ -89,6 +90,9 @@ function updateUI(settings: SpeakifySettings): void {
 
   elements.overlayOpacity.value = String(Math.round(settings.overlayOpacity * 100));
   updateValueDisplay(elements.overlayOpacity, elements.overlayOpacityValue);
+
+  // Debug mode
+  elements.debugMode.checked = settings.debugMode;
 }
 
 /**
@@ -103,6 +107,7 @@ async function handleSettingsChange(): Promise<void> {
     overlaySizeMin: parseInt(elements.overlaySizeMin.value, 10),
     overlaySizeMax: parseInt(elements.overlaySizeMax.value, 10),
     overlayOpacity: parseInt(elements.overlayOpacity.value, 10) / 100,
+    debugMode: elements.debugMode.checked,
   };
 
   await saveAllSettings(settings);
@@ -151,6 +156,9 @@ async function init(): Promise<void> {
     updateValueDisplay(elements.overlayOpacity, elements.overlayOpacityValue);
     handleSettingsChange();
   });
+
+  // Debug mode toggle
+  elements.debugMode.addEventListener('change', handleSettingsChange);
 }
 
 // Run initialization

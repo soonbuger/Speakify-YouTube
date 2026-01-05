@@ -7,7 +7,7 @@
 /**
  * Overlay position options
  */
-export type OverlayPosition = 'center' | 'bottom-right' | 'bottom-left' | 'random';
+export type OverlayPosition = 'center' | 'random' | 'smart';
 
 /**
  * Extension settings interface
@@ -20,6 +20,7 @@ export interface SpeakifySettings {
   overlaySizeMin: number; // 최소 크기 (%)
   overlaySizeMax: number; // 최대 크기 (%)
   overlayOpacity: number;
+  debugMode: boolean; // 디버그 모드
 }
 
 /**
@@ -29,10 +30,11 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   extensionEnabled: true,
   appearChance: 1.0,
   flipChance: 0.25,
-  overlayPosition: 'center',
+  overlayPosition: 'random',
   overlaySizeMin: 20,
   overlaySizeMax: 100,
   overlayOpacity: 1.0,
+  debugMode: false,
 };
 
 /**
