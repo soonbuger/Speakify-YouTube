@@ -70,24 +70,37 @@
           <option value="center" data-i18n="positionCenter">중앙</option>
           <option value="bottom-right" data-i18n="positionBottomRight">우하단</option>
           <option value="bottom-left" data-i18n="positionBottomLeft">좌하단</option>
+          <option value="random" data-i18n="positionRandom">랜덤</option>
         </select>
       </div>
 
       <div class="setting-row">
         <div class="setting-label">
           <span data-i18n="overlaySize">크기</span>
-          <span class="setting-value" id="overlaySizeValue">100%</span>
+          <span class="setting-value" id="overlaySizeValue">20% ~ 100%</span>
         </div>
-        <input
-          type="range"
-          id="overlaySize"
-          class="range-slider"
-          min="20"
-          max="150"
-          step="10"
-          value="100"
-          title="Overlay Size"
-        />
+        <div class="range-slider-dual">
+          <input
+            type="range"
+            id="overlaySizeMin"
+            class="range-slider range-min"
+            min="10"
+            max="150"
+            step="5"
+            value="20"
+            title="Minimum Size"
+          />
+          <input
+            type="range"
+            id="overlaySizeMax"
+            class="range-slider range-max"
+            min="10"
+            max="150"
+            step="5"
+            value="100"
+            title="Maximum Size"
+          />
+        </div>
       </div>
 
       <div class="setting-row">

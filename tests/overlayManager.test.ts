@@ -63,6 +63,16 @@ describe('OverlayManager', () => {
 
       expect(result?.style.opacity).toBe('0.5');
     });
+
+    it('should apply random position with percentage values', () => {
+      const result = applyOverlay(thumbnailElement, 'https://example.com/overlay.png', {
+        position: 'random',
+      });
+
+      // 랜덤 위치는 % 단위로 설정됨
+      expect(result?.style.top).toMatch(/^\d+(\.\d+)?%$/);
+      expect(result?.style.left).toMatch(/^\d+(\.\d+)?%$/);
+    });
   });
 
   describe('isAlreadyProcessed', () => {

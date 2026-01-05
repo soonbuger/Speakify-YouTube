@@ -46,5 +46,9 @@
   "positionBottomLeft": {
     "message": "Bottom Left",
     "description": "Bottom left position"
+  },
+  "positionRandom": {
+    "message": "Random",
+    "description": "Random position (weighted)"
   }
 }
