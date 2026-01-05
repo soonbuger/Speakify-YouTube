@@ -82,6 +82,11 @@ export function validateSizeRange(): void {
  * Update all UI elements with current settings
  */
 export function updateUI(settings: SpeakifySettings): void {
+  // Language selector
+  if (elements.languageSelector) {
+    elements.languageSelector.value = settings.language;
+  }
+
   if (elements.enableExtension) {
     elements.enableExtension.checked = settings.extensionEnabled;
   }
