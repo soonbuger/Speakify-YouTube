@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "Overlay Speaki character on YouTube thumbnails",
+    "message": "Speaki appears in the YouTube thumbnails",
     "description": "Extension description"
   },
   "settingsTitle": {
@@ -58,9 +58,5 @@
   "debugMode": {
     "message": "Debug Mode",
     "description": "Debug mode toggle"
-  },
-  "debugModeDesc": {
-    "message": "Show analyzed position as red dot",
-    "description": "Debug mode description"
   }
 }
