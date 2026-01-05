@@ -4,5 +4,4 @@
 
 ## 📜 Credits
 
-This project is based on [MrBeastify-Youtube](https://github.com/MagicJinn/MrBeastify-Youtube).
-Trickcal: Chibi Go 원작: © EpidGames
+This project is based on [MrBeastify-Youtube](https://github.com/MagicJinn/MrBeastify-Youtube)
