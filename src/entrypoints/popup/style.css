@@ -133,6 +133,35 @@ input:checked + .slider:before {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Dual Range Slider Container */
+.range-slider-dual {
+  position: relative;
+  height: 20px;
+}
+
+.range-slider-dual .range-slider {
+  position: absolute;
+  width: 100%;
+  pointer-events: none;
+  background: transparent;
+}
+
+.range-slider-dual .range-slider::-webkit-slider-thumb {
+  pointer-events: all;
+  position: relative;
+  z-index: 2;
+}
+
+.range-slider-dual .range-min {
+  z-index: 1;
+}
+
+.range-slider-dual .range-max {
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+}
+
 /* Select Dropdown */
 .select-input {
   width: 100%;

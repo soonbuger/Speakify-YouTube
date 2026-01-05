@@ -46,5 +46,9 @@
   "positionBottomLeft": {
     "message": "좌하단",
     "description": "좌하단 위치"
+  },
+  "positionRandom": {
+    "message": "랜덤",
+    "description": "랜덤 위치 (가중치 적용)"
   }
 }

@@ -63,11 +63,23 @@ export default defineContentScript({
           // Determine if image should be flipped
           const shouldFlip = Math.random() < settings.flipChance;
 
+          // 크기 범위 내에서 랜덤 값 생성
+          const randomSize =
+            settings.overlaySizeMin +
+            Math.random() * (settings.overlaySizeMax - settings.overlaySizeMin);
+
+          // 디버그 로그
+          Logger.debug('Size calculation', {
+            min: settings.overlaySizeMin,
+            max: settings.overlaySizeMax,
+            randomSize: Math.round(randomSize),
+          });
+
           // Apply the overlay
           const overlay = applyOverlay(thumbnail, imageURL, {
             flip: shouldFlip,
             position: settings.overlayPosition,
-            size: settings.overlaySize,
+            size: randomSize,
             opacity: settings.overlayOpacity,
           });
 

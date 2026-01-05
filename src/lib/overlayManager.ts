@@ -4,6 +4,7 @@
  */
 import type { OverlayPosition } from './storage';
 import { EXTENSION_NAME } from './constants';
+import { generateRandomPosition } from './randomPosition';
 
 /**
  * Options for applying an overlay
@@ -18,7 +19,7 @@ export interface OverlayOptions {
 /**
  * Gets CSS styles based on position setting
  */
-function getPositionStyles(position: OverlayPosition): Record<string, string> {
+function getPositionStyles(position: OverlayPosition, size: number = 100): Record<string, string> {
   const base = {
     position: 'absolute',
     zIndex: '0',
@@ -44,6 +45,18 @@ function getPositionStyles(position: OverlayPosition): Record<string, string> {
         right: 'auto',
         transform: '',
       };
+    case 'random': {
+      // 가중치 기반 랜덤 위치 생성 (하단 선호, 좌하단 회피)
+      const randomPos = generateRandomPosition(size);
+      return {
+        ...base,
+        top: `${randomPos.y}%`,
+        left: `${randomPos.x}%`,
+        bottom: 'auto',
+        right: 'auto',
+        transform: '',
+      };
+    }
     case 'center':
     default:
       return {
@@ -74,10 +87,12 @@ export function applyOverlay(
   overlayImage.src = overlayImageURL;
 
   // Get position-specific styles
-  const posStyles = getPositionStyles(position);
+  const posStyles = getPositionStyles(position, size);
 
   // Calculate size based on position
-  const sizeStyle = position === 'center' ? `${size}%` : `${Math.max(20, size * 0.5)}%`;
+  // center와 random은 전체 크기, 고정 위치(bottom-right/left)는 축소된 크기
+  const sizeStyle =
+    position === 'center' || position === 'random' ? `${size}%` : `${Math.max(20, size * 0.5)}%`;
 
   // Build transform with flip if needed
   let transformStyle = posStyles.transform || '';
@@ -94,13 +109,18 @@ export function applyOverlay(
     right: posStyles.right,
     transform: transformStyle.trim(),
     width: sizeStyle,
-    maxWidth: '256px', // 최대 크기 제한 (원본 2배까지만 확대)
     opacity: opacity.toString(),
     zIndex: posStyles.zIndex,
     pointerEvents: posStyles.pointerEvents,
     // 이미지 품질 최적화
     imageRendering: 'auto',
   });
+
+  // 이미지 로드 후 maxWidth/maxHeight를 원본 크기로 제한 (화질 저하 방지)
+  overlayImage.onload = () => {
+    overlayImage.style.maxWidth = `${overlayImage.naturalWidth}px`;
+    overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
+  };
 
   const parent = thumbnailElement.parentElement;
   if (parent) {

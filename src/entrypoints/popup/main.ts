@@ -16,7 +16,8 @@ const elements = {
   flipChance: document.getElementById('flipChance') as HTMLInputElement,
   flipChanceValue: document.getElementById('flipChanceValue') as HTMLSpanElement,
   overlayPosition: document.getElementById('overlayPosition') as HTMLSelectElement,
-  overlaySize: document.getElementById('overlaySize') as HTMLInputElement,
+  overlaySizeMin: document.getElementById('overlaySizeMin') as HTMLInputElement,
+  overlaySizeMax: document.getElementById('overlaySizeMax') as HTMLInputElement,
   overlaySizeValue: document.getElementById('overlaySizeValue') as HTMLSpanElement,
   overlayOpacity: document.getElementById('overlayOpacity') as HTMLInputElement,
   overlayOpacityValue: document.getElementById('overlayOpacityValue') as HTMLSpanElement,
@@ -45,6 +46,28 @@ function updateValueDisplay(input: HTMLInputElement, display: HTMLSpanElement, s
 }
 
 /**
+ * Update size range display
+ */
+function updateSizeRangeDisplay(): void {
+  const min = elements.overlaySizeMin.value;
+  const max = elements.overlaySizeMax.value;
+  elements.overlaySizeValue.textContent = `${min}% ~ ${max}%`;
+}
+
+/**
+ * Validate and correct size range (min <= max)
+ */
+function validateSizeRange(): void {
+  const minVal = parseInt(elements.overlaySizeMin.value, 10);
+  const maxVal = parseInt(elements.overlaySizeMax.value, 10);
+
+  // min이 max보다 크면 조정
+  if (minVal > maxVal) {
+    elements.overlaySizeMin.value = String(maxVal);
+  }
+}
+
+/**
  * Update all UI elements with current settings
  */
 function updateUI(settings: SpeakifySettings): void {
@@ -59,8 +82,10 @@ function updateUI(settings: SpeakifySettings): void {
 
   elements.overlayPosition.value = settings.overlayPosition;
 
-  elements.overlaySize.value = String(settings.overlaySize);
-  updateValueDisplay(elements.overlaySize, elements.overlaySizeValue);
+  // Size range
+  elements.overlaySizeMin.value = String(settings.overlaySizeMin);
+  elements.overlaySizeMax.value = String(settings.overlaySizeMax);
+  updateSizeRangeDisplay();
 
   elements.overlayOpacity.value = String(Math.round(settings.overlayOpacity * 100));
   updateValueDisplay(elements.overlayOpacity, elements.overlayOpacityValue);
@@ -75,7 +100,8 @@ async function handleSettingsChange(): Promise<void> {
     appearChance: parseInt(elements.appearChance.value, 10) / 100,
     flipChance: parseInt(elements.flipChance.value, 10) / 100,
     overlayPosition: elements.overlayPosition.value as SpeakifySettings['overlayPosition'],
-    overlaySize: parseInt(elements.overlaySize.value, 10),
+    overlaySizeMin: parseInt(elements.overlaySizeMin.value, 10),
+    overlaySizeMax: parseInt(elements.overlaySizeMax.value, 10),
     overlayOpacity: parseInt(elements.overlayOpacity.value, 10) / 100,
   };
 
@@ -108,8 +134,16 @@ async function init(): Promise<void> {
 
   elements.overlayPosition.addEventListener('change', handleSettingsChange);
 
-  elements.overlaySize.addEventListener('input', () => {
-    updateValueDisplay(elements.overlaySize, elements.overlaySizeValue);
+  // Size range sliders
+  elements.overlaySizeMin.addEventListener('input', () => {
+    validateSizeRange();
+    updateSizeRangeDisplay();
+    handleSettingsChange();
+  });
+
+  elements.overlaySizeMax.addEventListener('input', () => {
+    validateSizeRange();
+    updateSizeRangeDisplay();
     handleSettingsChange();
   });
 
