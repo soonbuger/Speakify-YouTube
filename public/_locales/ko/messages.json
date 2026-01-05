@@ -4,7 +4,7 @@
     "description": "확장 프로그램 이름"
   },
   "extensionDescription": {
-    "message": "YouTube 썸네일에 Speaki 캐릭터를 오버레이합니다",
+    "message": "YouTube 썸네일에 Speaki가 출현합니다",
     "description": "확장 프로그램 설명"
   },
   "settingsTitle": {
@@ -58,9 +58,5 @@
   "debugMode": {
     "message": "디버그 모드",
     "description": "디버그 모드 토글"
-  },
-  "debugModeDesc": {
-    "message": "분석 위치를 빨간 점으로 표시",
-    "description": "디버그 모드 설명"
   }
 }

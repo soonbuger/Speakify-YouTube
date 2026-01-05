@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <h1>🎤 <span data-i18n="settingsTitle">Speakify 설정</span></h1>
+    <h1><span data-i18n="settingsTitle">Speakify 설정</span></h1>
 
     <!-- 기본 설정 섹션 -->
     <div class="section">
@@ -66,11 +66,13 @@
         <div class="setting-label">
           <span data-i18n="overlayPosition">위치</span>
         </div>
-        <select id="overlayPosition" class="select-input" title="Overlay Position">
-          <option value="center" data-i18n="positionCenter">중앙</option>
-          <option value="random" data-i18n="positionRandom">랜덤</option>
-          <option value="smart" data-i18n="positionSmart">스마트</option>
-        </select>
+        <div class="select-wrapper">
+          <select id="overlayPosition" class="select-input" title="Overlay Position">
+            <option value="center" data-i18n="positionCenter">중앙</option>
+            <option value="random" data-i18n="positionRandom">랜덤</option>
+            <option value="smart" data-i18n="positionSmart">스마트</option>
+          </select>
+        </div>
       </div>
 
       <div class="setting-row">
@@ -132,7 +134,6 @@
           </label>
           <span data-i18n="debugMode">디버그 모드</span>
         </div>
-        <div class="setting-description" data-i18n="debugModeDesc">분석 위치를 빨간 점으로 표시</div>
       </div>
     </div>
 
