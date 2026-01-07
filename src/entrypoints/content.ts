@@ -48,18 +48,33 @@ export default defineContentScript({
       // setInterval(100ms) 대신 변경 시에만 실행
       // ========================================
       let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+      const changedRoots = new Set<HTMLElement | Document>();
 
-      const observer = new MutationObserver(() => {
+      const observer = new MutationObserver((mutations) => {
+        // 변경된 요소 수집 (Scoped detection)
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof HTMLElement) changedRoots.add(node);
+          });
+        });
+
         // 디바운싱: 연속적인 DOM 변경을 하나로 묶음
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(async () => {
           try {
-            await applyOverlayToThumbnails(settings, randomizer);
-            Logger.debug('Refactored Processor Executed Safely (Observer)');
+            if (changedRoots.size === 0) return;
+
+            const roots = Array.from(changedRoots);
+            changedRoots.clear(); // 처리 후 초기화
+
+            await applyOverlayToThumbnails(settings, randomizer, roots);
+            Logger.debug('Refactored Processor Executed Safely (Observer)', {
+              count: roots.length,
+            });
           } catch (error) {
             Logger.error('Processor Runtime Error', { error: String(error) });
           }
-        }, 50); // 50ms 디바운스
+        }, 300); // 300ms bottleneck optimized
       });
 
       observer.observe(document.body, {

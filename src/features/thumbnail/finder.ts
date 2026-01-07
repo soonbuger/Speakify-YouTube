@@ -68,23 +68,24 @@ export function markAsProcessed(element: HTMLElement): void {
 
 /**
  * Finds all unprocessed YouTube thumbnails
+ * @param root Root element to search within (default: document)
  */
-export function findThumbnails(): HTMLElement[] {
+export function findThumbnails(root: Document | HTMLElement = document): HTMLElement[] {
   // Set을 사용하여 중복 제거
   const uniqueImages = new Set<HTMLElement>();
 
   // Collect images from all selectors
   for (const selector of IMAGE_SELECTORS) {
-    document.querySelectorAll<HTMLElement>(selector).forEach((img) => {
+    root.querySelectorAll<HTMLElement>(selector).forEach((img) => {
       uniqueImages.add(img);
     });
   }
 
   // Add special cases (video wall, cued thumbnails)
-  document.querySelectorAll<HTMLElement>('.ytp-videowall-still-image').forEach((img) => {
+  root.querySelectorAll<HTMLElement>('.ytp-videowall-still-image').forEach((img) => {
     uniqueImages.add(img);
   });
-  document.querySelectorAll<HTMLElement>('div.ytp-cued-thumbnail-overlay-image').forEach((img) => {
+  root.querySelectorAll<HTMLElement>('div.ytp-cued-thumbnail-overlay-image').forEach((img) => {
     uniqueImages.add(img);
   });
 
@@ -115,7 +116,7 @@ export function findThumbnails(): HTMLElement[] {
 
     const aspectRatio = width / height;
     return TARGET_ASPECT_RATIOS.some(
-      (target) => Math.abs(aspectRatio - target) < ASPECT_RATIO_TOLERANCE
+      (target) => Math.abs(aspectRatio - target) < ASPECT_RATIO_TOLERANCE,
     );
   });
 }

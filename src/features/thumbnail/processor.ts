@@ -35,7 +35,7 @@ async function processSingleThumbnail(
   thumbnail: HTMLElement,
   settings: SpeakifySettings,
   randomizer: Randomizer,
-  currentImageCount: number
+  currentImageCount: number,
 ): Promise<void> {
   // 중복 처리 방지: 발견 즉시 처리 완료 표시
   markAsProcessed(thumbnail);
@@ -100,7 +100,7 @@ async function processSingleThumbnail(
  * Calculates smart position for the overlay
  */
 async function getSmartPosition(
-  thumbnail: HTMLElement
+  thumbnail: HTMLElement,
 ): Promise<{ x: number; y: number } | undefined> {
   const thumbnailUrl = getThumbnailImageUrl(thumbnail);
   if (!thumbnailUrl) return undefined;
@@ -135,7 +135,7 @@ function showDebugIndicator(
   thumbnail: HTMLElement,
   smartPosition: { x: number; y: number } | undefined,
   overlayPosition: string,
-  info: { folder: string; index: number; size: number }
+  info: { folder: string; index: number; size: number },
 ): void {
   const debugPos = smartPosition || (overlayPosition === 'smart' ? { x: 50, y: 50 } : null);
 
@@ -187,18 +187,23 @@ function showDebugIndicator(
 
 export async function applyOverlayToThumbnails(
   settings: SpeakifySettings,
-  randomizer: Randomizer
+  randomizer: Randomizer,
+  roots: (Document | HTMLElement)[] = [document],
 ): Promise<void> {
   if (!settings.extensionEnabled) return;
 
   const currentImageCount = getImageCount();
   if (currentImageCount === 0) return;
 
-  const thumbnails = findThumbnails();
+  // Flatten found thumbnails from all roots
+  const thumbnails: HTMLElement[] = [];
+  roots.forEach((root) => {
+    thumbnails.push(...findThumbnails(root));
+  });
 
   await Promise.all(
     thumbnails.map((thumbnail) =>
-      processSingleThumbnail(thumbnail, settings, randomizer, currentImageCount)
-    )
+      processSingleThumbnail(thumbnail, settings, randomizer, currentImageCount),
+    ),
   );
 }

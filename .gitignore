@@ -6,7 +6,6 @@
 # User Custom Settings
 docs/
 scripts/
-project_context.md
 
 # Dependencies
 node_modules/
