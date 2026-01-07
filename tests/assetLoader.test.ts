@@ -3,24 +3,19 @@
  * Tests for image URL generation and count detection
  */
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { AssetLoader } from '../src/lib/assetLoader';
+import { AssetLoader } from '@/shared/lib/assets/loader';
+import { fakeBrowser } from 'wxt/testing';
 
-// Mock browser global manually
-const mockGetURL = vi.fn((path: string) => `chrome-extension://test-id${path}`);
-
+// Mock browser global
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(globalThis as any).browser = {
-  runtime: {
-    getURL: mockGetURL,
-  },
-};
+(globalThis as any).browser = fakeBrowser;
 
 // Mock fetch for image existence checks
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch;
 
 // Mock Logger to avoid console output during tests
-vi.mock('../src/lib/logger', () => ({
+vi.mock('@/shared/lib/utils/logger', () => ({
   Logger: {
     info: vi.fn(),
     warn: vi.fn(),
@@ -33,10 +28,12 @@ describe('AssetLoader', () => {
   let assetLoader: AssetLoader;
 
   beforeEach(() => {
+    fakeBrowser.reset();
     assetLoader = new AssetLoader('small');
     vi.clearAllMocks();
-    // Reset mockGetURL default behavior
-    mockGetURL.mockImplementation((path: string) => `chrome-extension://test-id${path}`);
+
+    // Mock getURL using fakeBrowser
+    fakeBrowser.runtime.getURL = vi.fn((path: string) => `chrome-extension://test-id${path}`);
   });
 
   afterEach(() => {
@@ -48,13 +45,13 @@ describe('AssetLoader', () => {
       const url = assetLoader.getImageURL(1);
 
       expect(url).toBe('chrome-extension://test-id/images/1.png');
-      expect(mockGetURL).toHaveBeenCalledWith('/images/1.png');
+      expect(fakeBrowser.runtime.getURL).toHaveBeenCalledWith('/images/1.png');
     });
 
     it('should handle different image indexes', () => {
       expect(assetLoader.getImageURL(5)).toBe('chrome-extension://test-id/images/5.png');
       expect(assetLoader.getImageURL(100)).toBe('chrome-extension://test-id/images/100.png');
-      expect(mockGetURL).toHaveBeenCalledTimes(2);
+      expect(fakeBrowser.runtime.getURL).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -66,9 +63,10 @@ describe('AssetLoader', () => {
     it('should return correct count after detection', async () => {
       // Setup: 5 images exist (1-5)
       mockFetch.mockImplementation((url: string) => {
-        const match = url.match(/\/images\/(\d+)\.png/);
+        const REGEX = /\/images\/(\d+)\.png/;
+        const match = REGEX.exec(url);
         if (match) {
-          const index = parseInt(match[1], 10);
+          const index = Number.parseInt(match[1], 10);
           return Promise.resolve({ ok: index <= 5 });
         }
         return Promise.resolve({ ok: false });
@@ -84,9 +82,10 @@ describe('AssetLoader', () => {
     it('should detect correct image count (10 images)', async () => {
       // 10개 이미지 존재 시뮬레이션
       mockFetch.mockImplementation((url: string) => {
-        const match = url.match(/\/images\/(\d+)\.png/);
+        const REGEX = /\/images\/(\d+)\.png/;
+        const match = REGEX.exec(url);
         if (match) {
-          const index = parseInt(match[1], 10);
+          const index = Number.parseInt(match[1], 10);
           return Promise.resolve({ ok: index <= 10 });
         }
         return Promise.resolve({ ok: false });
@@ -100,9 +99,10 @@ describe('AssetLoader', () => {
     it('should detect correct image count (1 image)', async () => {
       // 1개 이미지만 존재
       mockFetch.mockImplementation((url: string) => {
-        const match = url.match(/\/images\/(\d+)\.png/);
+        const REGEX = /\/images\/(\d+)\.png/;
+        const match = REGEX.exec(url);
         if (match) {
-          const index = parseInt(match[1], 10);
+          const index = Number.parseInt(match[1], 10);
           return Promise.resolve({ ok: index === 1 });
         }
         return Promise.resolve({ ok: false });
@@ -137,9 +137,10 @@ describe('AssetLoader', () => {
     it('should reset image count to 0', async () => {
       // Setup and detect
       mockFetch.mockImplementation((url: string) => {
-        const match = url.match(/\/images\/(\d+)\.png/);
+        const REGEX = /\/images\/(\d+)\.png/;
+        const match = REGEX.exec(url);
         if (match) {
-          const index = parseInt(match[1], 10);
+          const index = Number.parseInt(match[1], 10);
           return Promise.resolve({ ok: index <= 5 });
         }
         return Promise.resolve({ ok: false });

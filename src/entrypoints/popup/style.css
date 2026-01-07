@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: 'ONE Mobile POP';
-  src: url('/fonts/ONEMobilePOP.ttf') format('truetype');
+  src: url('../../shared/assets/fonts/ONEMobilePOP.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -325,8 +325,12 @@ input:focus + .slider {
   transition: all 0.2s ease;
 }
 
+/* Merged styles for option */
 .select-input option {
   font-family: inherit;
+  background: var(--white);
+  color: var(--text-primary);
+  padding: 8px;
 }
 
 .select-input:hover {
@@ -338,12 +342,6 @@ input:focus + .slider {
   outline: none;
   border-color: var(--point-orange);
   box-shadow: 0 0 0 3px rgba(255, 159, 67, 0.2);
-}
-
-.select-input option {
-  background: var(--white);
-  color: var(--text-primary);
-  padding: 8px;
 }
 
 /* Footer */

@@ -28,7 +28,7 @@ export interface RandomPositionResult {
  * 2. 좌하단 (타임스탬프 영역) 회피
  * 3. 이미지가 컨테이너 밖으로 나가지 않도록 보정
  */
-export function generateRandomPosition(imageSize: number = 20): RandomPositionResult {
+export function getRandomPosition(imageSize: number = 20): RandomPositionResult {
   // 이미지가 컨테이너 밖으로 나가지 않도록 최대값 제한
   const maxX = 100 - imageSize;
   const maxY = 100 - imageSize;

@@ -4,23 +4,21 @@
  * (Compatible with WXT and testable with fake-browser)
  */
 
-import {
-  SpeakifySettings,
-  DEFAULT_SETTINGS,
-  OverlayPosition,
-  Language,
-} from '../types';
+import { SpeakifySettings, DEFAULT_SETTINGS } from '@/types';
+import browser from 'webextension-polyfill';
 
 // 타입 재export (하위 호환성)
-export type { SpeakifySettings, OverlayPosition, Language };
-export { DEFAULT_SETTINGS };
+// 타입 재export (하위 호환성)
+export type { SpeakifySettings, OverlayPosition, Language } from '@/types';
+export { DEFAULT_SETTINGS } from '@/types';
 
 /**
  * Load all settings from browser.storage.local
  */
 export async function loadAllSettings(): Promise<SpeakifySettings> {
-  const result = await browser.storage.local.get(DEFAULT_SETTINGS);
-  return result as SpeakifySettings;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await browser.storage.local.get(DEFAULT_SETTINGS as any);
+  return result as unknown as SpeakifySettings;
 }
 
 /**
@@ -37,7 +35,7 @@ export function watchSettings(
   callback: (newSettings: Partial<SpeakifySettings>) => void
 ): () => void {
   const listener = (
-    changes: { [key: string]: browser.storage.StorageChange },
+    changes: { [key: string]: browser.Storage.StorageChange },
     areaName: string
   ) => {
     if (areaName !== 'local') return;

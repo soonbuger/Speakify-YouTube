@@ -1,5 +1,8 @@
 import { defineConfig } from 'wxt';
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'node:fs';
+
+const packageJson = JSON.parse(readFileSync('package.json', 'utf-8'));
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -15,7 +18,7 @@ export default defineConfig({
     name: '__MSG_extensionName__',
     description: '__MSG_extensionDescription__',
     default_locale: 'ko',
-    version: '1.0.0',
+    version: packageJson.version,
     permissions: ['storage'],
     icons: {
       16: '/icon/16.png',

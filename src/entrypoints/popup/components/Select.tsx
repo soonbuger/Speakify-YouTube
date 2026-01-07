@@ -1,19 +1,19 @@
 import React from 'react';
 
 interface SelectOption {
-  value: string;
-  label: string;
+  readonly value: string;
+  readonly label: string;
 }
 
 interface SelectProps {
   /** 셀렉트 레이블 */
-  label: string;
+  readonly label: string;
   /** 현재 선택된 값 */
-  value: string;
+  readonly value: string;
   /** 값 변경 핸들러 */
-  onChange: (value: string) => void;
+  readonly onChange: (value: string) => void;
   /** 옵션 목록 */
-  options: SelectOption[];
+  readonly options: SelectOption[];
 }
 
 /**
@@ -29,6 +29,7 @@ function Select({ label, value, onChange, options }: SelectProps) {
           className="select-input"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          aria-label={label}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -41,4 +42,4 @@ function Select({ label, value, onChange, options }: SelectProps) {
   );
 }
 
-export default Select;
+export default React.memo(Select);

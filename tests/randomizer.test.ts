@@ -3,7 +3,7 @@
  * TDD: RED → GREEN → REFACTOR
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Randomizer } from '../src/lib/randomizer';
+import { Randomizer } from '@/shared/lib/utils/randomizer';
 
 describe('Randomizer', () => {
   let randomizer: Randomizer;

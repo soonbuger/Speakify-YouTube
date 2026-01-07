@@ -1,3 +1,10 @@
+# User Custom Settings
+docs/
+logs/
+scripts/
+project_context.md
+
+
 # Dependencies
 node_modules/
 

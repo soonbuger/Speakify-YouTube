@@ -4,10 +4,10 @@
  *
  * @module entrypoints/content
  */
-import { detectImageCount, getImageCount } from '@/lib/assetLoader';
-import { loadAllSettings, watchSettings } from '@/lib/storage';
-import { Logger } from '@/lib/logger';
-import { Randomizer } from '@/lib/randomizer';
+import { detectImageCount, getImageCount } from '@/shared/lib/assets/loader';
+import { loadAllSettings, watchSettings } from '@/shared/lib/storage';
+import { Logger } from '@/shared/lib/utils/logger';
+import { Randomizer } from '@/shared/lib/utils/randomizer';
 import { applyOverlayToThumbnails } from '@/features/thumbnail/processor';
 
 export default defineContentScript({

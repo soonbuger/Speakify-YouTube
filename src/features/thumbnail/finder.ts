@@ -4,7 +4,7 @@
  *
  * @module lib/thumbnailFinder
  */
-import { THUMBNAIL_CONFIG, EXTENSION_NAME } from './constants';
+import { THUMBNAIL_CONFIG, EXTENSION_NAME } from '@/shared/config/constants';
 
 // CSS Selectors for YouTube thumbnails (multi-version support)
 const IMAGE_SELECTORS = [
@@ -49,9 +49,7 @@ function isAlreadyProcessed(element: HTMLElement): boolean {
 
   // 부모 및 부모의 부모까지 확인 (Shorts 구조 대응)
   const hasMarker = (container: HTMLElement): boolean => {
-    return Array.from(container.children).some(
-      (child) => child.id && child.id.includes(EXTENSION_NAME)
-    );
+    return Array.from(container.children).some((child) => child.id?.includes(EXTENSION_NAME));
   };
 
   if (hasMarker(parent)) return true;

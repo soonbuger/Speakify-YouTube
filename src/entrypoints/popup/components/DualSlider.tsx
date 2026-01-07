@@ -2,23 +2,23 @@ import React from 'react';
 
 interface DualSliderProps {
   /** 슬라이더 레이블 */
-  label: string;
+  readonly label: string;
   /** 최소값 상태 */
-  minValue: number;
+  readonly minValue: number;
   /** 최대값 상태 */
-  maxValue: number;
+  readonly maxValue: number;
   /** 최소값 변경 핸들러 */
-  onMinChange: (value: number) => void;
+  readonly onMinChange: (value: number) => void;
   /** 최대값 변경 핸들러 */
-  onMaxChange: (value: number) => void;
+  readonly onMaxChange: (value: number) => void;
   /** 범위의 절대 최소값 */
-  min: number;
+  readonly min: number;
   /** 범위의 절대 최대값 */
-  max: number;
+  readonly max: number;
   /** 단계 */
-  step?: number;
+  readonly step?: number;
   /** 표시 단위 */
-  unit?: string;
+  readonly unit?: string;
 }
 
 /**
@@ -60,6 +60,7 @@ function DualSlider({
       <div className="range-slider-dual" style={containerStyle}>
         <input
           type="range"
+          aria-label={`${label} Min`}
           className="range-slider range-min"
           min={min}
           max={max}
@@ -75,6 +76,7 @@ function DualSlider({
         />
         <input
           type="range"
+          aria-label={`${label} Max`}
           className="range-slider range-max"
           min={min}
           max={max}

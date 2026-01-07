@@ -3,12 +3,12 @@
  * 가중치 기반 랜덤 위치 생성 유틸리티 테스트
  */
 import { describe, it, expect } from 'vitest';
-import { generateRandomPosition } from '../src/lib/randomPosition';
+import { getRandomPosition } from '@/features/overlay/position';
 
 describe('RandomPosition', () => {
-  describe('generateRandomPosition', () => {
+  describe('getRandomPosition', () => {
     it('should return position within valid range (0-100%)', () => {
-      const result = generateRandomPosition(50);
+      const result = getRandomPosition(50);
 
       expect(result.x).toBeGreaterThanOrEqual(0);
       expect(result.x).toBeLessThanOrEqual(100);
@@ -20,7 +20,7 @@ describe('RandomPosition', () => {
       // 이미지 크기가 30%일 때, 최대 x/y는 70%를 넘지 않아야 함
       const imageSize = 30;
       for (let i = 0; i < 50; i++) {
-        const result = generateRandomPosition(imageSize);
+        const result = getRandomPosition(imageSize);
         expect(result.x + imageSize).toBeLessThanOrEqual(100);
         expect(result.y + imageSize).toBeLessThanOrEqual(100);
       }
@@ -33,7 +33,7 @@ describe('RandomPosition', () => {
       const iterations = 100;
 
       for (let i = 0; i < iterations; i++) {
-        const result = generateRandomPosition(20);
+        const result = getRandomPosition(20);
         if (result.y > 33) bottomCount++;
       }
 
@@ -44,7 +44,7 @@ describe('RandomPosition', () => {
     it('should avoid bottom-left corner (timestamp area)', () => {
       // 좌하단 영역 (x < 15%, y > 85%) 회피 테스트
       for (let i = 0; i < 50; i++) {
-        const result = generateRandomPosition(20);
+        const result = getRandomPosition(20);
         const isInTimestampArea = result.x < 15 && result.y > 85;
         expect(isInTimestampArea).toBe(false);
       }
@@ -54,7 +54,7 @@ describe('RandomPosition', () => {
       const positions = new Set<string>();
 
       for (let i = 0; i < 20; i++) {
-        const result = generateRandomPosition(20);
+        const result = getRandomPosition(20);
         positions.add(`${Math.round(result.x)}-${Math.round(result.y)}`);
       }
 

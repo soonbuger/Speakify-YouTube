@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAppSelector } from '../store/hooks';
+import browser from 'webextension-polyfill';
 
 /**
  * i18n 메시지 타입

@@ -9,7 +9,7 @@ import {
   saveAllSettings,
   DEFAULT_SETTINGS,
   type SpeakifySettings,
-} from '../src/lib/storage';
+} from '@/shared/lib/storage';
 
 // Mock browser global
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

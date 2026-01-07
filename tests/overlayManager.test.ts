@@ -2,7 +2,7 @@
  * OverlayManager Module Tests
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { applyOverlay, isAlreadyProcessed, getExtensionName } from '../src/lib/overlayManager';
+import { applyOverlay, isAlreadyProcessed, getExtensionName } from '@/features/overlay/manager';
 
 describe('OverlayManager', () => {
   let parentElement: HTMLDivElement;

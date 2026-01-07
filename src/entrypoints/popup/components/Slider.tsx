@@ -2,19 +2,19 @@ import React from 'react';
 
 interface SliderProps {
   /** 슬라이더 레이블 */
-  label: string;
+  readonly label: string;
   /** 현재 값 */
-  value: number;
+  readonly value: number;
   /** 값 변경 핸들러 */
-  onChange: (value: number) => void;
+  readonly onChange: (value: number) => void;
   /** 최소값 */
-  min: number;
+  readonly min: number;
   /** 최대값 */
-  max: number;
+  readonly max: number;
   /** 단계 */
-  step?: number;
+  readonly step?: number;
   /** 표시 단위 (예: "%") */
-  unit?: string;
+  readonly unit?: string;
 }
 
 /**
@@ -22,15 +22,7 @@ interface SliderProps {
  * 등장 확률, 반전 확률, 투명도 등에 사용
  * 진행률에 따라 주황색으로 채워짐
  */
-function Slider({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  step = 5,
-  unit = '%',
-}: SliderProps) {
+function Slider({ label, value, onChange, min, max, step = 5, unit = '%' }: SliderProps) {
   // 진행률 계산 (0-100%)
   const progress = ((value - min) / (max - min)) * 100;
 
@@ -51,6 +43,7 @@ function Slider({
       <input
         type="range"
         className="range-slider"
+        aria-label={label}
         min={min}
         max={max}
         step={step}

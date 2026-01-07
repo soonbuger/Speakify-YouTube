@@ -4,7 +4,7 @@
  *
  * @module lib/logger
  */
-import { EXTENSION_NAME } from './constants';
+import { EXTENSION_NAME } from '@/shared/config/constants';
 
 /** 로그 레벨 타입 */
 type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';

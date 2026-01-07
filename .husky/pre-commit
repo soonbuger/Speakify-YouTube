@@ -1,0 +1,27 @@
+# ============================================
+# Pre-commit Hook
+# 1. .gitignore 검증 (금지 폴더 체크)
+# 2. lint-staged (포맷팅)
+# ============================================
+
+# 🚫 무시해야 할 폴더가 스테이징되었는지 체크
+FORBIDDEN_PATHS="docs/ scripts/ logs/ project_context.md"
+ERROR_FOUND=false
+
+for path in $FORBIDDEN_PATHS; do
+  if git diff --cached --name-only | grep -q "^$path"; then
+    echo "❌ 오류: '$path'가 커밋에 포함되어 있습니다!"
+    echo "   → .gitignore를 확인하거나, 'git rm --cached' 명령으로 제거하세요."
+    ERROR_FOUND=true
+  fi
+done
+
+if [ "$ERROR_FOUND" = true ]; then
+  echo ""
+  echo "💡 힌트: 이미 추적 중인 파일은 .gitignore에 추가해도 무시되지 않습니다."
+  echo "   → git rm --cached -r <폴더명> 으로 추적을 해제하세요."
+  exit 1
+fi
+
+# ✅ Prettier 자동 포맷팅
+npx lint-staged

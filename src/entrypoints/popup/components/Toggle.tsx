@@ -2,13 +2,13 @@ import React from 'react';
 
 interface ToggleProps {
   /** 토글 레이블 텍스트 */
-  label: string;
+  readonly label: string;
   /** 현재 체크 상태 */
-  checked: boolean;
+  readonly checked: boolean;
   /** 상태 변경 핸들러 */
-  onChange: (checked: boolean) => void;
+  readonly onChange: (checked: boolean) => void;
   /** 고유 ID (label 연결용) */
-  id?: string;
+  readonly id?: string;
 }
 
 /**
@@ -24,6 +24,7 @@ function Toggle({ label, checked, onChange, id }: ToggleProps) {
       <label className="toggle" htmlFor={toggleId}>
         <input
           type="checkbox"
+          aria-label={label}
           id={toggleId}
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}

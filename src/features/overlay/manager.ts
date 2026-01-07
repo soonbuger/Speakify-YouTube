@@ -2,9 +2,10 @@
  * YouTube Speakify - Overlay Manager Module
  * Applies Speaki images over YouTube thumbnails.
  */
-import type { OverlayPosition } from './storage';
-import { EXTENSION_NAME } from './constants';
-import { generateRandomPosition } from './randomPosition';
+
+import { getRandomPosition } from '@/features/overlay/position';
+import type { OverlayPosition } from '@/types/index';
+import { EXTENSION_NAME } from '@/shared/config/constants';
 
 /**
  * Options for applying an overlay
@@ -57,7 +58,7 @@ function getPositionStyles(
     }
     case 'random': {
       // 가중치 기반 랜덤 위치 생성 (하단 선호, 좌하단 회피)
-      const randomPos = generateRandomPosition(size);
+      const randomPos = getRandomPosition(size);
       return {
         ...base,
         top: `${randomPos.y}%`,
@@ -146,7 +147,7 @@ export function isAlreadyProcessed(element: HTMLElement): boolean {
   const parent = element.parentElement;
   if (!parent) return false;
 
-  return Array.from(parent.children).some((child) => child.id && child.id.includes(EXTENSION_NAME));
+  return Array.from(parent.children).some((child) => child.id?.includes(EXTENSION_NAME));
 }
 
 /**

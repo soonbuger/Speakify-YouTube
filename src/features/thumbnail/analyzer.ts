@@ -4,7 +4,7 @@
  *
  * @module lib/canvasAnalyzer
  */
-import { Logger } from './logger';
+import { Logger } from '@/shared/lib/utils/logger';
 
 /**
  * 그리드 셀 정보

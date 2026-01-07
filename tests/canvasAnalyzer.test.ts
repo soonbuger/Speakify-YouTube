@@ -1,6 +1,7 @@
 /**
  * canvasAnalyzer Module Tests
  * 썸네일 이미지 분석 알고리즘 단위 테스트
+ * '스마트' 모드에서 썸네일 이미지 분석 알고리즘
  */
 import { describe, it, expect } from 'vitest';
 import {
@@ -9,7 +10,7 @@ import {
   findBestPosition,
   analyzeGrid,
   type GridCell,
-} from '../src/lib/canvasAnalyzer';
+} from '@/features/thumbnail/analyzer';
 
 describe('canvasAnalyzer', () => {
   // ========================================
@@ -94,7 +95,7 @@ describe('canvasAnalyzer', () => {
       expect(result.y).toBeCloseTo(75, 0);
     });
 
-    it('should return first cell when all have same complexity', () => {
+    it('should return bottom cell when all have same complexity due to position bias', () => {
       const grid: GridCell[] = [
         { x: 0, y: 0, complexity: 50 },
         { x: 1, y: 0, complexity: 50 },
@@ -104,9 +105,9 @@ describe('canvasAnalyzer', () => {
 
       const result = findBestPosition(grid, 2);
 
-      // 첫 번째 셀 (0, 0) 중앙 = (25%, 25%)
-      expect(result.x).toBeCloseTo(25, 0);
-      expect(result.y).toBeCloseTo(25, 0);
+      // (0, 0)은 상단이라 점수가 높음 (나쁨). (0, 1) 또는 (1, 1)이 선택됨 (하단)
+      // (1, 1)이 선택된 경우 = 75%, 75%
+      expect(result.y).toBeCloseTo(75, 0);
     });
 
     it('should calculate percentage position correctly for 4x4 grid', () => {

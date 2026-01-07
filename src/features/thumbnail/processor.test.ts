@@ -1,26 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getThumbnailImageUrl, applyOverlayToThumbnails } from './processor';
-import { DEFAULT_SETTINGS } from '@/types';
-import { assetManager } from '@/lib/assetLoader';
+import { describe, it, expect, vi } from 'vitest';
+import { getThumbnailImageUrl } from './processor';
 
 // Mock dependencies
-vi.mock('@/lib/thumbnailFinder', () => ({
+vi.mock('@/features/thumbnail/finder', () => ({
   findThumbnails: vi.fn(),
   markAsProcessed: vi.fn(),
 }));
 
-vi.mock('@/lib/overlayManager', () => ({
+vi.mock('@/features/overlay/manager', () => ({
   applyOverlay: vi.fn(),
 }));
 
-vi.mock('@/lib/assetLoader', () => ({
+vi.mock('@/shared/lib/assetLoader', () => ({
   assetManager: {
     getRandomImage: vi.fn().mockReturnValue({ url: 'mock-url', folder: 'mock', index: 0 }),
   },
   getImageCount: vi.fn().mockReturnValue(10),
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/shared/lib/utils/logger', () => ({
   Logger: {
     debug: vi.fn(),
     warn: vi.fn(),
@@ -50,6 +48,6 @@ describe('processor', () => {
     });
   });
 
-  // applyOverlayToThumbnails 테스트는 통합 테스트 성격이 강하므로 
+  // applyOverlayToThumbnails 테스트는 통합 테스트 성격이 강하므로
   // 여기서는 로직 분리가 잘 되었는지 기본 동작만 확인
 });

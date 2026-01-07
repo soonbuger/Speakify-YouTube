@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import Section from './components/Section';
 import Toggle from './components/Toggle';
 import Slider from './components/Slider';
@@ -26,25 +26,31 @@ function App() {
   /**
    * 설정 변경 핸들러
    */
-  const handleSettingChange = <K extends keyof SpeakifySettings>(
-    key: K,
-    value: SpeakifySettings[K]
-  ) => {
-    dispatch(updateSetting({ key, value }));
-    dispatch(persistSettings({ [key]: value }));
-  };
+  const handleSettingChange = useCallback(
+    <K extends keyof SpeakifySettings>(key: K, value: SpeakifySettings[K]) => {
+      dispatch(updateSetting({ key, value }));
+      dispatch(persistSettings({ [key]: value }));
+    },
+    [dispatch]
+  );
 
-  // 옵션 목록 (i18n 적용)
-  const languageOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'ko', label: '한국어' },
-  ];
+  // 옵션 목록 (i18n 적용) - useMemo로 참조 안정성 확보
+  const languageOptions = useMemo(
+    () => [
+      { value: 'en', label: 'English' },
+      { value: 'ko', label: '한국어' },
+    ],
+    []
+  );
 
-  const positionOptions = [
-    { value: 'center', label: t('positionCenter', '중앙') },
-    { value: 'random', label: t('positionRandom', '랜덤') },
-    { value: 'smart', label: t('positionSmart', '스마트') },
-  ];
+  const positionOptions = useMemo(
+    () => [
+      { value: 'center', label: t('positionCenter', '중앙') },
+      { value: 'random', label: t('positionRandom', '랜덤') },
+      { value: 'smart', label: t('positionSmart', '스마트') },
+    ],
+    [t]
+  );
 
   // 로딩 중일 때 표시
   if (settings.isLoading || !isLoaded) {
@@ -92,7 +98,9 @@ function App() {
         <Select
           label={t('overlayPosition', '위치')}
           value={settings.overlayPosition}
-          onChange={(value) => handleSettingChange('overlayPosition', value as 'center' | 'random' | 'smart')}
+          onChange={(value) =>
+            handleSettingChange('overlayPosition', value as 'center' | 'random' | 'smart')
+          }
           options={positionOptions}
         />
 

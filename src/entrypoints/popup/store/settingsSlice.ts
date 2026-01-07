@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { loadAllSettings, saveAllSettings } from '../../../lib/storage';
+import { loadAllSettings, saveAllSettings } from '@/shared/lib/storage';
 import { SpeakifySettings, DEFAULT_SETTINGS } from '../../../types';
 
 /**
@@ -19,13 +19,10 @@ const initialState: SettingsState = {
 /**
  * 비동기 Thunk: chrome.storage에서 설정 불러오기
  */
-export const fetchSettings = createAsyncThunk(
-  'settings/fetchSettings',
-  async () => {
-    const settings = await loadAllSettings();
-    return settings;
-  }
-);
+export const fetchSettings = createAsyncThunk('settings/fetchSettings', async () => {
+  const settings = await loadAllSettings();
+  return settings;
+});
 
 /**
  * 비동기 Thunk: chrome.storage에 설정 저장하기
@@ -52,7 +49,8 @@ const settingsSlice = createSlice({
       action: PayloadAction<{ key: K; value: SpeakifySettings[K] }>
     ) => {
       const { key, value } = action.payload;
-      (state as Record<string, unknown>)[key] = value;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (state as any)[key] = value;
     },
   },
   extraReducers: (builder) => {
@@ -81,4 +79,4 @@ export const { updateSetting } = settingsSlice.actions;
 export default settingsSlice.reducer;
 
 // 타입 재export (App.tsx에서 사용)
-export type { SpeakifySettings };
+export type { SpeakifySettings } from '@/types';

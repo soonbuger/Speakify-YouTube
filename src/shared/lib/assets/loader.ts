@@ -4,8 +4,9 @@
  *
  * @module lib/assetLoader
  */
-import { Logger } from './logger';
-import { IMAGE_PATHS, ImageFolder } from './constants';
+import { Logger } from '@/shared/lib/utils/logger';
+import { IMAGE_PATHS, ImageFolder } from '@/shared/config/constants';
+import browser from 'webextension-polyfill';
 
 /**
  * 이미지 로더 결과 타입
