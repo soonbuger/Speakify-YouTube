@@ -1,15 +1,15 @@
 :root {
   /* Character Identity Colors (Refined) */
-  --bg-cream: #f3f0ea; /* 조금 더 밝고 깨끗한 크림색 */
-  --text-purple: #3d2c42; /* 훨씬 진하고 깊은 보라색 (가독성 UP) */
-  --point-orange: #df7513; /* 채도 높고 선명한 오렌지 (생동감 UP) */
+  --bg-cream: #f3f0ea;
+  --text-purple: #3d2c42;
+  --point-orange: #ff9f43;
   --white: #ffffff;
 
   /* Semantic Mapping */
   --primary-color: var(--point-orange);
   --bg-color: var(--bg-cream);
   --text-primary: var(--text-purple);
-  --text-secondary: #746279; /* 기존 보라색을 서브 텍스트로 활용 */
+  --text-secondary: #746279;
   --text-muted: rgba(116, 98, 121, 0.5);
 
   --glass-bg: rgba(255, 255, 255, 0.6);
@@ -27,25 +27,33 @@
   padding: 0;
 }
 
+@font-face {
+  font-family: 'ONE Mobile POP';
+  src: url('/fonts/ONEMobilePOP.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   font-family:
+    'ONE Mobile POP',
     'Pretendard',
-    'Segoe UI',
     -apple-system,
     BlinkMacSystemFont,
     Roboto,
     sans-serif;
   width: 320px;
-  padding: 20px;
+  padding: 16px;
   background-color: var(--bg-color);
   color: var(--text-primary);
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 24px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -67,12 +75,12 @@ h1 {
 }
 
 .section-title {
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   color: var(--text-muted);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 /* Setting Row */
@@ -89,14 +97,14 @@ h1 {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: normal;
   color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .setting-value {
-  color: var(--text-secondary); /* Changed to neutral color to reduce visual distraction */
-  font-weight: 600;
+  color: var(--text-secondary);
+  font-weight: normal;
   font-feature-settings: 'tnum';
 }
 
@@ -104,11 +112,27 @@ h1 {
 .toggle-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  /* Ensure text matches setting-label style */
   font-size: 13px;
-  font-weight: 600;
+  font-weight: normal;
   color: var(--text-primary);
+  width: 100%;
+}
+
+.horizontal-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.horizontal-layout .setting-label {
+  margin-bottom: 0;
+  width: auto;
+}
+
+.horizontal-layout .select-wrapper {
+  width: 120px;
 }
 
 .toggle {
@@ -293,11 +317,16 @@ input:focus + .slider {
   border-radius: var(--radius-md);
   background: var(--white);
   color: var(--text-primary);
+  font-family: inherit;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: normal;
   cursor: pointer;
   appearance: none;
   transition: all 0.2s ease;
+}
+
+.select-input option {
+  font-family: inherit;
 }
 
 .select-input:hover {

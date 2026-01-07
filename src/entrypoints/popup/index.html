@@ -14,10 +14,10 @@
       <div class="section-title" data-i18n="sectionBasic">Basic</div>
 
       <!-- 언어 설정 -->
-      <div class="setting-row">
+      <div class="setting-row horizontal-layout">
         <div class="setting-label" data-i18n="language">Language</div>
         <div class="select-wrapper">
-          <select id="languageSelector" class="select-input">
+          <select id="languageSelector" class="select-input" aria-label="Language selection">
             <option value="en">English</option>
             <option value="ko">한국어</option>
           </select>
@@ -26,11 +26,11 @@
 
       <!-- 확장 프로그램 활성화 -->
       <div class="setting-row toggle-row">
-          <label class="toggle" for="enableExtension" title="Enable Extension">
-            <input type="checkbox" id="enableExtension" />
-            <span class="slider"></span>
-          </label>
-          <span data-i18n="enableExtension">확장 프로그램 활성화</span>
+        <span data-i18n="enableExtension">확장 프로그램 활성화</span>
+        <label class="toggle" for="enableExtension" title="Enable Extension">
+          <input type="checkbox" id="enableExtension" aria-label="Enable Extension" />
+          <span class="slider"></span>
+        </label>
       </div>
 
       <div class="setting-row">
@@ -138,11 +138,11 @@
 
       <div class="setting-row">
         <div class="toggle-row">
+          <span data-i18n="debugMode">디버그 모드</span>
           <label class="toggle" for="debugMode" title="Debug Mode">
-            <input type="checkbox" id="debugMode" />
+            <input type="checkbox" id="debugMode" aria-label="Debug Mode" />
             <span class="slider"></span>
           </label>
-          <span data-i18n="debugMode">디버그 모드</span>
         </div>
       </div>
     </div>

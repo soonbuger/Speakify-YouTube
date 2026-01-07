@@ -14,11 +14,12 @@ async function loadMessages(lang: string): Promise<Record<string, { message: str
 
   try {
     // WXT copies public/_locales to dist/_locales
-    const path = `/_locales/${lang}/messages.json`;
-    const url = browser.runtime.getURL(path as any);
+    const url = browser.runtime.getURL(
+      `/_locales/${lang}/messages.json` as Parameters<typeof browser.runtime.getURL>[0]
+    );
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to load messages for ${lang}`);
-    
+
     const messages = await response.json();
     messageCache[lang] = messages;
     return messages;
@@ -52,4 +53,3 @@ export async function applyI18n(lang: string = 'en'): Promise<void> {
   // Update HTML lang attribute for accessibility
   document.documentElement.lang = lang;
 }
-
