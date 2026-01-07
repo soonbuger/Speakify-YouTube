@@ -188,7 +188,14 @@ input:focus + .slider {
   height: 8px;
   -webkit-appearance: none;
   appearance: none;
-  background: #e0e0e0; /* Neutral Gray as requested */
+  /* Dynamic gradient using CSS variable, fallback to gray */
+  background: linear-gradient(
+    to right,
+    var(--point-orange) 0%,
+    var(--point-orange) var(--slider-progress, 0%),
+    #e0e0e0 var(--slider-progress, 0%),
+    #e0e0e0 100%
+  );
   border-radius: 4px;
   outline: none;
   cursor: pointer;
@@ -197,11 +204,7 @@ input:focus + .slider {
   vertical-align: middle;
 }
 
-.range-slider:hover {
-  background: #d0d0d0; /* Slightly darker gray on hover */
-}
-
-/* Thumb Style */
+/* Thumb Style (Restored) */
 .range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -228,7 +231,7 @@ input:focus + .slider {
   border-radius: 4px;
 }
 
-/* Dual Range Slider Container */
+/* Dual Range Slider Container (Restored) */
 .range-slider-dual {
   position: relative;
   height: 24px; /* Sufficient height for thumbs */
@@ -236,7 +239,7 @@ input:focus + .slider {
   align-items: center;
 }
 
-/* Track Background for Dual Slider */
+/* Track Background for Dual Slider (Restored) */
 .range-slider-dual::before {
   content: '';
   position: absolute;
@@ -256,15 +259,14 @@ input:focus + .slider {
   z-index: 0;
 }
 
-/* Input elements in Dual Slider */
 .range-slider-dual .range-slider {
   position: absolute;
   width: 100%;
   pointer-events: none; /* Allow clicks to pass through */
-  background: transparent; /* Transparent background to show the track below */
+  background: transparent !important; /* Force transparent for dual slider inputs */
   height: auto; /* Let it fit container */
-  appearance: none;
   -webkit-appearance: none;
+  appearance: none;
   top: 50%;
   transform: translateY(-50%);
 }

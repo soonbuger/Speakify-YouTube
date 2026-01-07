@@ -26,10 +26,10 @@ function Slider({ label, value, onChange, min, max, step = 5, unit = '%' }: Slid
   // 진행률 계산 (0-100%)
   const progress = ((value - min) / (max - min)) * 100;
 
-  // 진행률에 따른 배경 그라디언트 스타일
-  const sliderStyle: React.CSSProperties = {
-    background: `linear-gradient(to right, var(--point-orange) 0%, var(--point-orange) ${progress}%, #e0e0e0 ${progress}%, #e0e0e0 100%)`,
-  };
+  // 진행률에 따른 배경 그라디언트 로직을 CSS 변수로 전달
+  const sliderStyle = {
+    '--slider-progress': `${progress}%`,
+  } as React.CSSProperties;
 
   return (
     <div className="setting-row">
