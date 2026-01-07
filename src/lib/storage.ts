@@ -4,41 +4,16 @@
  * (Compatible with WXT and testable with fake-browser)
  */
 
-/**
- * Overlay position options
- */
-export type OverlayPosition = 'center' | 'random' | 'smart';
-export type Language = 'en' | 'ko';
+import {
+  SpeakifySettings,
+  DEFAULT_SETTINGS,
+  OverlayPosition,
+  Language,
+} from '../types';
 
-/**
- * Extension settings interface
- */
-export interface SpeakifySettings {
-  language: Language;
-  extensionEnabled: boolean;
-  appearChance: number;
-  flipChance: number;
-  overlayPosition: OverlayPosition;
-  overlaySizeMin: number; // 최소 크기 (%)
-  overlaySizeMax: number; // 최대 크기 (%)
-  overlayOpacity: number;
-  debugMode: boolean; // 디버그 모드
-}
-
-/**
- * Default settings values
- */
-export const DEFAULT_SETTINGS: SpeakifySettings = {
-  language: 'en',
-  extensionEnabled: true,
-  appearChance: 1.0,
-  flipChance: 0.5,
-  overlayPosition: 'random',
-  overlaySizeMin: 25,
-  overlaySizeMax: 100,
-  overlayOpacity: 1.0,
-  debugMode: false,
-};
+// 타입 재export (하위 호환성)
+export type { SpeakifySettings, OverlayPosition, Language };
+export { DEFAULT_SETTINGS };
 
 /**
  * Load all settings from browser.storage.local
