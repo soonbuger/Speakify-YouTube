@@ -4,8 +4,8 @@
 # ============================================
 
 # User Custom Settings
-docs/
 scripts/
+docs/
 project_context.md
 
 # Dependencies

@@ -33,7 +33,7 @@ describe('AssetLoader', () => {
   let assetLoader: AssetLoader;
 
   beforeEach(() => {
-    assetLoader = new AssetLoader();
+    assetLoader = new AssetLoader('small');
     vi.clearAllMocks();
     // Reset mockGetURL default behavior
     mockGetURL.mockImplementation((path: string) => `chrome-extension://test-id${path}`);

@@ -1,48 +1,91 @@
+:root {
+  /* Character Identity Colors (Refined) */
+  --bg-cream: #f3f0ea;
+  --text-purple: #3d2c42;
+  --point-orange: #ff9f43;
+  --white: #ffffff;
+
+  /* Semantic Mapping */
+  --primary-color: var(--point-orange);
+  --bg-color: var(--bg-cream);
+  --text-primary: var(--text-purple);
+  --text-secondary: #746279;
+  --text-muted: rgba(116, 98, 121, 0.5);
+
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 8px 32px rgba(104, 84, 102, 0.08); /* Warm purple shadow */
+
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+@font-face {
+  font-family: 'ONE Mobile POP';
+  src: url('/fonts/ONEMobilePOP.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  width: 300px;
+  font-family:
+    'ONE Mobile POP',
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    Roboto,
+    sans-serif;
+  width: 320px;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
 }
 
 h1 {
   font-size: 18px;
-  margin-bottom: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  color: var(--text-primary);
+  text-shadow: none;
 }
 
-/* Section Divider */
+/* Glassmorphic Section Cards */
 .section {
+  background: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-lg);
+  padding: 16px;
   margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
+  box-shadow: 0 4px 20px rgba(104, 84, 102, 0.06);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .section-title {
   font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.7;
-  margin-bottom: 10px;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
 
 /* Setting Row */
 .setting-row {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .setting-row:last-child {
@@ -54,25 +97,48 @@ h1 {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  margin-bottom: 6px;
+  font-weight: normal;
+  color: var(--text-primary);
+  margin-bottom: 8px;
 }
 
 .setting-value {
-  font-weight: bold;
-  opacity: 0.9;
+  color: var(--text-secondary);
+  font-weight: normal;
+  font-feature-settings: 'tnum';
 }
 
 /* Toggle Switch */
 .toggle-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
+  font-size: 13px;
+  font-weight: normal;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.horizontal-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.horizontal-layout .setting-label {
+  margin-bottom: 0;
+  width: auto;
+}
+
+.horizontal-layout .select-wrapper {
+  width: 120px;
 }
 
 .toggle {
   position: relative;
-  width: 44px;
-  height: 24px;
+  width: 48px;
+  height: 26px;
   flex-shrink: 0;
 }
 
@@ -86,103 +152,206 @@ h1 {
   position: absolute;
   cursor: pointer;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.25);
-  transition: 0.3s;
-  border-radius: 24px;
+  background-color: #e0e0e0;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 26px;
 }
 
 .slider:before {
   position: absolute;
   content: '';
-  height: 18px;
-  width: 18px;
+  height: 20px;
+  width: 20px;
   left: 3px;
   bottom: 3px;
   background-color: white;
-  transition: 0.3s;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 input:checked + .slider {
-  background-color: #4ade80;
+  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
-  transform: translateX(20px);
+  transform: translateX(22px);
 }
 
-/* Range Slider */
+input:focus + .slider {
+  box-shadow: none; /* Removed glow effect as requested */
+}
+
+/* Range Slider (Common) */
 .range-slider {
   width: 100%;
-  height: 6px;
+  height: 8px;
   -webkit-appearance: none;
   appearance: none;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 3px;
+  background: #e0e0e0; /* Neutral Gray as requested */
+  border-radius: 4px;
   outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0; /* Reset margin */
+  vertical-align: middle;
 }
 
+.range-slider:hover {
+  background: #d0d0d0; /* Slightly darker gray on hover */
+}
+
+/* Thumb Style */
 .range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
-  background: #fff;
+  width: 20px;
+  height: 20px;
+  background: var(--white);
+  border: 2px solid var(--point-orange);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease;
+  margin-top: -6px; /* Center thumb vertically (8px height track - 20px thumb) / 2 = -6px */
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.range-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: transparent;
+  border-radius: 4px;
 }
 
 /* Dual Range Slider Container */
 .range-slider-dual {
   position: relative;
-  height: 20px;
+  height: 24px; /* Sufficient height for thumbs */
+  display: flex;
+  align-items: center;
 }
 
+/* Track Background for Dual Slider */
+.range-slider-dual::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    #e0e0e0 var(--start, 0%),
+    #ff9f43 var(--start, 0%),
+    #ff9f43 var(--end, 100%),
+    #e0e0e0 var(--end, 100%)
+  ); /* Dynamic fill using CSS variables */
+  border-radius: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+/* Input elements in Dual Slider */
 .range-slider-dual .range-slider {
   position: absolute;
   width: 100%;
-  pointer-events: none;
-  background: transparent;
+  pointer-events: none; /* Allow clicks to pass through */
+  background: transparent; /* Transparent background to show the track below */
+  height: auto; /* Let it fit container */
+  appearance: none;
+  -webkit-appearance: none;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .range-slider-dual .range-slider::-webkit-slider-thumb {
-  pointer-events: all;
+  pointer-events: all; /* Re-enable pointer events for thumbs */
   position: relative;
   z-index: 2;
+  margin-top: -6px; /* Center thumb vertically relative to track */
+}
+
+.range-slider-dual .range-slider::-webkit-slider-runnable-track {
+  background: transparent; /* Ensure invisible track */
+  height: 8px;
 }
 
 .range-slider-dual .range-min {
-  z-index: 1;
+  z-index: 2;
 }
 
 .range-slider-dual .range-max {
   z-index: 2;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 3px;
+}
+
+/* Hides the default track background for inputs inside dual slider */
+.range-slider-dual .range-slider:hover {
+  background: transparent;
 }
 
 /* Select Dropdown */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 10px;
+  color: var(--text-secondary); /* Changed to neutral color as requested */
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
 .select-input {
   width: 100%;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-size: 13px;
+  padding: 10px 12px;
+  border: 1px solid rgba(104, 84, 102, 0.2); /* Soft purple border */
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: normal;
   cursor: pointer;
+  appearance: none;
+  transition: all 0.2s ease;
 }
 
 .select-input option {
-  background: #5a4d8a;
-  color: #fff;
+  font-family: inherit;
+}
+
+.select-input:hover {
+  border-color: var(--point-orange);
+  background: #fffbf5;
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: var(--point-orange);
+  box-shadow: 0 0 0 3px rgba(255, 159, 67, 0.2);
+}
+
+.select-input option {
+  background: var(--white);
+  color: var(--text-primary);
+  padding: 8px;
 }
 
 /* Footer */
 .footer {
-  margin-top: 12px;
-  font-size: 10px;
-  opacity: 0.5;
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
   text-align: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--glass-border);
 }

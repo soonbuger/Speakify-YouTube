@@ -32,9 +32,16 @@ const processedElements = new WeakSet<HTMLElement>();
  * 요소가 이미 처리되었는지 확인
  * WeakSet + DOM 마커 둘 다 체크
  */
+/**
+ * 요소가 이미 처리되었는지 확인
+ * WeakSet + Dataset + DOM 마커 체크
+ */
 function isAlreadyProcessed(element: HTMLElement): boolean {
   // WeakSet 체크 (빠름)
   if (processedElements.has(element)) return true;
+
+  // Dataset 체크 (비동기 처리 중 중복 방지)
+  if (element.dataset.speakifyProcessed === 'true') return true;
 
   // DOM 마커 체크 (새로고침이나 동적 로드 시)
   const parent = element.parentElement;
@@ -58,6 +65,7 @@ function isAlreadyProcessed(element: HTMLElement): boolean {
  */
 export function markAsProcessed(element: HTMLElement): void {
   processedElements.add(element);
+  element.dataset.speakifyProcessed = 'true';
 }
 
 /**

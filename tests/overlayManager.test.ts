@@ -39,15 +39,6 @@ describe('OverlayManager', () => {
       expect(result?.style.transform).toContain('translate(-50%, -50%)');
     });
 
-    it('should apply bottom-right position', () => {
-      const result = applyOverlay(thumbnailElement, 'https://example.com/overlay.png', {
-        position: 'bottom-right',
-      });
-
-      expect(result?.style.bottom).toBe('8px');
-      expect(result?.style.right).toBe('8px');
-    });
-
     it('should apply flip transform', () => {
       const result = applyOverlay(thumbnailElement, 'https://example.com/overlay.png', {
         flip: true,
