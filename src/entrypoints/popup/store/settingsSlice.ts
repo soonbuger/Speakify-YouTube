@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { loadAllSettings, saveAllSettings, SpeakifySettings, DEFAULT_SETTINGS } from '../../../lib/storage';
+import { loadAllSettings, saveAllSettings } from '../../../lib/storage';
+import { SpeakifySettings, DEFAULT_SETTINGS } from '../../../types';
 
 /**
  * 설정 상태 인터페이스
