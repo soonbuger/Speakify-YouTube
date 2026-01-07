@@ -1,0 +1,65 @@
+import React from 'react';
+
+interface SliderProps {
+  /** 슬라이더 레이블 */
+  label: string;
+  /** 현재 값 */
+  value: number;
+  /** 값 변경 핸들러 */
+  onChange: (value: number) => void;
+  /** 최소값 */
+  min: number;
+  /** 최대값 */
+  max: number;
+  /** 단계 */
+  step?: number;
+  /** 표시 단위 (예: "%") */
+  unit?: string;
+}
+
+/**
+ * 슬라이더 컴포넌트
+ * 등장 확률, 반전 확률, 투명도 등에 사용
+ * 진행률에 따라 주황색으로 채워짐
+ */
+function Slider({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step = 5,
+  unit = '%',
+}: SliderProps) {
+  // 진행률 계산 (0-100%)
+  const progress = ((value - min) / (max - min)) * 100;
+
+  // 진행률에 따른 배경 그라디언트 스타일
+  const sliderStyle: React.CSSProperties = {
+    background: `linear-gradient(to right, var(--point-orange) 0%, var(--point-orange) ${progress}%, #e0e0e0 ${progress}%, #e0e0e0 100%)`,
+  };
+
+  return (
+    <div className="setting-row">
+      <div className="setting-label">
+        <span>{label}</span>
+        <span className="setting-value">
+          {value}
+          {unit}
+        </span>
+      </div>
+      <input
+        type="range"
+        className="range-slider"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        style={sliderStyle}
+      />
+    </div>
+  );
+}
+
+export default Slider;

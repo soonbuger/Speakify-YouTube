@@ -1,7 +1,12 @@
 import { defineConfig } from 'wxt';
+import react from '@vitejs/plugin-react';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
+  // React 플러그인 추가
+  vite: () => ({
+    plugins: [react()],
+  }),
   // src/ 폴더 사용
   srcDir: 'src',
 
