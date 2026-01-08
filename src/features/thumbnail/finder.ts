@@ -130,8 +130,23 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
       parent.closest('ytm-shorts-lockup-view-model-v2') !== null ||
       parent.closest('[is-shorts]') !== null;
 
-    // Shorts는 aspect ratio 검사 없이 통과
-    if (isShortsThumb) return true;
+    // Shorts는 aspect ratio가 세로형이어야 함 (사이드바 침범 방지)
+    if (isShortsThumb) {
+      const img = image as HTMLImageElement;
+      // 0일 수 있는 값 방어
+      const w = img.naturalWidth || img.width || img.getBoundingClientRect().width;
+      const h = img.naturalHeight || img.height || img.getBoundingClientRect().height;
+
+      if (h === 0) return false;
+      const ratio = w / h;
+
+      // 0.8 미만이면 세로형 (9:16 = 0.5625)
+      // 일부 정사각형에 가까운 Shorts도 있을 수 있으나, 보통 0.8 미만
+      if (ratio < 0.8) return true;
+
+      // Shorts 컨테이너 내부지만 비율이 넓으면(1.0 이상) 오버레이 대상 아님 (사이드바 배경 등)
+      return false;
+    }
 
     // Filter by aspect ratio (일반 영상 썸네일만)
     const img = image as HTMLImageElement;
