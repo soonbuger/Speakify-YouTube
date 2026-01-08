@@ -5,13 +5,20 @@ import Slider from './components/Slider';
 import DualSlider from './components/DualSlider';
 import Select from './components/Select';
 import { useAppDispatch, useAppSelector } from './store/hooks';
-import { fetchSettings, persistSettings, updateSetting } from './store/settingsSlice';
+import {
+  fetchSettings,
+  persistSettings,
+  updateSetting,
+  resetToDefaults,
+} from './store/settingsSlice';
 import { useI18n } from './hooks/useI18n';
 import type { SpeakifySettings } from './store/settingsSlice';
 
 /**
  * Speakify YouTube Settings - 메인 App 컴포넌트
- * Phase 6: i18n 통합
+ *
+ * @note i18n Fallback Rule: All fallback values must be in ENGLISH.
+ *       Example: t('key', 'English Fallback')
  */
 function App() {
   const dispatch = useAppDispatch();
@@ -31,8 +38,19 @@ function App() {
       dispatch(updateSetting({ key, value }));
       dispatch(persistSettings({ [key]: value }));
     },
-    [dispatch]
+    [dispatch],
   );
+
+  /**
+   * 기본값으로 초기화 핸들러
+   */
+  const handleResetToDefaults = useCallback(() => {
+    dispatch(resetToDefaults());
+    // Storage에도 저장
+    import('@/types').then(({ DEFAULT_SETTINGS }) => {
+      dispatch(persistSettings(DEFAULT_SETTINGS));
+    });
+  }, [dispatch]);
 
   // 옵션 목록 (i18n 적용) - useMemo로 참조 안정성 확보
   const languageOptions = useMemo(
@@ -40,7 +58,7 @@ function App() {
       { value: 'en', label: 'English' },
       { value: 'ko', label: '한국어' },
     ],
-    []
+    [],
   );
 
   const positionOptions = useMemo(
@@ -49,7 +67,7 @@ function App() {
       { value: 'random', label: t('positionRandom', '랜덤') },
       { value: 'smart', label: t('positionSmart', '스마트') },
     ],
-    [t]
+    [t],
   );
 
   // 로딩 중일 때 표시
@@ -59,7 +77,7 @@ function App() {
 
   return (
     <>
-      <h1>🎃 {t('settingsTitle', 'Speakify YouTube Settings')}</h1>
+      <h1>{t('settingsTitle', 'Speakify YouTube Settings')}</h1>
 
       {/* 기본 설정 섹션 */}
       <Section title={t('sectionBasic', 'BASIC')}>
@@ -71,13 +89,13 @@ function App() {
         />
 
         <Toggle
-          label={t('enableExtension', '확장 프로그램 활성화')}
+          label={t('enableExtension', 'Enable Extension')}
           checked={settings.extensionEnabled}
           onChange={(value) => handleSettingChange('extensionEnabled', value)}
         />
 
         <Slider
-          label={t('appearChance', '등장 확률')}
+          label={t('appearChance', 'Appear Chance')}
           value={Math.round(settings.appearChance * 100)}
           onChange={(value) => handleSettingChange('appearChance', value / 100)}
           min={0}
@@ -85,7 +103,7 @@ function App() {
         />
 
         <Slider
-          label={t('flipChance', '좌우 반전 확률')}
+          label={t('flipChance', 'Flip Chance')}
           value={Math.round(settings.flipChance * 100)}
           onChange={(value) => handleSettingChange('flipChance', value / 100)}
           min={0}
@@ -96,7 +114,7 @@ function App() {
       {/* 오버레이 설정 섹션 */}
       <Section title={t('sectionOverlay', 'OVERLAY')}>
         <Select
-          label={t('overlayPosition', '위치')}
+          label={t('overlayPosition', 'Position')}
           value={settings.overlayPosition}
           onChange={(value) =>
             handleSettingChange('overlayPosition', value as 'center' | 'random' | 'smart')
@@ -105,7 +123,7 @@ function App() {
         />
 
         <DualSlider
-          label={t('overlaySize', '크기')}
+          label={t('overlaySize', 'Size')}
           minValue={settings.overlaySizeMin}
           maxValue={settings.overlaySizeMax}
           onMinChange={(value) => handleSettingChange('overlaySizeMin', value)}
@@ -115,22 +133,40 @@ function App() {
         />
 
         <Slider
-          label={t('overlayOpacity', '투명도')}
+          label={t('overlayOpacity', 'Opacity')}
           value={Math.round(settings.overlayOpacity * 100)}
           onChange={(value) => handleSettingChange('overlayOpacity', value / 100)}
-          min={30}
+          min={10}
           max={100}
           step={10}
         />
+
+        {/* Multi-Image Overlay (Random 모드 전용) */}
+        {settings.overlayPosition === 'random' && (
+          <DualSlider
+            label={t('overlayCount', 'Image Count')}
+            minValue={settings.overlayCountMin}
+            maxValue={settings.overlayCountMax}
+            onMinChange={(value) => handleSettingChange('overlayCountMin', value)}
+            onMaxChange={(value) => handleSettingChange('overlayCountMax', value)}
+            min={1}
+            max={8}
+            step={1}
+            unit="개"
+          />
+        )}
       </Section>
 
       {/* 개발자 옵션 섹션 */}
       <Section title={t('sectionDeveloper', 'DEVELOPER')} className="developer-section">
         <Toggle
-          label={t('debugMode', '디버그 모드')}
+          label={t('debugMode', 'Debug Mode')}
           checked={settings.debugMode}
           onChange={(value) => handleSettingChange('debugMode', value)}
         />
+        <button className="reset-button" onClick={handleResetToDefaults} type="button">
+          {t('resetToDefaults', 'Reset to Defaults')}
+        </button>
       </Section>
 
       <div className="footer">{t('footerAutoSave', 'Settings are saved automatically')}</div>

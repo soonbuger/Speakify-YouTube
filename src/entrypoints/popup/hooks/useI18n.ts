@@ -72,7 +72,7 @@ export function useI18n() {
       const message = messages[key]?.message;
       return message || fallback || key;
     },
-    [messages]
+    [messages],
   );
 
   return { t, isLoaded, language };

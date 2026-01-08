@@ -32,11 +32,11 @@ export async function saveAllSettings(settings: Partial<SpeakifySettings>): Prom
  * Watch for settings changes
  */
 export function watchSettings(
-  callback: (newSettings: Partial<SpeakifySettings>) => void
+  callback: (newSettings: Partial<SpeakifySettings>) => void,
 ): () => void {
   const listener = (
     changes: { [key: string]: browser.Storage.StorageChange },
-    areaName: string
+    areaName: string,
   ) => {
     if (areaName !== 'local') return;
 

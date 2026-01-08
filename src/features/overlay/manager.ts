@@ -4,7 +4,7 @@
  */
 
 import { getRandomPosition } from '@/features/overlay/position';
-import type { OverlayPosition } from '@/types/index';
+import type { OverlayPosition, OverlayInstance } from '@/types/index';
 import { EXTENSION_NAME } from '@/shared/config/constants';
 
 /**
@@ -25,7 +25,7 @@ export interface OverlayOptions {
 function getPositionStyles(
   position: OverlayPosition,
   size: number = 100,
-  smartPosition?: { x: number; y: number }
+  smartPosition?: { x: number; y: number },
 ): Record<string, string> {
   const base = {
     position: 'absolute',
@@ -87,7 +87,7 @@ function getPositionStyles(
 export function applyOverlay(
   thumbnailElement: HTMLElement,
   overlayImageURL: string,
-  options: OverlayOptions = {}
+  options: OverlayOptions = {},
 ): HTMLImageElement | null {
   if (!overlayImageURL) return null;
 
@@ -155,4 +155,123 @@ export function isAlreadyProcessed(element: HTMLElement): boolean {
  */
 export function getExtensionName(): string {
   return EXTENSION_NAME;
+}
+
+// ==================== Multi-Image Overlay ====================
+
+import { generateNonOverlappingPositions } from '@/features/overlay/collision';
+
+/**
+ * Multi-Image Overlay 옵션
+ */
+export interface MultiOverlayOptions {
+  countMin: number;
+  countMax: number;
+  sizeMin: number;
+  sizeMax: number;
+  flipChance: number;
+  opacity: number;
+}
+
+/**
+ * Multi Overlay 결과 타입 (디버그 정보 포함)
+ */
+export interface MultiOverlayResult {
+  images: HTMLImageElement[];
+  instances: OverlayInstance[];
+}
+
+/**
+ * 이미지 에셋 타입 (디버그 정보 포함)
+ */
+export interface ImageAsset {
+  folder: 'small' | 'big';
+  index: number;
+  url: string;
+}
+
+/**
+ * 다중 이미지 오버레이 적용 (Random 모드 전용)
+ * 각 이미지는 독립적인 크기, 위치, 반전 속성을 가짐
+ *
+ * @param thumbnailElement 썸네일 요소
+ * @param imageAssets 사용 가능한 이미지 에셋 배열 (folder/index 포함)
+ * @param options 멀티 오버레이 옵션
+ * @returns 생성된 이미지 요소 배열과 인스턴스 메타데이터
+ */
+export function applyMultiOverlay(
+  thumbnailElement: HTMLElement,
+  imageAssets: ImageAsset[],
+  options: MultiOverlayOptions,
+): MultiOverlayResult {
+  const { countMin, countMax, sizeMin, sizeMax, flipChance, opacity } = options;
+
+  // 1. 랜덤 이미지 개수 결정 (min ~ max)
+  const imageCount = Math.floor(Math.random() * (countMax - countMin + 1)) + countMin;
+
+  // 2. 겹치지 않는 위치들 생성
+  const positions = generateNonOverlappingPositions(imageCount, 15, 50, 10);
+
+  // 3. 각 이미지에 대해 독립적인 인스턴스 생성
+  const instances: OverlayInstance[] = positions.map((pos) => {
+    // 랜덤 이미지 에셋 선택
+    const asset = imageAssets[Math.floor(Math.random() * imageAssets.length)];
+
+    // 독립적인 크기 (sizeMin ~ sizeMax)
+    const size = Math.floor(Math.random() * (sizeMax - sizeMin + 1)) + sizeMin;
+
+    // 독립적인 반전 여부
+    const flip = Math.random() < flipChance;
+
+    return {
+      imageUrl: asset.url,
+      folder: asset.folder,
+      index: asset.index,
+      size,
+      flip,
+      position: pos,
+      opacity,
+    };
+  });
+
+  // 4. 각 인스턴스를 DOM에 적용
+  const createdImages: HTMLImageElement[] = [];
+
+  instances.forEach((instance, index) => {
+    const overlayImage = document.createElement('img');
+    overlayImage.id = `${EXTENSION_NAME}-multi-${index}`;
+    overlayImage.src = instance.imageUrl;
+
+    // 스타일 적용
+    let transformStyle = '';
+    if (instance.flip) {
+      transformStyle = 'scaleX(-1)';
+    }
+
+    Object.assign(overlayImage.style, {
+      position: 'absolute',
+      top: `${instance.position.y}%`,
+      left: `${instance.position.x}%`,
+      width: `${instance.size}%`,
+      opacity: (instance.opacity ?? 1).toString(),
+      transform: transformStyle,
+      zIndex: '0',
+      pointerEvents: 'none',
+      imageRendering: 'auto',
+    });
+
+    // 이미지 품질 최적화
+    overlayImage.onload = () => {
+      overlayImage.style.maxWidth = `${overlayImage.naturalWidth}px`;
+      overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
+    };
+
+    const parent = thumbnailElement.parentElement;
+    if (parent) {
+      parent.insertBefore(overlayImage, thumbnailElement.nextSibling);
+      createdImages.push(overlayImage);
+    }
+  });
+
+  return { images: createdImages, instances };
 }

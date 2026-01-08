@@ -26,6 +26,8 @@ export interface SpeakifySettings {
   overlaySizeMin: number; // % (10~150)
   overlaySizeMax: number; // % (10~150)
   overlayOpacity: number; // 0.0 ~ 1.0
+  overlayCountMin: number; // 1~8 (Multi-Image 최소 개수)
+  overlayCountMax: number; // 1~8 (Multi-Image 최대 개수)
   debugMode: boolean;
 }
 
@@ -35,12 +37,14 @@ export interface SpeakifySettings {
 export const DEFAULT_SETTINGS: SpeakifySettings = {
   language: 'en',
   extensionEnabled: true,
-  appearChance: 1.0,
+  appearChance: 1,
   flipChance: 0.5,
   overlayPosition: 'random',
-  overlaySizeMin: 25,
+  overlaySizeMin: 10,
   overlaySizeMax: 100,
-  overlayOpacity: 1.0,
+  overlayOpacity: 1,
+  overlayCountMin: 1,
+  overlayCountMax: 1,
   debugMode: false,
 };
 
@@ -73,4 +77,24 @@ export interface ThumbnailState {
 export interface RendererInterface {
   createOverlay(imageUrl: string, options: OverlayOptions): HTMLImageElement;
   removeOverlay(element: HTMLElement | null): void;
+}
+
+// ==================== Multi-Image Overlay ====================
+
+/**
+ * 개별 오버레이 인스턴스 타입
+ * 각 이미지는 독립적인 속성(크기, 위치, 반전 등)을 가짐
+ * 미래 확장: rotation, skew 등 지원 예정
+ */
+export interface OverlayInstance {
+  imageUrl: string;
+  folder: 'small' | 'big'; // 이미지 폴더 (디버그용)
+  index: number; // 이미지 인덱스 (디버그용)
+  size: number; // % (10~150)
+  flip: boolean;
+  position: { x: number; y: number }; // % (0~100)
+  opacity?: number;
+  // 미래 확장용 (Optional)
+  rotation?: number; // degrees
+  skew?: number; // degrees
 }

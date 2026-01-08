@@ -47,7 +47,7 @@ function log(level: LogLevel, message: string, meta?: unknown): void {
 
   consoleFn(
     `%c[${EXTENSION_NAME}] [${level}] [${timestamp}] ${message}${metaStr}`,
-    `color: ${css}; font-weight: bold;`
+    `color: ${css}; font-weight: bold;`,
   );
 }
 

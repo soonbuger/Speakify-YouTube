@@ -215,7 +215,7 @@ export function findBestPosition(grid: GridCell[], gridSize: number = 4): { x: n
  */
 export async function analyzeImageForPlacement(
   imageUrl: string,
-  gridSize: number = 4
+  gridSize: number = 4,
 ): Promise<AnalysisResult | null> {
   const imageData = await loadImageToCanvas(imageUrl);
   if (!imageData) return null;

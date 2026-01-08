@@ -48,6 +48,6 @@ export default [
     },
   },
   {
-    ignores: ['node_modules/', 'dist/', '.wxt/', '.output/', '*.d.ts', 'docs/'],
+    ignores: ['node_modules/', 'dist/', '.wxt/', '.output/', '*.d.ts', 'docs/', 'scripts/'],
   },
 ];

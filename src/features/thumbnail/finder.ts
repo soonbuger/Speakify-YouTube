@@ -15,11 +15,18 @@ const IMAGE_SELECTORS = [
   // 검색 결과 썸네일
   'ytd-thumbnail yt-image img.ytCoreImageHost',
   'yt-image.ytd-thumbnail img',
-  // Shorts 썸네일
+  // Shorts 썸네일 - 홈페이지
+  'ytd-rich-item-renderer ytd-shortsLockupViewModel img',
+  'ytd-rich-item-renderer a img.yt-core-image',
+  'ytd-reel-shelf-renderer img',
+  'ytd-reel-item-renderer img',
+  // Shorts 썸네일 - 사이드바 (영상 페이지)
   'a.shortsLockupViewModelHostEndpoint img',
-  'ytm-shorts-lockup-view-model img.ytCoreImageHost',
+  'ytm-shorts-lockup-view-model img',
   'ytm-shorts-lockup-view-model-v2 img',
-  'yt-thumbnail-view-model img.ytCoreImageHost',
+  'yt-thumbnail-view-model img',
+  // 일반 ytCoreImageHost (Shorts 포함)
+  'img.ytCoreImageHost',
 ];
 
 // Destructure config for readability
@@ -105,7 +112,28 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
 
     if (isVideoPreview || isChapter) return false;
 
-    // Filter by aspect ratio (supports both regular and Shorts thumbnails)
+    // Shorts 썸네일인지 확인 (aspect ratio 검사 건너뛰기)
+    // 채널 아이콘 제외 (yt-avatar, yt-img-shadow#avatar 등)
+    const isChannelIcon =
+      parent.closest('#avatar') !== null ||
+      parent.closest('yt-avatar') !== null ||
+      parent.closest('#author-thumbnail') !== null ||
+      parent.closest('a[href*="/channel/"]')?.querySelector('img') === image ||
+      parent.closest('a[href*="/@"]')?.querySelector('img') === image;
+
+    if (isChannelIcon) return false;
+
+    const isShortsThumb =
+      parent.closest('ytd-reel-item-renderer') !== null ||
+      parent.closest('ytd-reel-shelf-renderer') !== null ||
+      parent.closest('ytm-shorts-lockup-view-model') !== null ||
+      parent.closest('ytm-shorts-lockup-view-model-v2') !== null ||
+      parent.closest('[is-shorts]') !== null;
+
+    // Shorts는 aspect ratio 검사 없이 통과
+    if (isShortsThumb) return true;
+
+    // Filter by aspect ratio (일반 영상 썸네일만)
     const img = image as HTMLImageElement;
 
     // Shorts 썸네일은 CSS 레이아웃 특성상 offsetWidth/offsetHeight가 0일 수 있음

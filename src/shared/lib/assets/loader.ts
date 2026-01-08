@@ -196,6 +196,42 @@ class AssetManager {
   getImageCount(folder: ImageFolder): number {
     return this.loaders.get(folder)!.getImageCount();
   }
+
+  /**
+   * 모든 이미지 URL을 배열로 반환 (Multi-Image Overlay용)
+   */
+  getAllImageUrls(): string[] {
+    const urls: string[] = [];
+
+    this.loaders.forEach((loader) => {
+      const count = loader.getImageCount();
+      for (let i = 1; i <= count; i++) {
+        urls.push(loader.getImageURL(i));
+      }
+    });
+
+    return urls;
+  }
+
+  /**
+   * 모든 이미지 에셋 정보를 배열로 반환 (디버그 정보 포함)
+   */
+  getAllImageAssets(): ImageAsset[] {
+    const assets: ImageAsset[] = [];
+
+    this.loaders.forEach((loader, folder) => {
+      const count = loader.getImageCount();
+      for (let i = 1; i <= count; i++) {
+        assets.push({
+          folder,
+          index: i,
+          url: loader.getImageURL(i),
+        });
+      }
+    });
+
+    return assets;
+  }
 }
 
 // ============================================================

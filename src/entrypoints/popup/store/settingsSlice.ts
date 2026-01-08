@@ -32,7 +32,7 @@ export const persistSettings = createAsyncThunk(
   async (settings: Partial<SpeakifySettings>) => {
     await saveAllSettings(settings);
     return settings;
-  }
+  },
 );
 
 /**
@@ -46,11 +46,15 @@ const settingsSlice = createSlice({
     // 동기 액션: UI 상태만 즉시 업데이트 (저장은 별도 thunk 호출)
     updateSetting: <K extends keyof SpeakifySettings>(
       state: SettingsState,
-      action: PayloadAction<{ key: K; value: SpeakifySettings[K] }>
+      action: PayloadAction<{ key: K; value: SpeakifySettings[K] }>,
     ) => {
       const { key, value } = action.payload;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (state as any)[key] = value;
+    },
+    // 기본값으로 초기화
+    resetToDefaults: (state: SettingsState) => {
+      Object.assign(state, DEFAULT_SETTINGS);
     },
   },
   extraReducers: (builder) => {
@@ -75,7 +79,7 @@ const settingsSlice = createSlice({
   },
 });
 
-export const { updateSetting } = settingsSlice.actions;
+export const { updateSetting, resetToDefaults } = settingsSlice.actions;
 export default settingsSlice.reducer;
 
 // 타입 재export (App.tsx에서 사용)

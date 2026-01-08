@@ -78,5 +78,13 @@
   "footerAutoSave": {
     "message": "설정이 자동 저장됩니다",
     "description": "Footer 자동 저장 메시지"
+  },
+  "overlayCount": {
+    "message": "이미지 개수",
+    "description": "오버레이 이미지 개수 (랜덤 모드 전용)"
+  },
+  "resetToDefaults": {
+    "message": "기본값으로 초기화",
+    "description": "모든 설정을 기본값으로 초기화하는 버튼"
   }
 }

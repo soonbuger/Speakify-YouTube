@@ -78,5 +78,13 @@
   "footerAutoSave": {
     "message": "Settings are saved automatically",
     "description": "Footer auto-save message"
+  },
+  "overlayCount": {
+    "message": "Image Count",
+    "description": "Number of overlay images (for random mode)"
+  },
+  "resetToDefaults": {
+    "message": "Reset to Defaults",
+    "description": "Button to reset all settings to default values"
   }
 }

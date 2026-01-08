@@ -1,8 +1,9 @@
 import { findThumbnails, markAsProcessed } from '@/features/thumbnail/finder';
-import { applyOverlay } from '@/features/overlay/manager';
+import { applyOverlay, applyMultiOverlay } from '@/features/overlay/manager';
 import { assetManager, getImageCount } from '@/shared/lib/assets/loader';
 import { Logger } from '@/shared/lib/utils/logger';
 import { analyzeImageForPlacement } from '@/features/thumbnail/analyzer';
+import { showDebugIndicator } from '@/features/debug/indicator';
 import type { SpeakifySettings } from '@/types/index';
 import type { Randomizer } from '@/shared/lib/utils/randomizer';
 
@@ -43,7 +44,36 @@ async function processSingleThumbnail(
   // Determine if Speaki should appear
   if (Math.random() > settings.appearChance) return;
 
-  // Get random non-repeating image
+  // ==================== Multi-Image Overlay (Random 모드 전용) ====================
+  if (settings.overlayPosition === 'random') {
+    const allImageAssets = assetManager.getAllImageAssets();
+    if (allImageAssets.length === 0) return;
+
+    const result = applyMultiOverlay(thumbnail, allImageAssets, {
+      countMin: settings.overlayCountMin,
+      countMax: settings.overlayCountMax,
+      sizeMin: settings.overlaySizeMin,
+      sizeMax: settings.overlaySizeMax,
+      flipChance: settings.flipChance,
+      opacity: settings.overlayOpacity,
+    });
+
+    // 디버그 모드: 통합 디버그 함수 사용 (단일 모드와 동일한 포맷)
+    if (settings.debugMode) {
+      Logger.debug('Multi-overlay applied', { count: result.images.length });
+      showDebugIndicator({
+        thumbnail,
+        overlayPosition: 'random',
+        info: {
+          mode: 'multi',
+          instances: result.instances,
+        },
+      });
+    }
+    return;
+  }
+
+  // ==================== Single Image Overlay (Center, Smart 모드) ====================
   const randomIndex = randomizer.getRandomIndex(currentImageCount);
   const imageAsset = assetManager.getRandomImage(randomIndex);
 
@@ -88,10 +118,16 @@ async function processSingleThumbnail(
 
   // 디버그 모드: 분석 위치 표시
   if (settings.debugMode) {
-    showDebugIndicator(thumbnail, smartPosition, settings.overlayPosition, {
-      folder: imageAsset.folder,
-      index: imageAsset.index,
-      size: randomSize,
+    showDebugIndicator({
+      thumbnail,
+      smartPosition,
+      overlayPosition: settings.overlayPosition,
+      info: {
+        mode: 'single',
+        folder: imageAsset.folder,
+        index: imageAsset.index,
+        size: randomSize,
+      },
     });
   }
 }
@@ -128,63 +164,6 @@ async function getSmartPosition(
   }
 }
 
-/**
- * Shows visual debug indicator for position and image info
- */
-function showDebugIndicator(
-  thumbnail: HTMLElement,
-  smartPosition: { x: number; y: number } | undefined,
-  overlayPosition: string,
-  info: { folder: string; index: number; size: number },
-): void {
-  const debugPos = smartPosition || (overlayPosition === 'smart' ? { x: 50, y: 50 } : null);
-
-  const parent = thumbnail.parentElement;
-  if (!parent) return;
-
-  // Position Dot
-  if (debugPos) {
-    const debugDot = document.createElement('div');
-    debugDot.className = 'speakify-debug-dot';
-    Object.assign(debugDot.style, {
-      position: 'absolute',
-      left: `${debugPos.x}%`,
-      top: `${debugPos.y}%`,
-      width: '12px',
-      height: '12px',
-      background: '#e74c3c',
-      border: '2px solid #fff',
-      borderRadius: '50%',
-      transform: 'translate(-50%, -50%)',
-      boxShadow: '0 0 8px rgba(231, 76, 60, 0.8)',
-      zIndex: '9999',
-      pointerEvents: 'none',
-    });
-    // 부모 요소에 상대적으로 배치
-    parent.appendChild(debugDot);
-  }
-
-  // Info Label
-  const infoLabel = document.createElement('div');
-  infoLabel.className = 'speakify-debug-info';
-  infoLabel.innerText = `[${info.folder}] #${info.index} / ${Math.round(info.size)}%`;
-  Object.assign(infoLabel.style, {
-    position: 'absolute',
-    top: '4px',
-    left: '4px',
-    background: 'rgba(0, 0, 0, 0.7)',
-    color: '#fff',
-    padding: '2px 6px',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    borderRadius: '4px',
-    zIndex: '9999',
-    pointerEvents: 'none',
-    whiteSpace: 'nowrap',
-  });
-  parent.appendChild(infoLabel);
-}
-
 export async function applyOverlayToThumbnails(
   settings: SpeakifySettings,
   randomizer: Randomizer,
@@ -195,11 +174,13 @@ export async function applyOverlayToThumbnails(
   const currentImageCount = getImageCount();
   if (currentImageCount === 0) return;
 
-  // Flatten found thumbnails from all roots
-  const thumbnails: HTMLElement[] = [];
+  // Flatten found thumbnails from all roots (Set으로 중복 제거)
+  const thumbnailSet = new Set<HTMLElement>();
   roots.forEach((root) => {
-    thumbnails.push(...findThumbnails(root));
+    findThumbnails(root).forEach((thumb) => thumbnailSet.add(thumb));
   });
+
+  const thumbnails = Array.from(thumbnailSet);
 
   await Promise.all(
     thumbnails.map((thumbnail) =>
