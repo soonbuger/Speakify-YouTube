@@ -11,6 +11,8 @@ describe('OverlayInstance Type', () => {
   it('should have independent properties for each image', () => {
     const instance: OverlayInstance = {
       imageUrl: 'test.png',
+      folder: 'small',
+      index: 1,
       size: 50,
       flip: true,
       position: { x: 30, y: 40 },
@@ -26,6 +28,8 @@ describe('OverlayInstance Type', () => {
   it('should support future extension properties', () => {
     const instance: OverlayInstance = {
       imageUrl: 'test.png',
+      folder: 'big',
+      index: 2,
       size: 70,
       flip: false,
       position: { x: 50, y: 50 },
@@ -51,7 +55,7 @@ describe('SpeakifySettings - Multi-Image', () => {
 
   it('should have default values for overlay count', () => {
     expect(DEFAULT_SETTINGS.overlayCountMin).toBe(1);
-    expect(DEFAULT_SETTINGS.overlayCountMax).toBe(3);
+    expect(DEFAULT_SETTINGS.overlayCountMax).toBe(1);
   });
 
   it('should validate count range (1~8)', () => {

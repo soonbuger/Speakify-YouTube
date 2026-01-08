@@ -19,7 +19,7 @@ export function checkCenterDistance(
 ): boolean {
   const dx = pos1.x - pos2.x;
   const dy = pos1.y - pos2.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
+  const distance = Math.hypot(dx, dy);
   return distance >= minDistance;
 }
 
@@ -50,7 +50,7 @@ export function generateNonOverlappingPositions(
   count: number,
   minDistance: number = 15,
   maxAttempts: number = 50,
-  padding: number = 10,
+  padding: number = 25,
 ): { x: number; y: number }[] {
   const positions: { x: number; y: number }[] = [];
 

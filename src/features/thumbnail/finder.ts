@@ -92,6 +92,9 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
   root.querySelectorAll<HTMLElement>('.ytp-videowall-still-image').forEach((img) => {
     uniqueImages.add(img);
   });
+  root.querySelectorAll<HTMLElement>('.ytp-modern-videowall-still-image').forEach((img) => {
+    uniqueImages.add(img);
+  });
   root.querySelectorAll<HTMLElement>('div.ytp-cued-thumbnail-overlay-image').forEach((img) => {
     uniqueImages.add(img);
   });
@@ -146,6 +149,17 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
 
       // Shorts 컨테이너 내부지만 비율이 넓으면(1.0 이상) 오버레이 대상 아님 (사이드바 배경 등)
       return false;
+    }
+
+    // Videowall 썸네일은 aspect ratio 검사 건너뛰기 (div with background-image)
+    const isVideowall =
+      image.classList.contains('ytp-videowall-still-image') ||
+      image.classList.contains('ytp-modern-videowall-still-image') ||
+      image.classList.contains('ytp-cued-thumbnail-overlay-image');
+
+    if (isVideowall) {
+      // background-image가 있는지 확인
+      return !!image.style.backgroundImage;
     }
 
     // Filter by aspect ratio (일반 영상 썸네일만)

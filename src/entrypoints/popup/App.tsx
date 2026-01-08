@@ -30,6 +30,9 @@ function App() {
     dispatch(fetchSettings());
   }, [dispatch]);
 
+  // Reset 중인지 여부 (Flash Reset: UI를 잠시 언마운트하여 상태 완전 초기화)
+  const [isResetting, setIsResetting] = React.useState(false);
+
   /**
    * 설정 변경 핸들러
    */
@@ -45,11 +48,21 @@ function App() {
    * 기본값으로 초기화 핸들러
    */
   const handleResetToDefaults = useCallback(() => {
+    // 1. 리셋 시작: UI 언마운트
+    setIsResetting(true);
+
+    // 2. 상태 초기화
     dispatch(resetToDefaults());
-    // Storage에도 저장
+
+    // 3. Storage 저장
     import('@/types').then(({ DEFAULT_SETTINGS }) => {
       dispatch(persistSettings(DEFAULT_SETTINGS));
     });
+
+    // 4. 짧은 딜레이 후 UI 리마운트 (Race Condition 및 Layout Thrashing 방지)
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 50);
   }, [dispatch]);
 
   // 옵션 목록 (i18n 적용) - useMemo로 참조 안정성 확보
@@ -70,8 +83,8 @@ function App() {
     [t],
   );
 
-  // 로딩 중일 때 표시
-  if (settings.isLoading || !isLoaded) {
+  // 로딩 중이거나 리셋 중일 때 표시
+  if (settings.isLoading || !isLoaded || isResetting) {
     return <div className="loading">Loading...</div>;
   }
 
@@ -140,6 +153,34 @@ function App() {
           max={100}
           step={10}
         />
+
+        <Toggle
+          label={t('colorSync', 'Smart Color Sync')}
+          checked={settings.colorSync}
+          onChange={(value) => handleSettingChange('colorSync', value)}
+        />
+
+        {/* Color Sync 세부 설정 (활성화 시에만 표시) */}
+        {settings.colorSync && (
+          <>
+            <Slider
+              label={t('colorSyncStrengthL', 'Lighting Intensity')}
+              value={Math.round(settings.colorSyncStrengthL * 100)}
+              onChange={(value) => handleSettingChange('colorSyncStrengthL', value / 100)}
+              min={0}
+              max={100}
+              step={5}
+            />
+            <Slider
+              label={t('colorSyncStrengthAB', 'Color Tint Intensity')}
+              value={Math.round(settings.colorSyncStrengthAB * 100)}
+              onChange={(value) => handleSettingChange('colorSyncStrengthAB', value / 100)}
+              min={0}
+              max={100}
+              step={5}
+            />
+          </>
+        )}
 
         {/* Multi-Image Overlay (Random 모드 전용) */}
         {settings.overlayPosition === 'random' && (

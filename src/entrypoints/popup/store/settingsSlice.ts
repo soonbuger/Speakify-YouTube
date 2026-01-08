@@ -71,11 +71,11 @@ const settingsSlice = createSlice({
       .addCase(fetchSettings.rejected, (state) => {
         state.isLoading = false;
         state.isInitialized = true;
-      })
-      // persistSettings 처리
-      .addCase(persistSettings.fulfilled, (state, action) => {
-        Object.assign(state, action.payload);
       });
+    // persistSettings: UI는 이미 Optimistic Update 되었으므로 상태 업데이트 불필요
+    // .addCase(persistSettings.fulfilled, (state, action) => {
+    //   Object.assign(state, action.payload);
+    // });
   },
 });
 

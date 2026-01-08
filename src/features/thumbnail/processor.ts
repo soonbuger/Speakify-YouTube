@@ -6,9 +6,12 @@ import { analyzeImageForPlacement } from '@/features/thumbnail/analyzer';
 import { showDebugIndicator } from '@/features/debug/indicator';
 import type { SpeakifySettings } from '@/types/index';
 import type { Randomizer } from '@/shared/lib/utils/randomizer';
+import { ColorAnalysisService } from '@/features/color-analysis/services/colorAnalysisService';
+import type { ColorStats } from '@/features/color-analysis/lib/colorMath';
 
 /**
- * 썸네일 img 요소의 src URL을 가져옴
+ * 썸네일 img 요소의 src URL을 가져옴 (동기)
+ * img.src 또는 background-image CSS 속성 지원
  */
 export function getThumbnailImageUrl(thumbnail: HTMLElement): string | null {
   // 직접 img 요소인 경우
@@ -20,7 +23,58 @@ export function getThumbnailImageUrl(thumbnail: HTMLElement): string | null {
   if (imgChild?.src) {
     return imgChild.src;
   }
+  // background-image CSS 속성 (videowall 지원)
+  const bgImage = thumbnail.style.backgroundImage;
+  if (bgImage) {
+    const regex = /url\(["']?([^"')]+)["']?\)/;
+    const match = regex.exec(bgImage);
+    if (match) {
+      return match[1];
+    }
+  }
   return null;
+}
+
+/**
+ * 썸네일 img 요소의 src URL을 가져옴 (비동기 - lazy loading 대응)
+ * YouTube의 lazy loading으로 인해 img.src가 아직 설정되지 않은 경우를 처리
+ */
+export async function getThumbnailImageUrlAsync(
+  thumbnail: HTMLElement,
+  maxWait: number = 1500,
+): Promise<string | null> {
+  // 먼저 동기적으로 시도
+  const immediateUrl = getThumbnailImageUrl(thumbnail);
+  if (immediateUrl) return immediateUrl;
+
+  // 없으면 짧은 대기 후 재시도 (lazy loading 대응)
+  const imgChild =
+    thumbnail instanceof HTMLImageElement ? thumbnail : thumbnail.querySelector('img');
+  if (!imgChild) return null;
+
+  return new Promise((resolve) => {
+    // 이미 src가 있으면 즉시 반환
+    if (imgChild.src) {
+      resolve(imgChild.src);
+      return;
+    }
+
+    // MutationObserver로 src 변경 감지
+    const observer = new MutationObserver(() => {
+      if (imgChild.src) {
+        observer.disconnect();
+        resolve(imgChild.src);
+      }
+    });
+
+    observer.observe(imgChild, { attributes: true, attributeFilter: ['src'] });
+
+    // 타임아웃
+    setTimeout(() => {
+      observer.disconnect();
+      resolve(imgChild.src || null);
+    }, maxWait);
+  });
 }
 
 /**
@@ -38,53 +92,117 @@ async function processSingleThumbnail(
   randomizer: Randomizer,
   currentImageCount: number,
 ): Promise<void> {
-  // 중복 처리 방지: 발견 즉시 처리 완료 표시
-  markAsProcessed(thumbnail);
-
   // Determine if Speaki should appear
-  if (Math.random() > settings.appearChance) return;
+  if (Math.random() > settings.appearChance) {
+    // Only mark permanently if appearChance check fails
+    // This allows re-checking on page navigation if new nodes appear
+    // (though in current logic, marked nodes are ignored)
+    markAsProcessed(thumbnail);
+    return;
+  }
 
-  // ==================== Multi-Image Overlay (Random 모드 전용) ====================
+  // Multi-Image Overlay (Random Mode)
   if (settings.overlayPosition === 'random') {
-    const allImageAssets = assetManager.getAllImageAssets();
-    if (allImageAssets.length === 0) return;
+    await applyMultiOverlayMode(thumbnail, settings);
+    return;
+  }
 
-    const result = applyMultiOverlay(thumbnail, allImageAssets, {
+  // Single Image Overlay (Center, Smart Mode)
+  await applySingleOverlayMode(thumbnail, settings, randomizer, currentImageCount);
+}
+
+/**
+ * Performs color analysis on the thumbnail image
+ */
+async function performColorAnalysis(
+  thumbnail: HTMLElement,
+  settings: SpeakifySettings,
+  mode: 'random' | 'single',
+): Promise<ColorStats | undefined> {
+  // Use colorSync setting (default true)
+  if (!settings.colorSync) return undefined;
+
+  const thumbUrl = await getThumbnailImageUrlAsync(thumbnail);
+  if (!thumbUrl) return undefined;
+
+  try {
+    return await ColorAnalysisService.getInstance().analyzeThumbnail(thumbUrl);
+  } catch (e) {
+    Logger.warn(`Color analysis failed for ${mode} mode`, e);
+    return undefined;
+  }
+}
+
+/**
+ * Handles Multi-Image Overlay (Random Mode)
+ */
+async function applyMultiOverlayMode(
+  thumbnail: HTMLElement,
+  settings: SpeakifySettings,
+): Promise<void> {
+  const allImageAssets = assetManager.getAllImageAssets();
+  if (allImageAssets.length === 0) {
+    markAsProcessed(thumbnail);
+    return;
+  }
+
+  const colorStats = await performColorAnalysis(thumbnail, settings, 'random');
+
+  const result = applyMultiOverlay(
+    thumbnail,
+    allImageAssets,
+    {
       countMin: settings.overlayCountMin,
       countMax: settings.overlayCountMax,
       sizeMin: settings.overlaySizeMin,
       sizeMax: settings.overlaySizeMax,
       flipChance: settings.flipChance,
       opacity: settings.overlayOpacity,
-    });
+      colorSyncStrengthL: settings.colorSyncStrengthL,
+      colorSyncStrengthAB: settings.colorSyncStrengthAB,
+    },
+    colorStats,
+  );
 
-    // 디버그 모드: 통합 디버그 함수 사용 (단일 모드와 동일한 포맷)
-    if (settings.debugMode) {
-      Logger.debug('Multi-overlay applied', { count: result.images.length });
-      showDebugIndicator({
-        thumbnail,
-        overlayPosition: 'random',
-        info: {
-          mode: 'multi',
-          instances: result.instances,
-        },
-      });
-    }
-    return;
+  // Mark as processed AFTER successful overlay creation
+  if (result.images.length > 0) {
+    markAsProcessed(thumbnail);
   }
 
-  // ==================== Single Image Overlay (Center, Smart 모드) ====================
+  // Debug mode indicator
+  if (settings.debugMode) {
+    Logger.debug('Multi-overlay applied', {
+      count: result.images.length,
+      colorSync: !!colorStats,
+    });
+    showDebugIndicator({
+      thumbnail,
+      overlayPosition: 'random',
+      info: {
+        mode: 'multi',
+        instances: result.instances,
+      },
+    });
+  }
+}
+
+/**
+ * Handles Single Image Overlay (Center, Smart Mode)
+ */
+async function applySingleOverlayMode(
+  thumbnail: HTMLElement,
+  settings: SpeakifySettings,
+  randomizer: Randomizer,
+  currentImageCount: number,
+): Promise<void> {
   const randomIndex = randomizer.getRandomIndex(currentImageCount);
   const imageAsset = assetManager.getRandomImage(randomIndex);
-
-  // Determine if image should be flipped
   const shouldFlip = Math.random() < settings.flipChance;
 
-  // 크기 범위 내에서 랜덤 값 생성
   let randomSize =
     settings.overlaySizeMin + Math.random() * (settings.overlaySizeMax - settings.overlaySizeMin);
 
-  // big 폴더 이미지는 너무 크므로 0.4배 축소 (단, 3% 확률로 거대 Speaki 등장)
+  // Giant Speaki logic (Big folder images)
   if (imageAsset.folder === 'big') {
     const isGiant = Math.random() < 0.03;
     if (isGiant) {
@@ -94,29 +212,40 @@ async function processSingleThumbnail(
     }
   }
 
-  // 스마트 위치 분석
+  // Smart Position Analysis
   let smartPosition: { x: number; y: number } | undefined;
   if (settings.overlayPosition === 'smart') {
     smartPosition = await getSmartPosition(thumbnail);
   }
 
-  // 디버그 로그
+  const colorStats = await performColorAnalysis(thumbnail, settings, 'single');
+
   Logger.debug('Image selected', {
     folder: imageAsset.folder,
     index: imageAsset.index,
     size: Math.round(randomSize),
+    colorSync: !!colorStats,
   });
 
-  // Apply the overlay
-  applyOverlay(thumbnail, imageAsset.url, {
-    flip: shouldFlip,
-    position: settings.overlayPosition,
-    size: randomSize,
-    opacity: settings.overlayOpacity,
-    smartPosition,
-  });
+  applyOverlay(
+    thumbnail,
+    imageAsset.url,
+    {
+      flip: shouldFlip,
+      position: settings.overlayPosition,
+      size: randomSize,
+      opacity: settings.overlayOpacity,
+      smartPosition,
+    },
+    colorStats,
+    settings.colorSyncStrengthL,
+    settings.colorSyncStrengthAB,
+  );
 
-  // 디버그 모드: 분석 위치 표시
+  // Mark as processed AFTER successful overlay
+  markAsProcessed(thumbnail);
+
+  // Debug mode indicator
   if (settings.debugMode) {
     showDebugIndicator({
       thumbnail,

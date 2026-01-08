@@ -86,5 +86,17 @@
   "resetToDefaults": {
     "message": "기본값으로 초기화",
     "description": "모든 설정을 기본값으로 초기화하는 버튼"
+  },
+  "colorSync": {
+    "message": "스마트 컬러 동기화",
+    "description": "스마트 컬러 동기화 토글"
+  },
+  "colorSyncStrengthL": {
+    "message": "조명 강도",
+    "description": "컬러 동기화 밝기(조명) 강도"
+  },
+  "colorSyncStrengthAB": {
+    "message": "색조 강도",
+    "description": "컬러 동기화 색조(틴트) 강도"
   }
 }

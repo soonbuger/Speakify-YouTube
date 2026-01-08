@@ -28,6 +28,9 @@ export interface SpeakifySettings {
   overlayOpacity: number; // 0.0 ~ 1.0
   overlayCountMin: number; // 1~8 (Multi-Image 최소 개수)
   overlayCountMax: number; // 1~8 (Multi-Image 최대 개수)
+  colorSync: boolean; // Smart Color Overlay 활성화 여부
+  colorSyncStrengthL: number; // 밝기(조명) 강도 0.0 ~ 1.0
+  colorSyncStrengthAB: number; // 색조(틴트) 강도 0.0 ~ 1.0
   debugMode: boolean;
 }
 
@@ -45,6 +48,9 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   overlayOpacity: 1,
   overlayCountMin: 1,
   overlayCountMax: 1,
+  colorSync: true,
+  colorSyncStrengthL: 0.2, // 밝기(조명) 효과 강도
+  colorSyncStrengthAB: 0.25, // 색조(틴트) 효과 강도
   debugMode: false,
 };
 

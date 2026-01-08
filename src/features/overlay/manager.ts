@@ -84,23 +84,35 @@ function getPositionStyles(
 /**
  * Applies an overlay image to a thumbnail element
  */
+
+import { ColorAnalysisService } from '@/features/color-analysis/services/colorAnalysisService';
+import type { ColorStats } from '@/features/color-analysis/lib/colorMath';
+
+/**
+ * Applies an overlay image to a thumbnail element
+ * Uses Progressive Enhancement: shows original immediately, updates when transform completes
+ */
 export function applyOverlay(
   thumbnailElement: HTMLElement,
   overlayImageURL: string,
   options: OverlayOptions = {},
+  colorStats?: ColorStats,
+  strengthL?: number,
+  strengthAB?: number,
 ): HTMLImageElement | null {
   if (!overlayImageURL) return null;
 
   const { flip = false, position = 'center', size = 100, opacity = 1, smartPosition } = options;
 
+  // Create overlay element immediately with original image
   const overlayImage = document.createElement('img');
   overlayImage.id = EXTENSION_NAME;
-  overlayImage.src = overlayImageURL;
+  overlayImage.src = overlayImageURL; // Start with original
 
   // Get position-specific styles
   const posStyles = getPositionStyles(position, size, smartPosition);
 
-  // Calculate size (center와 random 모두 전체 크기 사용)
+  // Calculate size
   const sizeStyle = `${size}%`;
 
   // Build transform with flip if needed
@@ -121,11 +133,10 @@ export function applyOverlay(
     opacity: opacity.toString(),
     zIndex: posStyles.zIndex,
     pointerEvents: posStyles.pointerEvents,
-    // 이미지 품질 최적화
     imageRendering: 'auto',
   });
 
-  // 이미지 로드 후 maxWidth/maxHeight를 원본 크기로 제한 (화질 저하 방지)
+  // 이미지 로드 후 maxWidth/maxHeight를 원본 크기로 제한
   overlayImage.onload = () => {
     overlayImage.style.maxWidth = `${overlayImage.naturalWidth}px`;
     overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
@@ -134,10 +145,28 @@ export function applyOverlay(
   const parent = thumbnailElement.parentElement;
   if (parent) {
     parent.insertBefore(overlayImage, thumbnailElement.nextSibling);
-    return overlayImage;
+  } else {
+    return null;
   }
 
-  return null;
+  // Progressive Enhancement: Apply color transformation in background
+  if (colorStats) {
+    // Don't await - let it run in background
+    ColorAnalysisService.getInstance()
+      .getTransformedBlobUrl(overlayImageURL, colorStats, strengthL, strengthAB)
+      .then((transformedUrl) => {
+        if (transformedUrl !== overlayImageURL) {
+          Logger.info('[OverlayManager] Progressive update: applying color sync');
+          overlayImage.src = transformedUrl;
+        }
+      })
+      .catch((err) => {
+        Logger.warn('[OverlayManager] Color transformation failed:', err);
+        // Keep original - already set
+      });
+  }
+
+  return overlayImage;
 }
 
 /**
@@ -160,6 +189,7 @@ export function getExtensionName(): string {
 // ==================== Multi-Image Overlay ====================
 
 import { generateNonOverlappingPositions } from '@/features/overlay/collision';
+import { Logger } from '@/shared/lib/utils/logger';
 
 /**
  * Multi-Image Overlay 옵션
@@ -171,6 +201,8 @@ export interface MultiOverlayOptions {
   sizeMax: number;
   flipChance: number;
   opacity: number;
+  colorSyncStrengthL?: number; // 밝기(조명) 강도 (0-1)
+  colorSyncStrengthAB?: number; // 색조(틴트) 강도 (0-1)
 }
 
 /**
@@ -193,16 +225,135 @@ export interface ImageAsset {
 /**
  * 다중 이미지 오버레이 적용 (Random 모드 전용)
  * 각 이미지는 독립적인 크기, 위치, 반전 속성을 가짐
- *
- * @param thumbnailElement 썸네일 요소
- * @param imageAssets 사용 가능한 이미지 에셋 배열 (folder/index 포함)
- * @param options 멀티 오버레이 옵션
- * @returns 생성된 이미지 요소 배열과 인스턴스 메타데이터
+ * Progressive Enhancement: 원본 이미지를 먼저 표시하고, 색상 변환 완료 시 교체
+ * colorStats가 없으면 내부에서 분석 시도
  */
+/**
+ * Helper: Extracts thumbnail URL from element
+ */
+function extractThumbnailUrl(element: HTMLElement): string | null {
+  if (element instanceof HTMLImageElement && element.src) {
+    return element.src;
+  }
+  const imgChild = element.querySelector('img');
+  if (imgChild?.src) {
+    return imgChild.src;
+  }
+  // background-image CSS property (videowall support)
+  const bgImage = element.style.backgroundImage;
+  if (bgImage) {
+    const match = /url\(["']?([^"')]+)["']?\)/.exec(bgImage);
+    if (match) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
+/**
+ * Helper: Creates and appends a single overlay image instance
+ */
+function createSingleMultiOverlayImage(
+  thumbnailElement: HTMLElement,
+  instance: OverlayInstance,
+  index: number,
+  options: MultiOverlayOptions,
+  colorStats?: ColorStats,
+): HTMLImageElement | null {
+  const overlayImage = document.createElement('img');
+  overlayImage.id = `${EXTENSION_NAME}-multi-${index}`;
+  overlayImage.src = instance.imageUrl; // Start with original
+
+  const transformStyle = instance.flip ? 'scaleX(-1)' : '';
+
+  Object.assign(overlayImage.style, {
+    position: 'absolute',
+    top: `${instance.position.y}%`,
+    left: `${instance.position.x}%`,
+    width: `${instance.size}%`,
+    opacity: (instance.opacity ?? 1).toString(),
+    transform: transformStyle,
+    zIndex: '0',
+    pointerEvents: 'none',
+    imageRendering: 'auto',
+  });
+
+  overlayImage.onload = () => {
+    overlayImage.style.maxWidth = `${overlayImage.naturalWidth}px`;
+    overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
+  };
+
+  const parent = thumbnailElement.parentElement;
+  if (!parent) return null;
+
+  parent.insertBefore(overlayImage, thumbnailElement.nextSibling);
+
+  // Progressive Enhancement: Apply color transformation in background
+  const applyColorSync = async (stats: ColorStats) => {
+    try {
+      const transformedUrl = await ColorAnalysisService.getInstance().getTransformedBlobUrl(
+        instance.imageUrl,
+        stats,
+        options.colorSyncStrengthL,
+        options.colorSyncStrengthAB,
+      );
+      if (transformedUrl !== instance.imageUrl) {
+        overlayImage.src = transformedUrl;
+      }
+    } catch (error) {
+      Logger.warn('[OverlayManager] Color transformation failed:', error);
+      // Keep original
+    }
+  };
+
+  // Analyze thumbnail and apply Color Sync
+  const analyzeAndApply = (url: string) => {
+    ColorAnalysisService.getInstance()
+      .analyzeThumbnail(url)
+      .then(applyColorSync)
+      .catch((error) => {
+        Logger.warn('[OverlayManager] Thumbnail analysis failed:', error);
+        /* Keep original */
+      });
+  };
+
+  if (colorStats) {
+    applyColorSync(colorStats);
+  } else {
+    // Fallback: Analyze thumbnail internally
+    const thumbUrl = extractThumbnailUrl(thumbnailElement);
+    if (thumbUrl) {
+      analyzeAndApply(thumbUrl);
+    } else {
+      // Lazy Color Sync: Wait for img.src to become available
+      const imgChild =
+        thumbnailElement instanceof HTMLImageElement
+          ? thumbnailElement
+          : thumbnailElement.querySelector('img');
+
+      if (imgChild) {
+        const observer = new MutationObserver(() => {
+          if (imgChild.src) {
+            observer.disconnect();
+            analyzeAndApply(imgChild.src);
+          }
+        });
+        observer.observe(imgChild, { attributes: true, attributeFilter: ['src'] });
+
+        // Timeout after 3 seconds to avoid memory leak
+        setTimeout(() => observer.disconnect(), 3000);
+      }
+    }
+  }
+
+  return overlayImage;
+}
+
 export function applyMultiOverlay(
   thumbnailElement: HTMLElement,
   imageAssets: ImageAsset[],
   options: MultiOverlayOptions,
+  colorStats?: ColorStats,
 ): MultiOverlayResult {
   const { countMin, countMax, sizeMin, sizeMax, flipChance, opacity } = options;
 
@@ -214,13 +365,8 @@ export function applyMultiOverlay(
 
   // 3. 각 이미지에 대해 독립적인 인스턴스 생성
   const instances: OverlayInstance[] = positions.map((pos) => {
-    // 랜덤 이미지 에셋 선택
     const asset = imageAssets[Math.floor(Math.random() * imageAssets.length)];
-
-    // 독립적인 크기 (sizeMin ~ sizeMax)
     const size = Math.floor(Math.random() * (sizeMax - sizeMin + 1)) + sizeMin;
-
-    // 독립적인 반전 여부
     const flip = Math.random() < flipChance;
 
     return {
@@ -234,42 +380,19 @@ export function applyMultiOverlay(
     };
   });
 
-  // 4. 각 인스턴스를 DOM에 적용
+  // 4. 각 인스턴스를 DOM에 적용 (Progressive Enhancement)
   const createdImages: HTMLImageElement[] = [];
 
   instances.forEach((instance, index) => {
-    const overlayImage = document.createElement('img');
-    overlayImage.id = `${EXTENSION_NAME}-multi-${index}`;
-    overlayImage.src = instance.imageUrl;
-
-    // 스타일 적용
-    let transformStyle = '';
-    if (instance.flip) {
-      transformStyle = 'scaleX(-1)';
-    }
-
-    Object.assign(overlayImage.style, {
-      position: 'absolute',
-      top: `${instance.position.y}%`,
-      left: `${instance.position.x}%`,
-      width: `${instance.size}%`,
-      opacity: (instance.opacity ?? 1).toString(),
-      transform: transformStyle,
-      zIndex: '0',
-      pointerEvents: 'none',
-      imageRendering: 'auto',
-    });
-
-    // 이미지 품질 최적화
-    overlayImage.onload = () => {
-      overlayImage.style.maxWidth = `${overlayImage.naturalWidth}px`;
-      overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
-    };
-
-    const parent = thumbnailElement.parentElement;
-    if (parent) {
-      parent.insertBefore(overlayImage, thumbnailElement.nextSibling);
-      createdImages.push(overlayImage);
+    const img = createSingleMultiOverlayImage(
+      thumbnailElement,
+      instance,
+      index,
+      options,
+      colorStats,
+    );
+    if (img) {
+      createdImages.push(img);
     }
   });
 

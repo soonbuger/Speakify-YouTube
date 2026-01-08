@@ -1,3 +1,4 @@
+import { Logger } from '@/shared/lib/utils/logger';
 import { useState, useEffect, useCallback } from 'react';
 import { useAppSelector } from '../store/hooks';
 import browser from 'webextension-polyfill';
@@ -32,7 +33,7 @@ async function loadMessages(language: string): Promise<I18nMessages> {
     messageCache[language] = messages;
     return messages;
   } catch (error) {
-    console.error(`[i18n] Failed to load messages for ${language}:`, error);
+    Logger.error(`[i18n] Failed to load messages for ${language}:`, error);
     return {};
   }
 }

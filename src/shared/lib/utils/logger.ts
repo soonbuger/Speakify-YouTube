@@ -39,11 +39,23 @@ function log(level: LogLevel, message: string, meta?: unknown): void {
     hour12: false,
   });
 
-  const metaStr = meta !== undefined ? ` ${safeStringify(meta)}` : '';
+  // Build meta string
+  let metaStr = '';
+  if (meta !== undefined) {
+    metaStr = ` ${safeStringify(meta)}`;
+  }
+
   const css = CSS_COLORS[level];
 
-  const consoleFn =
-    level === 'ERROR' ? console.error : level === 'WARN' ? console.warn : console.log;
+  // Select console function based on level
+  let consoleFn: typeof console.log;
+  if (level === 'ERROR') {
+    consoleFn = console.error;
+  } else if (level === 'WARN') {
+    consoleFn = console.warn;
+  } else {
+    consoleFn = console.log;
+  }
 
   consoleFn(
     `%c[${EXTENSION_NAME}] [${level}] [${timestamp}] ${message}${metaStr}`,

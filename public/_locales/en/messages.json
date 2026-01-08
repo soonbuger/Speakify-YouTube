@@ -86,5 +86,17 @@
   "resetToDefaults": {
     "message": "Reset to Defaults",
     "description": "Button to reset all settings to default values"
+  },
+  "colorSync": {
+    "message": "Smart Color Sync",
+    "description": "Smart color synchronization toggle"
+  },
+  "colorSyncStrengthL": {
+    "message": "Lighting Intensity",
+    "description": "Color sync brightness/lighting strength"
+  },
+  "colorSyncStrengthAB": {
+    "message": "Color Tint Intensity",
+    "description": "Color sync color tint strength"
   }
 }
