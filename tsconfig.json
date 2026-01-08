@@ -6,6 +6,6 @@
       "@/*": ["./src/*"]
     },
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"]
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   }
 }
