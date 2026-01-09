@@ -65,7 +65,7 @@ function getPositionStyles(
         left: `${randomPos.x}%`,
         bottom: 'auto',
         right: 'auto',
-        transform: '',
+        transform: 'translate(-50%, -50%)',
       };
     }
     case 'center':
@@ -264,7 +264,9 @@ function createSingleMultiOverlayImage(
   overlayImage.id = `${EXTENSION_NAME}-multi-${index}`;
   overlayImage.src = instance.imageUrl; // Start with original
 
-  const transformStyle = instance.flip ? 'scaleX(-1)' : '';
+  const transformStyle = instance.flip
+    ? 'translate(-50%, -50%) scaleX(-1)'
+    : 'translate(-50%, -50%)';
 
   Object.assign(overlayImage.style, {
     position: 'absolute',
@@ -366,8 +368,17 @@ export function applyMultiOverlay(
   // 3. 각 이미지에 대해 독립적인 인스턴스 생성
   const instances: OverlayInstance[] = positions.map((pos) => {
     const asset = imageAssets[Math.floor(Math.random() * imageAssets.length)];
-    const size = Math.floor(Math.random() * (sizeMax - sizeMin + 1)) + sizeMin;
+    let size = Math.floor(Math.random() * (sizeMax - sizeMin + 1)) + sizeMin;
     const flip = Math.random() < flipChance;
+    let isGiant = false;
+
+    // Giant Speaki 이스터에그: Big 폴더 이미지는 40% 크기, 3% 확률로 원본 크기
+    if (asset.folder === 'big') {
+      isGiant = Math.random() < 0.03;
+      if (!isGiant) {
+        size = Math.floor(size * 0.4);
+      }
+    }
 
     return {
       imageUrl: asset.url,
@@ -377,6 +388,7 @@ export function applyMultiOverlay(
       flip,
       position: pos,
       opacity,
+      isGiant,
     };
   });
 

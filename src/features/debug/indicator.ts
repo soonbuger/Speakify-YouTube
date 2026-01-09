@@ -18,12 +18,16 @@ export interface DebugInfo {
   folder?: string;
   index?: number;
   size?: number;
+  isGiant?: boolean;
   // Multi 모드용 - 각 이미지의 상세 정보
   instances?: Array<{
     folder: string;
     index: number;
     size: number;
+    isGiant?: boolean;
   }>;
+  // Smart Position 디버그용
+  densityMap?: number[][];
 }
 
 /**
@@ -44,6 +48,8 @@ export interface DebugIndicatorOptions {
 const DEBUG_CLASSES = {
   dot: 'speakify-debug-dot',
   info: 'speakify-debug-info',
+  densityGrid: 'speakify-debug-density-grid',
+  densityCell: 'speakify-debug-density-cell',
 } as const;
 
 /** 디버그 Dot 스타일 */
@@ -91,11 +97,15 @@ function formatDebugLabel(info: DebugInfo): string {
   if (info.mode === 'multi' && info.instances) {
     // Multi 모드: 각 이미지 정보를 콤마로 연결
     return info.instances
-      .map((inst) => `[${inst.folder}] #${inst.index} / ${inst.size}%`)
+      .map((inst) => {
+        const giantTag = inst.isGiant ? ' 🔥' : '';
+        return `[${inst.folder}] #${inst.index} / ${inst.size}%${giantTag}`;
+      })
       .join(', ');
   }
   // Single 모드: 단일 이미지 정보
-  return `[${info.folder}] #${info.index} / ${Math.round(info.size ?? 0)}%`;
+  const giantTag = info.isGiant ? ' 🔥' : '';
+  return `[${info.folder}] #${info.index} / ${Math.round(info.size ?? 0)}%${giantTag}`;
 }
 
 /**
@@ -122,6 +132,74 @@ function createDebugInfoLabel(labelText: string): HTMLDivElement {
   return label;
 }
 
+/**
+ * 밀도 값을 색상으로 변환 (녹색=낮음, 빨강=높음)
+ * @param value 정규화된 밀도 (0~1)
+ */
+function densityToColor(value: number): string {
+  // 0 = 녹색 (안전), 1 = 빨강 (텍스트)
+  const r = Math.round(255 * value);
+  const g = Math.round(255 * (1 - value));
+  return `rgba(${r}, ${g}, 0, 0.5)`;
+}
+
+/**
+ * 밀도 맵 시각화 그리드 생성
+ * 각 셀은 밀도에 따라 색상으로 표시됨 (녹색=낮음, 빨강=높음)
+ */
+function createDensityGrid(densityMap: number[][]): HTMLDivElement {
+  const grid = document.createElement('div');
+  grid.className = DEBUG_CLASSES.densityGrid;
+  Object.assign(grid.style, {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    display: 'grid',
+    gridTemplateColumns: `repeat(${densityMap[0]?.length || 4}, 1fr)`,
+    gridTemplateRows: `repeat(${densityMap.length}, 1fr)`,
+    zIndex: '9998',
+    pointerEvents: 'none',
+  } as Partial<CSSStyleDeclaration>);
+
+  // 밀도 정규화를 위한 최대/최소값
+  let minDensity = Infinity;
+  let maxDensity = 0;
+  for (const row of densityMap) {
+    for (const val of row) {
+      minDensity = Math.min(minDensity, val);
+      maxDensity = Math.max(maxDensity, val);
+    }
+  }
+  const range = maxDensity - minDensity;
+
+  // 각 셀 생성
+  for (const row of densityMap) {
+    for (const rawDensity of row) {
+      const normalized = range > 0 ? (rawDensity - minDensity) / range : 0;
+
+      const cell = document.createElement('div');
+      cell.className = DEBUG_CLASSES.densityCell;
+      Object.assign(cell.style, {
+        background: densityToColor(normalized),
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '9px',
+        fontFamily: 'monospace',
+        color: '#fff',
+        textShadow: '0 0 2px #000',
+      } as Partial<CSSStyleDeclaration>);
+      cell.innerText = rawDensity.toFixed(0);
+      grid.appendChild(cell);
+    }
+  }
+
+  return grid;
+}
+
 // ============================================================
 // Main Export
 // ============================================================
@@ -140,6 +218,11 @@ export function showDebugIndicator(options: DebugIndicatorOptions): void {
   const parent = thumbnail.parentElement;
   if (!parent) return;
 
+  // Density Map Grid (smart 모드에서 밀도 맵이 있을 때)
+  if (overlayPosition === 'smart' && info.densityMap && info.densityMap.length > 0) {
+    parent.appendChild(createDensityGrid(info.densityMap));
+  }
+
   // Position Dot (smart 모드에서만)
   if (debugPos) {
     parent.appendChild(createDebugDot(debugPos));
@@ -156,7 +239,9 @@ export function showDebugIndicator(options: DebugIndicatorOptions): void {
 export function removeDebugIndicators(container: HTMLElement): void {
   const dots = container.querySelectorAll(`.${DEBUG_CLASSES.dot}`);
   const labels = container.querySelectorAll(`.${DEBUG_CLASSES.info}`);
+  const grids = container.querySelectorAll(`.${DEBUG_CLASSES.densityGrid}`);
 
   dots.forEach((el) => el.remove());
   labels.forEach((el) => el.remove());
+  grids.forEach((el) => el.remove());
 }

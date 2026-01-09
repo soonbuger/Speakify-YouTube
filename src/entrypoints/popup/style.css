@@ -92,6 +92,11 @@ h1 {
   margin-bottom: 0;
 }
 
+/* Random Mode Sub Option */
+.random-sub-option {
+  margin-bottom: 16px;
+}
+
 .setting-label {
   display: flex;
   justify-content: space-between;

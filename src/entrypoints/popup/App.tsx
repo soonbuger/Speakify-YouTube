@@ -135,6 +135,36 @@ function App() {
           options={positionOptions}
         />
 
+        {/* Multi-Image Overlay (Random 모드 전용) - 위치 바로 아래에 들여쓰기 스타일 */}
+        {settings.overlayPosition === 'random' && (
+          <div className="random-sub-option">
+            <DualSlider
+              label={t('overlayCount', 'Image Count')}
+              minValue={settings.overlayCountMin}
+              maxValue={settings.overlayCountMax}
+              onMinChange={(value) => handleSettingChange('overlayCountMin', value)}
+              onMaxChange={(value) => handleSettingChange('overlayCountMax', value)}
+              min={1}
+              max={8}
+              step={1}
+              unit="개"
+            />
+          </div>
+        )}
+
+        {/* Smart Position Sensitivity (Smart 모드 전용) */}
+        {settings.overlayPosition === 'smart' && (
+          <div className="random-sub-option">
+            <Slider
+              label={t('smartSensitivity', 'Text Avoidance')}
+              value={Math.round(settings.smartSensitivity * 100)}
+              onChange={(value) => handleSettingChange('smartSensitivity', value / 100)}
+              min={0}
+              max={100}
+            />
+          </div>
+        )}
+
         <DualSlider
           label={t('overlaySize', 'Size')}
           minValue={settings.overlaySizeMin}
@@ -180,21 +210,6 @@ function App() {
               step={5}
             />
           </>
-        )}
-
-        {/* Multi-Image Overlay (Random 모드 전용) */}
-        {settings.overlayPosition === 'random' && (
-          <DualSlider
-            label={t('overlayCount', 'Image Count')}
-            minValue={settings.overlayCountMin}
-            maxValue={settings.overlayCountMax}
-            onMinChange={(value) => handleSettingChange('overlayCountMin', value)}
-            onMaxChange={(value) => handleSettingChange('overlayCountMax', value)}
-            min={1}
-            max={8}
-            step={1}
-            unit="개"
-          />
         )}
       </Section>
 

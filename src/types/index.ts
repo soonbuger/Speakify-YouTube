@@ -31,6 +31,7 @@ export interface SpeakifySettings {
   colorSync: boolean; // Smart Color Overlay 활성화 여부
   colorSyncStrengthL: number; // 밝기(조명) 강도 0.0 ~ 1.0
   colorSyncStrengthAB: number; // 색조(틴트) 강도 0.0 ~ 1.0
+  smartSensitivity: number; // Smart Position 텍스트 회피 민감도 0.0 ~ 1.0
   debugMode: boolean;
 }
 
@@ -50,7 +51,8 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   overlayCountMax: 1,
   colorSync: true,
   colorSyncStrengthL: 0.2, // 밝기(조명) 효과 강도
-  colorSyncStrengthAB: 0.25, // 색조(틴트) 효과 강도
+  colorSyncStrengthAB: 0.15, // 색조(틴트) 효과 강도
+  smartSensitivity: 0.7, // Smart Position 텍스트 회피 민감도 (기본 70%)
   debugMode: false,
 };
 
@@ -100,6 +102,7 @@ export interface OverlayInstance {
   flip: boolean;
   position: { x: number; y: number }; // % (0~100)
   opacity?: number;
+  isGiant?: boolean; // Giant Speaki 이스터에그 (3% 확률)
   // 미래 확장용 (Optional)
   rotation?: number; // degrees
   skew?: number; // degrees

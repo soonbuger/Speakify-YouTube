@@ -2,8 +2,9 @@ import { findThumbnails, markAsProcessed } from '@/features/thumbnail/finder';
 import { applyOverlay, applyMultiOverlay } from '@/features/overlay/manager';
 import { assetManager, getImageCount } from '@/shared/lib/assets/loader';
 import { Logger } from '@/shared/lib/utils/logger';
-import { analyzeImageForPlacement } from '@/features/thumbnail/analyzer';
+import { analyzeForSmartPosition } from '@/features/smart-position/services/positionService';
 import { showDebugIndicator } from '@/features/debug/indicator';
+import { getRandomPosition } from '@/features/overlay/position';
 import type { SpeakifySettings } from '@/types/index';
 import type { Randomizer } from '@/shared/lib/utils/randomizer';
 import { ColorAnalysisService } from '@/features/color-analysis/services/colorAnalysisService';
@@ -47,10 +48,33 @@ export async function getThumbnailImageUrlAsync(
   const immediateUrl = getThumbnailImageUrl(thumbnail);
   if (immediateUrl) return immediateUrl;
 
-  // 없으면 짧은 대기 후 재시도 (lazy loading 대응)
+  // img 요소 찾기 (본인이 img이거나 자식 img)
   const imgChild =
     thumbnail instanceof HTMLImageElement ? thumbnail : thumbnail.querySelector('img');
-  if (!imgChild) return null;
+
+  // img가 없으면 background-image 폴링 시도 (videowall 등)
+  if (!imgChild) {
+    return new Promise((resolve) => {
+      let elapsed = 0;
+      const interval = 100;
+
+      const check = () => {
+        const url = getThumbnailImageUrl(thumbnail);
+        if (url) {
+          resolve(url);
+          return;
+        }
+        elapsed += interval;
+        if (elapsed >= maxWait) {
+          resolve(null);
+          return;
+        }
+        setTimeout(check, interval);
+      };
+
+      check();
+    });
+  }
 
   return new Promise((resolve) => {
     // 이미 src가 있으면 즉시 반환
@@ -85,8 +109,9 @@ export async function getThumbnailImageUrlAsync(
  */
 /**
  * Processes a single thumbnail element
+ * @public - Export되어 ViewportObserver에서 사용
  */
-async function processSingleThumbnail(
+export async function processSingleThumbnail(
   thumbnail: HTMLElement,
   settings: SpeakifySettings,
   randomizer: Randomizer,
@@ -212,10 +237,10 @@ async function applySingleOverlayMode(
     }
   }
 
-  // Smart Position Analysis
-  let smartPosition: { x: number; y: number } | undefined;
+  // Smart Position Analysis (새 알고리즘 적용)
+  let smartPosition: { x: number; y: number; densityMap?: number[][] } | undefined;
   if (settings.overlayPosition === 'smart') {
-    smartPosition = await getSmartPosition(thumbnail);
+    smartPosition = await getSmartPosition(thumbnail, settings.smartSensitivity);
   }
 
   const colorStats = await performColorAnalysis(thumbnail, settings, 'single');
@@ -256,40 +281,59 @@ async function applySingleOverlayMode(
         folder: imageAsset.folder,
         index: imageAsset.index,
         size: randomSize,
+        densityMap: smartPosition?.densityMap,
       },
     });
   }
 }
 
 /**
- * Calculates smart position for the overlay
+ * Calculates smart position for the overlay using new v2 algorithm
+ * 텍스트 감지 기반 스마트 위치 계산
  */
 async function getSmartPosition(
   thumbnail: HTMLElement,
-): Promise<{ x: number; y: number } | undefined> {
-  const thumbnailUrl = getThumbnailImageUrl(thumbnail);
-  if (!thumbnailUrl) return undefined;
+  sensitivity: number = 0.7,
+): Promise<{ x: number; y: number; densityMap?: number[][] } | undefined> {
+  // 비동기로 URL 가져오기 (lazy loading 대응 - 3초 대기)
+  const thumbnailUrl = await getThumbnailImageUrlAsync(thumbnail, 3000);
+
+  if (!thumbnailUrl) {
+    Logger.debug('Smart position: No thumbnail URL available');
+    return undefined;
+  }
 
   try {
-    const analysisPromise = analyzeImageForPlacement(thumbnailUrl);
-    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 500));
+    const startTime = performance.now();
+    const analysisPromise = analyzeForSmartPosition(thumbnailUrl, { sensitivity });
+    // 타임아웃을 2초로 증가 (동시 요청 시 병목 대응)
+    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2000));
     const analysis = await Promise.race([analysisPromise, timeoutPromise]);
 
-    if (analysis) {
-      Logger.debug('Smart position analyzed', {
+    const elapsed = performance.now() - startTime;
+
+    if (analysis && analysis.confidence > 0) {
+      Logger.debug('Smart position v2 analyzed', {
         url: thumbnailUrl.substring(0, 50),
-        position: analysis.bestPosition,
+        position: { x: analysis.x, y: analysis.y },
+        confidence: analysis.confidence.toFixed(2),
+        elapsed: `${elapsed.toFixed(0)}ms`,
       });
-      return analysis.bestPosition;
+      return { x: analysis.x, y: analysis.y, densityMap: analysis.densityMap };
     }
 
-    Logger.debug('Smart analysis timeout, using center fallback');
-    return { x: 50, y: 50 };
+    Logger.warn('Smart analysis timeout or low confidence', {
+      url: thumbnailUrl.substring(0, 50),
+      elapsed: `${elapsed.toFixed(0)}ms`,
+    });
+    const fallback = getRandomPosition(20);
+    return { x: fallback.x, y: fallback.y };
   } catch (error) {
-    Logger.warn('Smart analysis failed, using center fallback', {
+    Logger.warn('Smart analysis failed, using random fallback', {
       error: error instanceof Error ? error.message : String(error),
     });
-    return { x: 50, y: 50 };
+    const fallback = getRandomPosition(20);
+    return { x: fallback.x, y: fallback.y };
   }
 }
 

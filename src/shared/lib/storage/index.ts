@@ -8,7 +8,6 @@ import { SpeakifySettings, DEFAULT_SETTINGS } from '@/types';
 import browser from 'webextension-polyfill';
 
 // 타입 재export (하위 호환성)
-// 타입 재export (하위 호환성)
 export type { SpeakifySettings, OverlayPosition, Language } from '@/types';
 export { DEFAULT_SETTINGS } from '@/types';
 
