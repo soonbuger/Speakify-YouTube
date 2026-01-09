@@ -284,11 +284,16 @@ input:focus + .slider {
 }
 
 .range-slider-dual .range-min {
-  z-index: 2;
+  z-index: 3;
 }
 
 .range-slider-dual .range-max {
-  z-index: 2;
+  z-index: 4;
+}
+
+/* DualSlider 동적 우선순위: min thumb이 max에 가까울 때 위로 올림 */
+.range-slider-dual .range-min.range-priority {
+  z-index: 5;
 }
 
 /* Hides the default track background for inputs inside dual slider */

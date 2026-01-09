@@ -12,6 +12,7 @@ import {
 } from '../lib/colorMath';
 import { LRUCache } from '../../../shared/lib/utils/lruCache';
 import { Logger } from '@/shared/lib/utils/logger';
+import { CACHE } from '@/shared/config/constants';
 
 export class ColorAnalysisService {
   private static instance: ColorAnalysisService;
@@ -23,9 +24,9 @@ export class ColorAnalysisService {
   private readonly blobUrlCache: LRUCache<string, string>;
 
   private constructor() {
-    this.cache = new LRUCache(50);
+    this.cache = new LRUCache(CACHE.THUMBNAIL_SIZE);
     this.characterCache = new Map();
-    this.blobUrlCache = new LRUCache(20);
+    this.blobUrlCache = new LRUCache(CACHE.BLOB_URL_SIZE);
     Logger.info('[ColorService] Initialized (Main Thread Mode)');
   }
 

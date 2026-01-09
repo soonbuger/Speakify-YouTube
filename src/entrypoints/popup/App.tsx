@@ -76,8 +76,8 @@ function App() {
 
   const positionOptions = useMemo(
     () => [
-      { value: 'center', label: t('positionCenter', '중앙') },
       { value: 'random', label: t('positionRandom', '랜덤') },
+      { value: 'center', label: t('positionCenter', '중앙') },
       { value: 'smart', label: t('positionSmart', '스마트') },
     ],
     [t],

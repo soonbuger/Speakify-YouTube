@@ -9,6 +9,7 @@ import { loadAllSettings, watchSettings } from '@/shared/lib/storage';
 import { Logger } from '@/shared/lib/utils/logger';
 import { Randomizer } from '@/shared/lib/utils/randomizer';
 import { applyOverlayToThumbnails } from '@/features/thumbnail/processor';
+import { PERFORMANCE } from '@/shared/config/constants';
 
 export default defineContentScript({
   matches: ['*://*.youtube.com/*'],
@@ -74,7 +75,7 @@ export default defineContentScript({
           } catch (error) {
             Logger.error('Processor Runtime Error', { error: String(error) });
           }
-        }, 300); // 300ms bottleneck optimized
+        }, PERFORMANCE.DEBOUNCE_MS);
       });
 
       observer.observe(document.body, {

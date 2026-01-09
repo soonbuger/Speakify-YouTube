@@ -26,3 +26,17 @@ export const THUMBNAIL_CONFIG = {
   /** 비율 오차 허용 범위 */
   ASPECT_RATIO_TOLERANCE: 0.02,
 } as const;
+
+/** 성능 관련 설정 (디바운싱, 쓰로틀링) */
+export const PERFORMANCE = {
+  /** MutationObserver 디바운스 시간 (ms) */
+  DEBOUNCE_MS: 300,
+} as const;
+
+/** 캐시 크기 설정 */
+export const CACHE = {
+  /** 썸네일 색상 분석 캐시 크기 */
+  THUMBNAIL_SIZE: 50,
+  /** Blob URL 캐시 크기 */
+  BLOB_URL_SIZE: 20,
+} as const;

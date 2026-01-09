@@ -47,10 +47,6 @@ function DualSlider({
     '--end': `${endPercent}%`,
   } as React.CSSProperties;
 
-  // min과 max가 가까우면 min 슬라이더에 높은 z-index (오른쪽 끝에서 조작 가능하게)
-  const minZIndex = minValue >= maxValue - step ? 5 : 3;
-  const maxZIndex = maxValue <= minValue + step ? 3 : 4;
-
   return (
     <div className="setting-row">
       <div className="setting-label">
@@ -65,12 +61,11 @@ function DualSlider({
         <input
           type="range"
           aria-label={`${label} Min`}
-          className="range-slider range-min"
+          className={`range-slider range-min${minValue >= maxValue - step ? ' range-priority' : ''}`}
           min={min}
           max={max}
           step={step}
           value={minValue}
-          style={{ zIndex: minZIndex }}
           onChange={(e) => {
             const newValue = Number(e.target.value);
             // 최소값이 최대값을 넘으면 최대값도 함께 이동
@@ -88,7 +83,6 @@ function DualSlider({
           max={max}
           step={step}
           value={maxValue}
-          style={{ zIndex: maxZIndex }}
           onChange={(e) => {
             const newValue = Number(e.target.value);
             // 최대값이 최소값보다 작아지면 최소값도 함께 이동
