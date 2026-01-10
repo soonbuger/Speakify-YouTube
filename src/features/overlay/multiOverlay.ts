@@ -32,6 +32,8 @@ export interface MultiOverlayOptions {
   opacity: number;
   colorSyncStrengthL?: number; // 밝기(조명) 강도 (0-1)
   colorSyncStrengthAB?: number; // 색조(틴트) 강도 (0-1)
+  rotationMin?: number; // 기울기 최소값 (0-180)
+  rotationMax?: number; // 기울기 최대값 (0-180)
 }
 
 /**
@@ -69,9 +71,14 @@ function createSingleMultiOverlayImage(
   overlayImage.id = `${EXTENSION_NAME}-multi-${index}`;
   overlayImage.src = instance.imageUrl; // Start with original
 
-  const transformStyle = instance.flip
-    ? 'translate(-50%, -50%) scaleX(-1)'
-    : 'translate(-50%, -50%)';
+  // Build transform with flip and rotation
+  let transformStyle = 'translate(-50%, -50%)';
+  if (instance.flip) {
+    transformStyle += ' scaleX(-1)';
+  }
+  if (instance.rotation && instance.rotation !== 0) {
+    transformStyle += ` rotate(${instance.rotation}deg)`;
+  }
 
   Object.assign(overlayImage.style, {
     position: 'absolute',
@@ -132,7 +139,16 @@ export function applyMultiOverlay(
   options: MultiOverlayOptions,
   colorStats?: ColorStats,
 ): MultiOverlayResult {
-  const { countMin, countMax, sizeMin, sizeMax, flipChance, opacity } = options;
+  const {
+    countMin,
+    countMax,
+    sizeMin,
+    sizeMax,
+    flipChance,
+    opacity,
+    rotationMin = 0,
+    rotationMax = 0,
+  } = options;
 
   // 1. 랜덤 이미지 개수 결정 (min ~ max)
   const imageCount = Math.floor(Math.random() * (countMax - countMin + 1)) + countMin;
@@ -146,6 +162,14 @@ export function applyMultiOverlay(
     let size = Math.floor(Math.random() * (sizeMax - sizeMin + 1)) + sizeMin;
     const flip = Math.random() < flipChance;
     let isGiant = false;
+
+    // 랜덤 회전 각도 계산 (양방향: ±rotation)
+    let rotation = 0;
+    if (rotationMax > 0) {
+      const rotationRange = rotationMax - rotationMin;
+      const baseRotation = rotationMin + Math.random() * rotationRange;
+      rotation = Math.random() < 0.5 ? baseRotation : -baseRotation;
+    }
 
     // Giant Speaki 이스터에그: Big 폴더 이미지는 40% 크기, 3% 확률로 원본 크기
     if (asset.folder === 'big') {
@@ -164,6 +188,7 @@ export function applyMultiOverlay(
       position: pos,
       opacity,
       isGiant,
+      rotation,
     };
   });
 

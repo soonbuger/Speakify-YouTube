@@ -39,6 +39,14 @@
     "message": "Center",
     "description": "Center position"
   },
+  "positionTopLeft": {
+    "message": "Top Left",
+    "description": "Top left position"
+  },
+  "positionTopRight": {
+    "message": "Top Right",
+    "description": "Top right position"
+  },
   "positionBottomRight": {
     "message": "Bottom Right",
     "description": "Bottom right position"
@@ -98,5 +106,9 @@
   "colorSyncStrengthAB": {
     "message": "Color Tint Intensity",
     "description": "Color sync color tint strength"
+  },
+  "overlayRotation": {
+    "message": "Rotation",
+    "description": "Overlay image rotation angle"
   }
 }

@@ -9,7 +9,14 @@
 export type Language = 'en' | 'ko';
 
 /** 오버레이 위치 옵션 */
-export type OverlayPosition = 'center' | 'random' | 'smart';
+export type OverlayPosition =
+  | 'smart'
+  | 'random'
+  | 'center'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
 
 // ==================== 설정 ====================
 
@@ -31,7 +38,8 @@ export interface SpeakifySettings {
   colorSync: boolean; // Smart Color Overlay 활성화 여부
   colorSyncStrengthL: number; // 밝기(조명) 강도 0.0 ~ 1.0
   colorSyncStrengthAB: number; // 색조(틴트) 강도 0.0 ~ 1.0
-  smartSensitivity: number; // Smart Position 텍스트 회피 민감도 0.0 ~ 1.0
+  rotationMin: number; // 기울기 최소값 (0~180)
+  rotationMax: number; // 기울기 최대값 (0~180)
   debugMode: boolean;
 }
 
@@ -43,7 +51,7 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   extensionEnabled: true,
   appearChance: 1,
   flipChance: 0.5,
-  overlayPosition: 'random',
+  overlayPosition: 'smart',
   overlaySizeMin: 10,
   overlaySizeMax: 100,
   overlayOpacity: 1,
@@ -52,7 +60,8 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   colorSync: true,
   colorSyncStrengthL: 0.2, // 밝기(조명) 효과 강도
   colorSyncStrengthAB: 0.15, // 색조(틴트) 효과 강도
-  smartSensitivity: 0.7, // Smart Position 텍스트 회피 민감도 (기본 70%)
+  rotationMin: 0, // 기울기 최소값 (기본: 0도 = 회전 없음)
+  rotationMax: 0, // 기울기 최대값 (기본: 0도 = 회전 없음)
   debugMode: false,
 };
 

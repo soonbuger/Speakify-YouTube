@@ -12,6 +12,7 @@ const IMAGE_SELECTORS = [
   'ytd-thumbnail a > yt-image > img.yt-core-image',
   'img.style-scope.yt-img-shadow[width="86"]',
   '.yt-thumbnail-view-model__image img',
+  '.yt-lockup-view-model__content-image img',
   // 검색 결과 썸네일
   'ytd-thumbnail yt-image img.ytCoreImageHost',
   'yt-image.ytd-thumbnail img',

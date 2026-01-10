@@ -186,6 +186,8 @@ async function applyMultiOverlayMode(
       opacity: settings.overlayOpacity,
       colorSyncStrengthL: settings.colorSyncStrengthL,
       colorSyncStrengthAB: settings.colorSyncStrengthAB,
+      rotationMin: settings.rotationMin,
+      rotationMax: settings.rotationMax,
     },
     colorStats,
   );
@@ -225,6 +227,14 @@ async function applySingleOverlayMode(
   const imageAsset = assetManager.getRandomImage(randomIndex);
   const shouldFlip = Math.random() < settings.flipChance;
 
+  // 랜덤 회전 각도 계산 (양방향: ±rotation)
+  let randomRotation = 0;
+  if (settings.rotationMax > 0) {
+    const rotationRange = settings.rotationMax - settings.rotationMin;
+    const baseRotation = settings.rotationMin + Math.random() * rotationRange;
+    randomRotation = Math.random() < 0.5 ? baseRotation : -baseRotation;
+  }
+
   let randomSize =
     settings.overlaySizeMin + Math.random() * (settings.overlaySizeMax - settings.overlaySizeMin);
 
@@ -241,7 +251,7 @@ async function applySingleOverlayMode(
   // Smart Position Analysis (새 알고리즘 적용)
   let smartPosition: { x: number; y: number; densityMap?: number[][] } | undefined;
   if (settings.overlayPosition === 'smart') {
-    smartPosition = await getSmartPosition(thumbnail, settings.smartSensitivity);
+    smartPosition = await getSmartPosition(thumbnail);
   }
 
   const colorStats = await performColorAnalysis(thumbnail, settings, 'single');
@@ -250,6 +260,7 @@ async function applySingleOverlayMode(
     folder: imageAsset.folder,
     index: imageAsset.index,
     size: Math.round(randomSize),
+    rotation: randomRotation,
     colorSync: !!colorStats,
   });
 
@@ -261,6 +272,7 @@ async function applySingleOverlayMode(
       position: settings.overlayPosition,
       size: randomSize,
       opacity: settings.overlayOpacity,
+      rotation: randomRotation,
       smartPosition,
     },
     colorStats,
@@ -282,6 +294,7 @@ async function applySingleOverlayMode(
         folder: imageAsset.folder,
         index: imageAsset.index,
         size: randomSize,
+        rotation: randomRotation,
         densityMap: smartPosition?.densityMap,
       },
     });
@@ -294,7 +307,6 @@ async function applySingleOverlayMode(
  */
 async function getSmartPosition(
   thumbnail: HTMLElement,
-  sensitivity: number = 0.7,
 ): Promise<{ x: number; y: number; densityMap?: number[][] } | undefined> {
   // 비동기로 URL 가져오기 (lazy loading 대응 - 3초 대기)
   const thumbnailUrl = await getThumbnailImageUrlAsync(thumbnail, 3000);
@@ -306,7 +318,8 @@ async function getSmartPosition(
 
   try {
     const startTime = performance.now();
-    const analysisPromise = analyzeForSmartPosition(thumbnailUrl, { sensitivity });
+    // sensitivity는 내부적으로 고정 (0.7)
+    const analysisPromise = analyzeForSmartPosition(thumbnailUrl);
     // 타임아웃을 2초로 증가 (동시 요청 시 병목 대응)
     const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2000));
     const analysis = await Promise.race([analysisPromise, timeoutPromise]);

@@ -83,4 +83,4 @@ export const { updateSetting, resetToDefaults } = settingsSlice.actions;
 export default settingsSlice.reducer;
 
 // 타입 재export (App.tsx에서 사용)
-export type { SpeakifySettings } from '@/types';
+export type { SpeakifySettings, OverlayPosition } from '@/types';

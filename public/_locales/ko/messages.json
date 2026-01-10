@@ -39,13 +39,21 @@
     "message": "중앙",
     "description": "중앙 위치"
   },
+  "positionTopLeft": {
+    "message": "좌측 상단",
+    "description": "좌측 상단 위치"
+  },
+  "positionTopRight": {
+    "message": "우측 상단",
+    "description": "우측 상단 위치"
+  },
   "positionBottomRight": {
-    "message": "우하단",
-    "description": "우하단 위치"
+    "message": "우측 하단",
+    "description": "우측 하단 위치"
   },
   "positionBottomLeft": {
-    "message": "좌하단",
-    "description": "좌하단 위치"
+    "message": "좌측 하단",
+    "description": "좌측 하단 위치"
   },
   "positionRandom": {
     "message": "랜덤",
@@ -97,6 +105,10 @@
   },
   "colorSyncStrengthAB": {
     "message": "색조 강도",
-    "description": "컬러 동기화 색조(틴트) 강도"
+    "description": "컴러 동기화 색조(틴트) 강도"
+  },
+  "overlayRotation": {
+    "message": "기울기",
+    "description": "오버레이 이미지 회전 각도"
   }
 }

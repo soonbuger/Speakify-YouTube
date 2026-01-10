@@ -12,7 +12,7 @@ import {
   resetToDefaults,
 } from './store/settingsSlice';
 import { useI18n } from './hooks/useI18n';
-import type { SpeakifySettings } from './store/settingsSlice';
+import type { SpeakifySettings, OverlayPosition } from './store/settingsSlice';
 
 /**
  * Speakify YouTube Settings - 메인 App 컴포넌트
@@ -76,9 +76,13 @@ function App() {
 
   const positionOptions = useMemo(
     () => [
+      { value: 'smart', label: t('positionSmart', '스마트') },
       { value: 'random', label: t('positionRandom', '랜덤') },
       { value: 'center', label: t('positionCenter', '중앙') },
-      { value: 'smart', label: t('positionSmart', '스마트') },
+      { value: 'top-left', label: t('positionTopLeft', '좌측 상단') },
+      { value: 'top-right', label: t('positionTopRight', '우측 상단') },
+      { value: 'bottom-right', label: t('positionBottomRight', '우측 하단') },
+      { value: 'bottom-left', label: t('positionBottomLeft', '좌측 하단') },
     ],
     [t],
   );
@@ -113,6 +117,7 @@ function App() {
           onChange={(value) => handleSettingChange('appearChance', value / 100)}
           min={0}
           max={100}
+          step={1}
         />
 
         <Slider
@@ -121,6 +126,7 @@ function App() {
           onChange={(value) => handleSettingChange('flipChance', value / 100)}
           min={0}
           max={100}
+          step={1}
         />
       </Section>
 
@@ -129,9 +135,7 @@ function App() {
         <Select
           label={t('overlayPosition', 'Position')}
           value={settings.overlayPosition}
-          onChange={(value) =>
-            handleSettingChange('overlayPosition', value as 'center' | 'random' | 'smart')
-          }
+          onChange={(value) => handleSettingChange('overlayPosition', value as OverlayPosition)}
           options={positionOptions}
         />
 
@@ -152,19 +156,6 @@ function App() {
           </div>
         )}
 
-        {/* Smart Position Sensitivity (Smart 모드 전용) */}
-        {settings.overlayPosition === 'smart' && (
-          <div className="random-sub-option">
-            <Slider
-              label={t('smartSensitivity', 'Text Avoidance')}
-              value={Math.round(settings.smartSensitivity * 100)}
-              onChange={(value) => handleSettingChange('smartSensitivity', value / 100)}
-              min={0}
-              max={100}
-            />
-          </div>
-        )}
-
         <DualSlider
           label={t('overlaySize', 'Size')}
           minValue={settings.overlaySizeMin}
@@ -173,6 +164,19 @@ function App() {
           onMaxChange={(value) => handleSettingChange('overlaySizeMax', value)}
           min={10}
           max={150}
+          step={1}
+        />
+
+        <DualSlider
+          label={t('overlayRotation', 'Rotation')}
+          minValue={settings.rotationMin}
+          maxValue={settings.rotationMax}
+          onMinChange={(value) => handleSettingChange('rotationMin', value)}
+          onMaxChange={(value) => handleSettingChange('rotationMax', value)}
+          min={0}
+          max={180}
+          step={1}
+          unit="°"
         />
 
         <Slider
@@ -181,7 +185,7 @@ function App() {
           onChange={(value) => handleSettingChange('overlayOpacity', value / 100)}
           min={10}
           max={100}
-          step={10}
+          step={1}
         />
 
         <Toggle
@@ -199,7 +203,7 @@ function App() {
               onChange={(value) => handleSettingChange('colorSyncStrengthL', value / 100)}
               min={0}
               max={100}
-              step={5}
+              step={1}
             />
             <Slider
               label={t('colorSyncStrengthAB', 'Color Tint Intensity')}
@@ -207,7 +211,7 @@ function App() {
               onChange={(value) => handleSettingChange('colorSyncStrengthAB', value / 100)}
               min={0}
               max={100}
-              step={5}
+              step={1}
             />
           </>
         )}

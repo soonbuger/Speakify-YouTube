@@ -11,6 +11,7 @@
  */
 import { getTextDensityMap } from '../detectors/textDetector';
 import { getRandomPosition } from '@/features/overlay/position';
+import { SMART_POSITION } from '@/shared/config/constants';
 
 /**
  * 랜덤 fallback 위치 생성 (분석 실패 시 사용)
@@ -108,24 +109,34 @@ function getDensityRange(densityMap: number[][], gridSize: number): { min: numbe
   return { min, max };
 }
 
-/**
- * 최소 비용 셀 찾기 (헬퍼)
- * 하단부터 스캔하여 동일 비용 시 하단 셀 선호
- */
-function findBestCell(
-  densityMap: number[][],
-  gridSize: number,
-  sensitivity: number,
-  preferredX: number,
-  preferredY: number,
-  minDensity: number,
-  densityRange: number,
-): { gx: number; gy: number; minCost: number } {
-  let minCost = Infinity;
-  let bestCell = { gx: Math.floor(gridSize / 2), gy: gridSize - 1 };
+/** 셀 후보 타입 */
+interface CellCandidate {
+  gx: number;
+  gy: number;
+  cost: number;
+}
 
-  // 하단부터 상단으로 스캔 (동일 비용 시 하단 셀 선호)
-  for (let gy = gridSize - 1; gy >= 0; gy--) {
+/** findTopNCells 파라미터 */
+interface FindTopNCellsParams {
+  densityMap: number[][];
+  gridSize: number;
+  sensitivity: number;
+  preferredX: number;
+  preferredY: number;
+  minDensity: number;
+  densityRange: number;
+  n: number;
+}
+
+/**
+ * 상위 N개 저비용 셀 찾기
+ */
+function findTopNCells(params: FindTopNCellsParams): CellCandidate[] {
+  const { densityMap, gridSize, sensitivity, preferredX, preferredY, minDensity, densityRange, n } =
+    params;
+  const allCells: CellCandidate[] = [];
+
+  for (let gy = 0; gy < gridSize; gy++) {
     for (let gx = 0; gx < gridSize; gx++) {
       const rawDensity = densityMap[gy]?.[gx] ?? 0;
       const normalizedDensity = densityRange > 0 ? (rawDensity - minDensity) / densityRange : 0;
@@ -136,15 +147,59 @@ function findBestCell(
       const normalizedDist = rawDist / 70;
 
       const cost = sensitivity * normalizedDensity + (1 - sensitivity) * normalizedDist;
-
-      if (cost < minCost) {
-        minCost = cost;
-        bestCell = { gx, gy };
-      }
+      allCells.push({ gx, gy, cost });
     }
   }
 
-  return { ...bestCell, minCost };
+  // 비용 오름차순 정렬 후 상위 N개 반환
+  return allCells.toSorted((a, b) => a.cost - b.cost).slice(0, n);
+}
+
+/**
+ * 비용 반비례 가중치로 셀 선택
+ */
+function selectCellByWeightedRandom(candidates: CellCandidate[]): CellCandidate {
+  // 가중치 = 1 / (cost + epsilon)
+  const weights = candidates.map((c) => 1 / (c.cost + SMART_POSITION.EPSILON));
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+
+  let random = Math.random() * totalWeight;
+  for (let i = 0; i < candidates.length; i++) {
+    random -= weights[i];
+    if (random <= 0) return candidates[i];
+  }
+  return candidates.at(-1)!;
+}
+
+/**
+ * Box-Muller 변환을 이용한 가우시안 랜덤
+ */
+function gaussianRandom(mean: number, stdDev: number): number {
+  const u1 = Math.random();
+  const u2 = Math.random();
+  const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  return mean + z * stdDev;
+}
+
+/**
+ * 중앙 편향 랜덤 위치 (가우시안 + 균등 혼합)
+ * @param safeMin 안전 최소값 (%)
+ * @param safeMax 안전 최대값 (%)
+ */
+function getCenterBiasedPosition(safeMin: number, safeMax: number): number {
+  const center = (safeMin + safeMax) / 2;
+  const range = safeMax - safeMin;
+  const stdDev = range / 3;
+
+  // 균등 분포
+  const uniform = safeMin + Math.random() * range;
+
+  // 가우시안 분포 (클램프)
+  let gaussian = gaussianRandom(center, stdDev);
+  gaussian = Math.max(safeMin, Math.min(safeMax, gaussian));
+
+  // 혼합 (centerBias=0.4 → 40% 가우시안 + 60% 균등)
+  return uniform * (1 - SMART_POSITION.CENTER_BIAS) + gaussian * SMART_POSITION.CENTER_BIAS;
 }
 
 /**
@@ -157,6 +212,7 @@ function findBestCell(
 export function calculateSmartPosition(
   imageData: ImageData,
   options: PositionOptions = {},
+  overlaySize: number = 30,
 ): SmartPositionResult {
   const { sensitivity, gridSize, preferredX, preferredY } = { ...DEFAULT_OPTIONS, ...options };
 
@@ -178,8 +234,8 @@ export function calculateSmartPosition(
     const { min: minDensity, max: maxDensity } = getDensityRange(densityMap, gridSize);
     const densityRange = maxDensity - minDensity;
 
-    // 3. 최소 비용 셀 찾기
-    const bestCell = findBestCell(
+    // 3. 상위 N개 후보 셀 찾기
+    const topCells = findTopNCells({
       densityMap,
       gridSize,
       sensitivity,
@@ -187,14 +243,35 @@ export function calculateSmartPosition(
       preferredY,
       minDensity,
       densityRange,
-    );
+      n: SMART_POSITION.CANDIDATE_COUNT,
+    });
 
-    // 4. 최적 위치를 퍼센트로 변환
-    const x = ((bestCell.gx + 0.5) / gridSize) * 100;
-    const y = ((bestCell.gy + 0.5) / gridSize) * 100;
+    // 4. 비용 반비례 가중치로 셀 선택
+    const selectedCell = selectCellByWeightedRandom(topCells);
 
-    // 5. 신뢰도 계산
-    const selectedDensity = densityMap[bestCell.gy]?.[bestCell.gx] ?? 0;
+    // 5. 안전 마진 계산 (스피키 크기의 절반)
+    const safeMargin = overlaySize / 2;
+    const safeMin = safeMargin;
+    const safeMax = 100 - safeMargin;
+
+    // 6. 셀 범위 계산
+    const cellMinX = (selectedCell.gx / gridSize) * 100;
+    const cellMaxX = ((selectedCell.gx + 1) / gridSize) * 100;
+    const cellMinY = (selectedCell.gy / gridSize) * 100;
+    const cellMaxY = ((selectedCell.gy + 1) / gridSize) * 100;
+
+    // 7. 셀 범위와 안전 범위의 교집합
+    const effectiveMinX = Math.max(cellMinX, safeMin);
+    const effectiveMaxX = Math.min(cellMaxX, safeMax);
+    const effectiveMinY = Math.max(cellMinY, safeMin);
+    const effectiveMaxY = Math.min(cellMaxY, safeMax);
+
+    // 8. 중앙 편향 랜덤 위치
+    const x = getCenterBiasedPosition(effectiveMinX, effectiveMaxX);
+    const y = getCenterBiasedPosition(effectiveMinY, effectiveMaxY);
+
+    // 9. 신뢰도 계산
+    const selectedDensity = densityMap[selectedCell.gy]?.[selectedCell.gx] ?? 0;
     const normalizedSelected = densityRange > 0 ? (selectedDensity - minDensity) / densityRange : 0;
     const confidence = 1 - normalizedSelected;
 

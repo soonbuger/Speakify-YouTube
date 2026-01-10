@@ -18,12 +18,14 @@ export interface DebugInfo {
   folder?: string;
   index?: number;
   size?: number;
+  rotation?: number; // 기울기 (도)
   isGiant?: boolean;
   // Multi 모드용 - 각 이미지의 상세 정보
   instances?: Array<{
     folder: string;
     index: number;
     size: number;
+    rotation?: number;
     isGiant?: boolean;
   }>;
   // Smart Position 디버그용
@@ -99,13 +101,15 @@ function formatDebugLabel(info: DebugInfo): string {
     return info.instances
       .map((inst) => {
         const giantTag = inst.isGiant ? ' 🔥' : '';
-        return `[${inst.folder}] #${inst.index} / ${inst.size}%${giantTag}`;
+        const rotTag = inst.rotation ? ` ${inst.rotation.toFixed(0)}°` : '';
+        return `[${inst.folder}] #${inst.index} / ${inst.size}%${rotTag}${giantTag}`;
       })
       .join(', ');
   }
   // Single 모드: 단일 이미지 정보
   const giantTag = info.isGiant ? ' 🔥' : '';
-  return `[${info.folder}] #${info.index} / ${Math.round(info.size ?? 0)}%${giantTag}`;
+  const rotTag = info.rotation ? ` ${info.rotation.toFixed(0)}°` : '';
+  return `[${info.folder}] #${info.index} / ${Math.round(info.size ?? 0)}%${rotTag}${giantTag}`;
 }
 
 /**

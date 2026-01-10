@@ -48,3 +48,13 @@ export const GIANT_SPEAKI = {
   /** Big 폴더 이미지의 기본 크기 비율 (40%) */
   BIG_FOLDER_SIZE_RATIO: 0.4,
 } as const;
+
+/** 스마트 포지션 설정 */
+export const SMART_POSITION = {
+  /** 후보 영역 개수 */
+  CANDIDATE_COUNT: 4,
+  /** 중앙 편향 정도 (0=균등, 1=강한 가우시안) */
+  CENTER_BIAS: 0.4,
+  /** 0으로 나누기 방지용 작은 값 */
+  EPSILON: 0.001,
+} as const;
