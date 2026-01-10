@@ -124,7 +124,7 @@ export class AssetLoader {
  * 여러 AssetLoader를 관리하고 통합 API 제공
  */
 class AssetManager {
-  private loaders: Map<ImageFolder, AssetLoader> = new Map();
+  private readonly loaders: Map<ImageFolder, AssetLoader> = new Map();
 
   constructor() {
     // 각 폴더별 로더 생성

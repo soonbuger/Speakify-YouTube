@@ -7,31 +7,31 @@
 import { describe, it, expect } from 'vitest';
 import { detectTextRegions, calculateEdgeDensity, TextRegion } from './textDetector';
 
-describe('textDetector', () => {
-  /**
-   * 테스트용 ImageData 생성 헬퍼
-   */
-  function createTestImageData(
-    width: number,
-    height: number,
-    pixelFn: (x: number, y: number) => [number, number, number],
-  ): ImageData {
-    const data = new Uint8ClampedArray(width * height * 4);
+/**
+ * 테스트용 ImageData 생성 헬퍼
+ */
+function createTestImageData(
+  width: number,
+  height: number,
+  pixelFn: (x: number, y: number) => [number, number, number],
+): ImageData {
+  const data = new Uint8ClampedArray(width * height * 4);
 
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const [r, g, b] = pixelFn(x, y);
-        const i = (y * width + x) * 4;
-        data[i] = r;
-        data[i + 1] = g;
-        data[i + 2] = b;
-        data[i + 3] = 255;
-      }
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const [r, g, b] = pixelFn(x, y);
+      const i = (y * width + x) * 4;
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+      data[i + 3] = 255;
     }
-
-    return { data, width, height } as ImageData;
   }
 
+  return { data, width, height } as ImageData;
+}
+
+describe('textDetector', () => {
   describe('calculateEdgeDensity', () => {
     it('should calculate density from edge data and integral image', () => {
       // 간단한 테스트: 모든 엣지 값이 동일한 경우
@@ -99,7 +99,7 @@ describe('textDetector', () => {
         { x: 10, y: 0, width: 10, height: 10, density: 200 },
         { x: 0, y: 10, width: 10, height: 10, density: 50 },
       ];
-      const sorted = regions.sort((a, b) => b.density - a.density);
+      const sorted = regions.toSorted((a, b) => b.density - a.density);
 
       expect(sorted[0].density).toBe(200);
       expect(sorted[1].density).toBe(100);

@@ -1,6 +1,6 @@
 /**
- * YouTube Speakify - Thumbnail Finder Module
- * Finds and filters YouTube thumbnail elements.
+ * YouTube Speakify - 썸네일 파인더 모듈
+ * YouTube 썸네일 요소를 찾아 필터링
  *
  * @module lib/thumbnailFinder
  */
@@ -131,6 +131,7 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
       parent.closest('ytd-reel-shelf-renderer') !== null ||
       parent.closest('ytm-shorts-lockup-view-model') !== null ||
       parent.closest('ytm-shorts-lockup-view-model-v2') !== null ||
+      parent.closest('.shortsLockupViewModelHostEndpoint') !== null ||
       parent.closest('[is-shorts]') !== null;
 
     // Shorts는 aspect ratio가 세로형이어야 함 (사이드바 침범 방지)
@@ -140,14 +141,18 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
       const w = img.naturalWidth || img.width || img.getBoundingClientRect().width;
       const h = img.naturalHeight || img.height || img.getBoundingClientRect().height;
 
-      if (h === 0) return false;
+      // 이미지가 아직 로드되지 않았으면 일단 통과 (나중에 처리됨)
+      // 그전꺼: h === 0 이면 false → Shorts 컨테이너 확인 시에는 통과
+      if (h === 0) return true;
+
       const ratio = w / h;
 
       // 0.8 미만이면 세로형 (9:16 = 0.5625)
       // 일부 정사각형에 가까운 Shorts도 있을 수 있으나, 보통 0.8 미만
-      if (ratio < 0.8) return true;
+      // 세로형(9:16) 또는 정사각형에 가까운 경우 Shorts로 처리(어차피 처리해야하는 건 비슷해서 상관 X)
+      if (ratio < 1.2) return true;
 
-      // Shorts 컨테이너 내부지만 비율이 넓으면(1.0 이상) 오버레이 대상 아님 (사이드바 배경 등)
+      // Shorts 컨테이너 내부지만 비율이 넓으면(1.2 이상) 오버레이 대상 아님 (사이드바 배경 등)
       return false;
     }
 

@@ -5,6 +5,7 @@ import { Logger } from '@/shared/lib/utils/logger';
 import { analyzeForSmartPosition } from '@/features/smart-position/services/positionService';
 import { showDebugIndicator } from '@/features/debug/indicator';
 import { getRandomPosition } from '@/features/overlay/position';
+import { GIANT_SPEAKI } from '@/shared/config/constants';
 import type { SpeakifySettings } from '@/types/index';
 import type { Randomizer } from '@/shared/lib/utils/randomizer';
 import { ColorAnalysisService } from '@/features/color-analysis/services/colorAnalysisService';
@@ -229,11 +230,11 @@ async function applySingleOverlayMode(
 
   // Giant Speaki logic (Big folder images)
   if (imageAsset.folder === 'big') {
-    const isGiant = Math.random() < 0.03;
+    const isGiant = Math.random() < GIANT_SPEAKI.CHANCE;
     if (isGiant) {
       Logger.debug('Giant Speaki appeared! (3% chance)');
     } else {
-      randomSize *= 0.4;
+      randomSize *= GIANT_SPEAKI.BIG_FOLDER_SIZE_RATIO;
     }
   }
 

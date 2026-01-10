@@ -40,3 +40,11 @@ export const CACHE = {
   /** Blob URL 캐시 크기 */
   BLOB_URL_SIZE: 20,
 } as const;
+
+/** Giant Speaki 이스터에그 설정 */
+export const GIANT_SPEAKI = {
+  /** Giant Speaki 등장 확률 (3%) */
+  CHANCE: 0.03,
+  /** Big 폴더 이미지의 기본 크기 비율 (40%) */
+  BIG_FOLDER_SIZE_RATIO: 0.4,
+} as const;
