@@ -52,6 +52,15 @@ _시연 영상 (준비 중)_
 5.  **선택**: 1번에서 압축을 푼 폴더(`dist` 혹은 `YouTube-Speakify` 폴더)를 선택합니다.
 6.  **완료!**: 유튜브에 접속하면 스피키가 여러분을 반겨줍니다! 🎉
 
+### Firefox
+
+1.  **다운로드**: 이 저장소의 [Releases](https://github.com/soonbuger/Speakify-YouTube/releases) 페이지에서 최신 `YouTube-Speakify-vX.X.X.zip` 파일을 다운로드하고 압축을 풉니다. (`firefox` 폴더 확인)
+2.  **디버깅 페이지**: 주소창에 `about:debugging`을 입력하여 이동합니다.
+3.  **내 파이어폭스**: 왼쪽 메뉴에서 [This Firefox (이 파이어폭스)](about:debugging#/runtime/this-firefox)를 클릭합니다.
+4.  **임시 로드**: **Load Temporary Add-on... (임시 부가 기능 로드...)** 버튼을 클릭합니다.
+5.  **선택**: 1번에서 압축을 푼 폴더 내의 `manifest.json` 파일을 선택합니다.
+6.  **완료!**: 유튜브에 접속하여 스피키를 확인하세요! (브라우저를 재시작하면 다시 로드해야 할 수 있습니다.)
+
 ---
 
 ## 📜 Credits

@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './src/**/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -16,6 +16,7 @@ module.exports = {
           sub: '#746279', // --text-secondary
           muted: 'rgba(116, 98, 121, 0.5)', // --text-muted
         },
+        border: '#e2dcd5',
         white: '#ffffff',
       },
       fontFamily: {

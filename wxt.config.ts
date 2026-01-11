@@ -9,6 +9,9 @@ export default defineConfig({
   // React 플러그인 추가
   vite: () => ({
     plugins: [react()],
+    css: {
+      postcss: './postcss.config.js',
+    },
   }),
   // src/ 폴더 사용
   srcDir: 'src',

@@ -14,19 +14,28 @@ interface SelectProps {
   readonly onChange: (value: string) => void;
   /** 옵션 목록 */
   readonly options: SelectOption[];
+  /** 추가 CSS 클래스 */
+  readonly className?: string;
 }
 
 /**
  * 셀렉트 드롭다운 컴포넌트
  * 언어 선택, 위치 선택 등에 사용
  */
-function Select({ label, value, onChange, options }: SelectProps) {
+function Select({ label, value, onChange, options, className = '' }: SelectProps) {
   return (
-    <div className="flex justify-between items-center mb-4 last:mb-0">
-      <div className="text-[13px] font-medium text-text">{label}</div>
-      <div className="relative">
+    <div className={`flex justify-between items-center mb-4 last:mb-0 ${className}`}>
+      <div className="text-[15px] text-text">{label}</div>
+      <div className="relative w-[120px]">
         <select
-          className="appearance-none bg-white border border-border rounded-lg py-1.5 pl-3 pr-8 text-xs font-medium text-text focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer shadow-sm transition-all hover:border-primary"
+          className="
+            w-full py-2.5 px-3 pr-8
+            appearance-none bg-white text-text text-[15px]
+            border border-gray-300/50 rounded-[10px]
+            cursor-pointer transition-all
+            hover:border-primary hover:bg-[#fffbf5]
+            focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20
+          "
           value={value}
           onChange={(e) => onChange(e.target.value)}
           aria-label={label}
@@ -37,12 +46,22 @@ function Select({ label, value, onChange, options }: SelectProps) {
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-sub">
-          <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+        {/* 드롭다운 화살표 */}
+        {/* 드롭다운 화살표 */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-sub">
+          <svg
+            width="10"
+            height="6"
+            viewBox="0 0 10 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-              fillRule="evenodd"
+              d="M1 1L5 5L9 1"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         </div>

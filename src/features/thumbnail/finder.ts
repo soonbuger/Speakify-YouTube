@@ -42,10 +42,6 @@ const processedElements = new WeakSet<HTMLElement>();
 
 /**
  * 요소가 이미 처리되었는지 확인
- * WeakSet + DOM 마커 둘 다 체크
- */
-/**
- * 요소가 이미 처리되었는지 확인
  * WeakSet + Dataset + DOM 마커 체크
  */
 function isAlreadyProcessed(element: HTMLElement): boolean {

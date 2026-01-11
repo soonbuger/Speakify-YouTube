@@ -2,11 +2,11 @@ import React from 'react';
 
 interface SectionProps {
   /** 섹션 제목 (예: "BASIC", "OVERLAY") */
-  title: string;
+  readonly title: string;
   /** 섹션 내부에 들어갈 자식 요소들 */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
   /** 추가 CSS 클래스 */
-  className?: string;
+  readonly className?: string;
 }
 
 /**
@@ -16,9 +16,14 @@ interface SectionProps {
 function Section({ title, children, className = '' }: SectionProps) {
   return (
     <div
-      className={`mb-4 p-4 bg-background-card/80 backdrop-blur-md rounded-2xl border border-white/60 shadow-card transition-all duration-200 hover:shadow-lg ${className}`}
+      className={`
+        bg-white rounded-[16px] p-4 mb-4 
+        border border-white/50 shadow-card
+        transition-all duration-200
+        ${className}
+      `}
     >
-      <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-text-sub mb-3 select-none">
+      <div className="text-[11px] font-semibold uppercase tracking-[1.2px] text-text-muted mb-3">
         {title}
       </div>
       {children}

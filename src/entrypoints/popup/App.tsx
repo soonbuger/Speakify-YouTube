@@ -21,6 +21,7 @@ import type { SpeakifySettings, OverlayPosition } from './store/settingsSlice';
  *       Example: t('key', 'English Fallback')
  */
 function App() {
+  console.log('🚀 App Component Rendering'); // Debug Log
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settings);
   const { t, isLoaded } = useI18n();
@@ -81,6 +82,7 @@ function App() {
       { value: 'center', label: t('positionCenter', '중앙') },
       { value: 'top-left', label: t('positionTopLeft', '좌측 상단') },
       { value: 'top-right', label: t('positionTopRight', '우측 상단') },
+
       { value: 'bottom-right', label: t('positionBottomRight', '우측 하단') },
       { value: 'bottom-left', label: t('positionBottomLeft', '좌측 하단') },
     ],
@@ -89,7 +91,9 @@ function App() {
 
   // 로딩 중이거나 리셋 중일 때 표시
   if (settings.isLoading || !isLoaded || isResetting) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen text-text-sub">Loading...</div>
+    );
   }
 
   return (
@@ -105,12 +109,14 @@ function App() {
           value={settings.language}
           onChange={(value) => handleSettingChange('language', value as 'ko' | 'en')}
           options={languageOptions}
+          className="mb-3.5"
         />
 
         <Toggle
           label={t('enableExtension', 'Enable Extension')}
           checked={settings.extensionEnabled}
           onChange={(value) => handleSettingChange('extensionEnabled', value)}
+          className="mb-3.5"
         />
 
         <Slider
@@ -120,6 +126,8 @@ function App() {
           min={0}
           max={100}
           step={1}
+          unit="%"
+          className="mb-2.5"
         />
 
         <Slider
@@ -129,6 +137,8 @@ function App() {
           min={0}
           max={100}
           step={1}
+          unit="%"
+          className="mb-0"
         />
       </Section>
 
@@ -139,6 +149,7 @@ function App() {
           value={settings.overlayPosition}
           onChange={(value) => handleSettingChange('overlayPosition', value as OverlayPosition)}
           options={positionOptions}
+          className="mb-3.5"
         />
 
         {/* Multi-Image Overlay (Random 모드 전용) - 위치 바로 아래에 들여쓰기 스타일 */}
@@ -148,12 +159,15 @@ function App() {
               label={t('overlayCount', 'Image Count')}
               minValue={settings.overlayCountMin}
               maxValue={settings.overlayCountMax}
-              onMinChange={(value) => handleSettingChange('overlayCountMin', value)}
-              onMaxChange={(value) => handleSettingChange('overlayCountMax', value)}
+              onChange={(min, max) => {
+                handleSettingChange('overlayCountMin', min);
+                handleSettingChange('overlayCountMax', max);
+              }}
               min={1}
               max={8}
               step={1}
               unit="개"
+              className="mb-2.5"
             />
           </div>
         )}
@@ -162,23 +176,30 @@ function App() {
           label={t('overlaySize', 'Size')}
           minValue={settings.overlaySizeMin}
           maxValue={settings.overlaySizeMax}
-          onMinChange={(value) => handleSettingChange('overlaySizeMin', value)}
-          onMaxChange={(value) => handleSettingChange('overlaySizeMax', value)}
+          onChange={(min, max) => {
+            handleSettingChange('overlaySizeMin', min);
+            handleSettingChange('overlaySizeMax', max);
+          }}
           min={10}
           max={150}
           step={1}
+          unit="%"
+          className="mb-2.5"
         />
 
         <DualSlider
           label={t('overlayRotation', 'Rotation')}
           minValue={settings.rotationMin}
           maxValue={settings.rotationMax}
-          onMinChange={(value) => handleSettingChange('rotationMin', value)}
-          onMaxChange={(value) => handleSettingChange('rotationMax', value)}
+          onChange={(min, max) => {
+            handleSettingChange('rotationMin', min);
+            handleSettingChange('rotationMax', max);
+          }}
           min={0}
           max={180}
           step={1}
           unit="°"
+          className="mb-2.5"
         />
 
         <Slider
@@ -188,12 +209,15 @@ function App() {
           min={10}
           max={100}
           step={1}
+          unit="%"
+          className="mb-2.5"
         />
 
         <Toggle
           label={t('colorSync', 'Smart Color Sync')}
           checked={settings.colorSync}
           onChange={(value) => handleSettingChange('colorSync', value)}
+          className={settings.colorSync ? 'mb-3.5' : 'mb-0'}
         />
 
         {/* Color Sync 세부 설정 (활성화 시에만 표시) */}
@@ -206,6 +230,8 @@ function App() {
               min={0}
               max={100}
               step={1}
+              unit="%"
+              className="mb-2.5"
             />
             <Slider
               label={t('colorSyncStrengthAB', 'Color Tint Intensity')}
@@ -214,23 +240,23 @@ function App() {
               min={0}
               max={100}
               step={1}
+              unit="%"
+              className="mb-0"
             />
           </>
         )}
       </Section>
 
       {/* 개발자 옵션 섹션 */}
-      <Section
-        title={t('sectionDeveloper', 'DEVELOPER')}
-        className="opacity-90 hover:opacity-100 transition-opacity"
-      >
+      <Section title={t('sectionDeveloper', 'DEVELOPER')}>
         <Toggle
           label={t('debugMode', 'Debug Mode')}
           checked={settings.debugMode}
           onChange={(value) => handleSettingChange('debugMode', value)}
+          className="mb-0"
         />
         <button
-          className="w-full mt-2 py-2 px-4 bg-gray-200/50 text-xs font-bold text-text-sub rounded-lg hover:bg-gray-200 hover:text-red-500 transition-all active:scale-95"
+          className="w-full mt-4 py-2.5 px-4 text-[13px] font-medium text-text-sub bg-white border border-gray-200/80 rounded-[12px] cursor-pointer transition-all hover:text-primary hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm active:scale-[0.98]"
           onClick={handleResetToDefaults}
           type="button"
         >
@@ -238,7 +264,7 @@ function App() {
         </button>
       </Section>
 
-      <div className="mt-6 text-center text-[10px] font-medium text-text-muted tracking-wide uppercase opacity-70">
+      <div className="mt-5 pt-3 text-[11px] text-text-muted text-center border-t border-white/80">
         {t('footerAutoSave', 'Settings are saved automatically')}
       </div>
     </main>

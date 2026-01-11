@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 
 interface DualSliderProps {
   /** 슬라이더 레이블 */
@@ -7,10 +7,8 @@ interface DualSliderProps {
   readonly minValue: number;
   /** 최대값 상태 */
   readonly maxValue: number;
-  /** 최소값 변경 핸들러 */
-  readonly onMinChange: (value: number) => void;
-  /** 최대값 변경 핸들러 */
-  readonly onMaxChange: (value: number) => void;
+  /** 값 변경 핸들러 (min, max 함께 전달) */
+  readonly onChange: (min: number, max: number) => void;
   /** 범위의 절대 최소값 */
   readonly min: number;
   /** 범위의 절대 최대값 */
@@ -19,142 +17,156 @@ interface DualSliderProps {
   readonly step?: number;
   /** 표시 단위 */
   readonly unit?: string;
+  /** 추가 CSS 클래스 */
+  readonly className?: string;
 }
 
 /**
- * 듀얼 슬라이더 컴포넌트
- * 크기 범위 설정에 사용 (최소~최대)
- * 두 핸들 사이에 주황색으로 채워짐
+ * Custom Dual Slider Component
+ * - Pure React + Tailwind CSS
+ * - Two thumbs (Range selection)
  */
-function DualSlider({
+export default function DualSlider({
   label,
   minValue,
   maxValue,
-  onMinChange,
-  onMaxChange,
+  onChange,
   min,
   max,
-  step = 5,
-  unit = '%',
+  step = 1,
+  unit = '',
+  className = '',
 }: DualSliderProps) {
-  // 시작점과 끝점 계산 (백분율)
-  const startPercent = ((minValue - min) / (max - min)) * 100;
-  const endPercent = ((maxValue - min) / (max - min)) * 100;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [activeThumb, setActiveThumb] = useState<'min' | 'max' | null>(null);
 
-  // 듀얼 슬라이더 컨테이너 스타일 (CSS 변수 설정)
-  const containerStyle: React.CSSProperties = {
-    '--start': `${startPercent}%`,
-    '--end': `${endPercent}%`,
-  } as React.CSSProperties;
+  // 퍼센트 계산
+  const getPercent = useCallback(
+    (value: number) => Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)),
+    [min, max],
+  );
+
+  const minPercent = getPercent(minValue);
+  const maxPercent = getPercent(maxValue);
+
+  const getValueFromClientX = useCallback(
+    (clientX: number) => {
+      if (!trackRef.current) return min;
+      const rect = trackRef.current.getBoundingClientRect();
+      const trackWidth = rect.width;
+      const x = Math.max(0, Math.min(clientX - rect.left, trackWidth));
+      const percent = x / trackWidth;
+      const rawValue = min + percent * (max - min);
+      const steppedValue = Math.round(rawValue / step) * step;
+      return Math.min(max, Math.max(min, Number(steppedValue.toFixed(2))));
+    },
+    [min, max, step],
+  );
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    const newValue = getValueFromClientX(e.clientX);
+
+    // 더 가까운 썸 찾기
+    const distMin = Math.abs(newValue - minValue);
+    const distMax = Math.abs(newValue - maxValue);
+
+    let target: 'min' | 'max';
+    if (distMin < distMax) target = 'min';
+    else if (distMax < distMin) target = 'max';
+    else target = newValue < minValue ? 'min' : 'max'; // 동일 거리면 방향에 따름
+
+    setActiveThumb(target);
+    (e.target as Element).setPointerCapture(e.pointerId);
+
+    // 클릭 즉시 값 업데이트
+    if (target === 'min') {
+      const v = Math.min(newValue, maxValue); // Max와 겹침 허용
+      onChange(v, maxValue);
+    } else {
+      const v = Math.max(newValue, minValue); // Min과 겹침 허용
+      onChange(minValue, v);
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!activeThumb) return;
+    e.preventDefault();
+    const newValue = getValueFromClientX(e.clientX);
+
+    if (activeThumb === 'min') {
+      // Max와 겹침 허용 (최소 간격 없음)
+      const v = Math.min(newValue, maxValue);
+      onChange(Math.max(min, v), maxValue);
+    } else {
+      // Min과 겹침 허용
+      const v = Math.max(newValue, minValue);
+      onChange(minValue, Math.min(max, v));
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setActiveThumb(null);
+    (e.target as Element).releasePointerCapture(e.pointerId);
+  };
 
   return (
-    <div className="mb-4 last:mb-0">
-      <div className="flex justify-between items-center mb-2 text-[13px] font-medium text-text">
-        <span>{label}</span>
-        <span className="font-bold text-primary">
+    <div className="mb-3 last:mb-0 select-none">
+      <div className="flex justify-between items-center text-[15px] text-text mb-2">
+        <span className="font-medium">{label}</span>
+        <span className="text-text-sub tabular-nums font-medium">
           {minValue}
           {unit} ~ {maxValue}
           {unit}
         </span>
       </div>
-      <div className="relative w-full h-2 rounded-lg bg-border">
-        {/* 채워지는 트랙 (Filled Track) */}
+
+      <div
+        className={`relative flex items-center h-6 cursor-pointer touch-none mx-1 ${className}`}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+      >
+        {/* Track Background */}
         <div
-          className="absolute top-0 bottom-0 rounded-lg bg-primary pointer-events-none z-0"
-          style={{ left: `${startPercent}%`, width: `${endPercent - startPercent}%` }}
-        />
+          ref={trackRef}
+          className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden"
+        >
+          {/* Active Range Fill */}
+          <div
+            className="absolute top-0 h-full bg-primary"
+            style={{
+              left: `${minPercent}%`,
+              width: `${maxPercent - minPercent}%`,
+            }}
+          />
+        </div>
 
-        {/* Min Thumb Slider */}
-        <input
-          type="range"
-          aria-label={`${label} Min`}
-          className={`
-            absolute w-full h-full appearance-none bg-transparent pointer-events-none z-10
-            focus:outline-none focus:ring-0
-            [&::-webkit-slider-thumb]:pointer-events-auto
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:w-5
-            [&::-webkit-slider-thumb]:h-5
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:bg-white
-            [&::-webkit-slider-thumb]:border-2
-            [&::-webkit-slider-thumb]:border-primary
-            [&::-webkit-slider-thumb]:shadow-md
-            [&::-webkit-slider-thumb]:transition-transform
-            [&::-webkit-slider-thumb]:hover:scale-110
-            [&::-webkit-slider-thumb]:cursor-pointer
-
-            [&::-moz-range-thumb]:pointer-events-auto
-            [&::-moz-range-thumb]:w-5
-            [&::-moz-range-thumb]:h-5
-            [&::-moz-range-thumb]:border-none
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-white
-            [&::-moz-range-thumb]:border-2
-            [&::-moz-range-thumb]:border-primary
-            [&::-moz-range-thumb]:shadow-md
-            [&::-moz-range-thumb]:transition-transform
-            [&::-moz-range-thumb]:hover:scale-110
-            [&::-moz-range-thumb]:cursor-pointer
-            ${minValue >= maxValue - 5 ? 'z-20' : ''}
-          `}
-          min={min}
-          max={max}
-          step={step}
-          value={minValue}
-          onChange={(e) => {
-            const newValue = Number(e.target.value);
-            if (newValue > maxValue) onMaxChange(newValue);
-            onMinChange(newValue);
+        {/* Min Thumb */}
+        <div
+          className={`absolute w-[18px] h-[18px] bg-white border-2 border-primary rounded-full transition-transform z-10 ${
+            activeThumb === 'min' ? 'scale-110 ring-2 ring-primary/30 z-30' : 'hover:scale-110'
+          } ${minValue === maxValue ? 'shadow-none' : 'shadow-md'}`}
+          style={{
+            left: `${minPercent}%`,
+            top: '50%',
+            transform: `translate(-50%, -50%)`,
           }}
         />
 
-        {/* Max Thumb Slider */}
-        <input
-          type="range"
-          aria-label={`${label} Max`}
-          className={`
-            absolute w-full h-full appearance-none bg-transparent pointer-events-none z-10
-            focus:outline-none focus:ring-0
-            [&::-webkit-slider-thumb]:pointer-events-auto
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:w-5
-            [&::-webkit-slider-thumb]:h-5
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:bg-white
-            [&::-webkit-slider-thumb]:border-2
-            [&::-webkit-slider-thumb]:border-primary
-            [&::-webkit-slider-thumb]:shadow-md
-            [&::-webkit-slider-thumb]:transition-transform
-            [&::-webkit-slider-thumb]:hover:scale-110
-            [&::-webkit-slider-thumb]:cursor-pointer
-
-            [&::-moz-range-thumb]:pointer-events-auto
-            [&::-moz-range-thumb]:w-5
-            [&::-moz-range-thumb]:h-5
-            [&::-moz-range-thumb]:border-none
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-white
-            [&::-moz-range-thumb]:border-2
-            [&::-moz-range-thumb]:border-primary
-            [&::-moz-range-thumb]:shadow-md
-            [&::-moz-range-thumb]:transition-transform
-            [&::-moz-range-thumb]:hover:scale-110
-            [&::-moz-range-thumb]:cursor-pointer
-          `}
-          min={min}
-          max={max}
-          step={step}
-          value={maxValue}
-          onChange={(e) => {
-            const newValue = Number(e.target.value);
-            if (newValue < minValue) onMinChange(newValue);
-            onMaxChange(newValue);
+        {/* Max Thumb */}
+        <div
+          className={`absolute w-[18px] h-[18px] bg-white border-2 border-primary rounded-full shadow-md transition-transform z-20 ${
+            activeThumb === 'max' ? 'scale-110 ring-2 ring-primary/30 z-30' : 'hover:scale-110'
+          }`}
+          style={{
+            left: `${maxPercent}%`,
+            top: '50%',
+            transform: `translate(-50%, -50%)`,
           }}
         />
       </div>
     </div>
   );
 }
-
-export default DualSlider;
