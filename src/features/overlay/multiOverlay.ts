@@ -97,10 +97,25 @@ function createSingleMultiOverlayImage(
     overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
   };
 
-  const parent = thumbnailElement.parentElement;
-  if (!parent) return null;
+  // Determine container and injection method
+  let container: HTMLElement;
+  const isImgTag = thumbnailElement.tagName === 'IMG';
 
-  parent.insertBefore(overlayImage, thumbnailElement.nextSibling);
+  if (isImgTag) {
+    // If IMG, use parent as container
+    container = thumbnailElement.parentElement!;
+  } else {
+    // If not IMG (e.g. DIV videowall), use itself as container
+    container = thumbnailElement;
+  }
+
+  if (!container) return null;
+
+  // Apply overflow hidden to container to clip overlay
+  container.style.overflow = 'hidden';
+
+  // Append overlay
+  container.appendChild(overlayImage);
 
   // Progressive Enhancement: Apply color sync
   const colorSyncOptions = {

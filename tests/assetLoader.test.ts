@@ -10,7 +10,7 @@ import { fakeBrowser } from 'wxt/testing';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).browser = fakeBrowser;
 
-// Mock fetch for image existence checks
+// Mock fetch (이제 실제 fetch 안하지만 호환성 위해 남김)
 const mockFetch = vi.fn();
 globalThis.fetch = mockFetch;
 
@@ -29,7 +29,7 @@ describe('AssetLoader', () => {
 
   beforeEach(() => {
     fakeBrowser.reset();
-    assetLoader = new AssetLoader('small');
+    assetLoader = new AssetLoader('small'); // small type -> expected count 15
     vi.clearAllMocks();
 
     // Mock getURL using fakeBrowser
@@ -57,97 +57,34 @@ describe('AssetLoader', () => {
 
   describe('getImageCount', () => {
     it('should return 0 initially', () => {
+      // 초기 상태에서는 아직 감지 안됨
       expect(assetLoader.getImageCount()).toBe(0);
     });
 
-    it('should return correct count after detection', async () => {
-      // Setup: 5 images exist (1-5)
-      mockFetch.mockImplementation((url: string) => {
-        const REGEX = /\/images\/(\d+)\.png/;
-        const match = REGEX.exec(url);
-        if (match) {
-          const index = Number.parseInt(match[1], 10);
-          return Promise.resolve({ ok: index <= 5 });
-        }
-        return Promise.resolve({ ok: false });
-      });
-
+    it('should return defined constant count after detection', async () => {
+      // detectImageCount 호출
       await assetLoader.detectImageCount();
 
-      expect(assetLoader.getImageCount()).toBe(5);
+      // small 타입의 상수는 15
+      expect(assetLoader.getImageCount()).toBe(15);
     });
   });
 
   describe('detectImageCount', () => {
-    it('should detect correct image count (10 images)', async () => {
-      // 10개 이미지 존재 시뮬레이션
-      mockFetch.mockImplementation((url: string) => {
-        const REGEX = /\/images\/(\d+)\.png/;
-        const match = REGEX.exec(url);
-        if (match) {
-          const index = Number.parseInt(match[1], 10);
-          return Promise.resolve({ ok: index <= 10 });
-        }
-        return Promise.resolve({ ok: false });
-      });
-
+    it('should resolve to constant count immediately', async () => {
+      // 더 이상 fetch를 하지 않고 바로 상수를 반환해야 함
       const count = await assetLoader.detectImageCount();
 
-      expect(count).toBe(10);
-    });
-
-    it('should detect correct image count (1 image)', async () => {
-      // 1개 이미지만 존재
-      mockFetch.mockImplementation((url: string) => {
-        const REGEX = /\/images\/(\d+)\.png/;
-        const match = REGEX.exec(url);
-        if (match) {
-          const index = Number.parseInt(match[1], 10);
-          return Promise.resolve({ ok: index === 1 });
-        }
-        return Promise.resolve({ ok: false });
-      });
-
-      const count = await assetLoader.detectImageCount();
-
-      expect(count).toBe(1);
-    });
-
-    it('should return 0 or less when no images exist', async () => {
-      // 이미지 없음
-      mockFetch.mockResolvedValue({ ok: false });
-
-      const count = await assetLoader.detectImageCount();
-
-      expect(count).toBeLessThanOrEqual(0);
-    });
-
-    it('should handle fetch errors gracefully', async () => {
-      // fetch 에러 시뮬레이션
-      mockFetch.mockRejectedValue(new Error('Network error'));
-
-      const count = await assetLoader.detectImageCount();
-
-      // 에러 시 0 이하 반환
-      expect(count).toBeLessThanOrEqual(0);
+      expect(count).toBe(15);
+      expect(mockFetch).not.toHaveBeenCalled(); // fetch 호출 안함 확인
     });
   });
 
   describe('reset', () => {
     it('should reset image count to 0', async () => {
-      // Setup and detect
-      mockFetch.mockImplementation((url: string) => {
-        const REGEX = /\/images\/(\d+)\.png/;
-        const match = REGEX.exec(url);
-        if (match) {
-          const index = Number.parseInt(match[1], 10);
-          return Promise.resolve({ ok: index <= 5 });
-        }
-        return Promise.resolve({ ok: false });
-      });
-
+      // Setup
       await assetLoader.detectImageCount();
-      expect(assetLoader.getImageCount()).toBe(5);
+      expect(assetLoader.getImageCount()).toBe(15);
 
       // Reset
       assetLoader.reset();

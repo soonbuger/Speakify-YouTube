@@ -28,6 +28,10 @@ const IMAGE_SELECTORS = [
   'yt-thumbnail-view-model img',
   // 일반 ytCoreImageHost (Shorts 포함)
   'img.ytCoreImageHost',
+  // 영상 끝나기 직전 추천 영상 썸네일
+  // 채널 아이콘(원형) 등은 제외하고 비디오/재생목록만 타겟팅 (은근 채널 아이콘은 제외 안되니 유의)
+  '.ytp-ce-video .ytp-ce-covering-image',
+  '.ytp-ce-playlist .ytp-ce-covering-image',
 ];
 
 // Destructure config for readability
@@ -150,7 +154,7 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
 
       // 0.8 미만이면 세로형 (9:16 = 0.5625)
       // 일부 정사각형에 가까운 Shorts도 있을 수 있으나, 보통 0.8 미만
-      // 세로형(9:16) 또는 정사각형에 가까운 경우 Shorts로 처리(어차피 처리해야하는 건 비슷해서 상관 X)
+      // 세로형(9:16) 또는 정사각형에 가까운 경우 Shorts로 처리 (어차피 처리해야하는 건 비슷해서 상관 X)
       if (ratio < 1.2) return true;
 
       // Shorts 컨테이너 내부지만 비율이 넓으면(1.2 이상) 오버레이 대상 아님 (사이드바 배경 등)

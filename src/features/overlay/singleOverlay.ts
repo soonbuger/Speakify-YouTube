@@ -243,12 +243,26 @@ export function applyOverlay(
     overlayImage.style.maxHeight = `${overlayImage.naturalHeight}px`;
   };
 
-  const parent = thumbnailElement.parentElement;
-  if (parent) {
-    parent.insertBefore(overlayImage, thumbnailElement.nextSibling);
+  // Determine container and injection method
+  let container: HTMLElement;
+  const isImgTag = thumbnailElement.tagName === 'IMG';
+
+  if (isImgTag) {
+    // If IMG, use parent as container
+    container = thumbnailElement.parentElement!;
   } else {
-    return null;
+    // If not IMG (e.g. DIV videowall), use itself as container
+    container = thumbnailElement;
   }
+
+  if (!container) return null;
+
+  // Apply overflow hidden to container to clip overlay
+  // This prevents overlay from sticking out of rounded corners
+  container.style.overflow = 'hidden';
+
+  // Append overlay (using appendChild to ensure it's on top of existing content)
+  container.appendChild(overlayImage);
 
   // Progressive Enhancement: Apply color transformation in background
   if (colorStats) {
