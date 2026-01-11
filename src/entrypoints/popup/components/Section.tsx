@@ -15,8 +15,12 @@ interface SectionProps {
  */
 function Section({ title, children, className = '' }: SectionProps) {
   return (
-    <div className={`section ${className}`}>
-      <div className="section-title">{title}</div>
+    <div
+      className={`mb-4 p-4 bg-background-card/80 backdrop-blur-md rounded-2xl border border-white/60 shadow-card transition-all duration-200 hover:shadow-lg ${className}`}
+    >
+      <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-text-sub mb-3 select-none">
+        {title}
+      </div>
       {children}
     </div>
   );

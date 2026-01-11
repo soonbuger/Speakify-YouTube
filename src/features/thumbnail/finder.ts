@@ -89,6 +89,11 @@ export function findThumbnails(root: Document | HTMLElement = document): HTMLEle
   // Collect images from all selectors
   for (const selector of IMAGE_SELECTORS) {
     root.querySelectorAll<HTMLElement>(selector).forEach((img) => {
+      // Shorts Player 내부의 이미지(포스터 등)는 제외
+      // Shorts 피드는 자동 재생되므로 썸네일 오버레이가 불필요하며 방해됨
+      if (img.closest('ytd-reel-video-renderer')) {
+        return;
+      }
       uniqueImages.add(img);
     });
   }

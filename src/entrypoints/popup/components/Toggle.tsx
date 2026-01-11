@@ -19,17 +19,29 @@ function Toggle({ label, checked, onChange, id }: ToggleProps) {
   const toggleId = id || `toggle-${label.replace(/\s+/g, '-').toLowerCase()}`;
 
   return (
-    <div className="setting-row toggle-row">
-      <span>{label}</span>
-      <label className="toggle" htmlFor={toggleId}>
+    <div className="flex justify-between items-center mb-4 last:mb-0">
+      <span className="text-[13px] font-medium text-text">{label}</span>
+      <label className="relative inline-flex items-center cursor-pointer" htmlFor={toggleId}>
         <input
           type="checkbox"
-          aria-label={label}
+          className="sr-only peer"
           id={toggleId}
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
         />
-        <span className="slider"></span>
+        <div
+          className="
+          w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 
+          peer-focus:ring-2 peer-focus:ring-primary/50
+          peer-checked:after:translate-x-full 
+          peer-checked:after:border-white 
+          after:content-[''] 
+          after:absolute after:top-0.5 after:left-[2px] 
+          after:bg-white after:border-gray-300 after:border after:rounded-full 
+          after:h-5 after:w-5 after:transition-all 
+          peer-checked:bg-primary
+        "
+        ></div>
       </label>
     </div>
   );

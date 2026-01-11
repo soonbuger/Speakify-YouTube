@@ -48,47 +48,107 @@ function DualSlider({
   } as React.CSSProperties;
 
   return (
-    <div className="setting-row">
-      <div className="setting-label">
+    <div className="mb-4 last:mb-0">
+      <div className="flex justify-between items-center mb-2 text-[13px] font-medium text-text">
         <span>{label}</span>
-        <span className="setting-value">
+        <span className="font-bold text-primary">
           {minValue}
           {unit} ~ {maxValue}
           {unit}
         </span>
       </div>
-      <div className="range-slider-dual" style={containerStyle}>
+      <div className="relative w-full h-2 rounded-lg bg-border">
+        {/* 채워지는 트랙 (Filled Track) */}
+        <div
+          className="absolute top-0 bottom-0 rounded-lg bg-primary pointer-events-none z-0"
+          style={{ left: `${startPercent}%`, width: `${endPercent - startPercent}%` }}
+        />
+
+        {/* Min Thumb Slider */}
         <input
           type="range"
           aria-label={`${label} Min`}
-          className={`range-slider range-min${minValue >= maxValue - step ? ' range-priority' : ''}`}
+          className={`
+            absolute w-full h-full appearance-none bg-transparent pointer-events-none z-10
+            focus:outline-none focus:ring-0
+            [&::-webkit-slider-thumb]:pointer-events-auto
+            [&::-webkit-slider-thumb]:appearance-none
+            [&::-webkit-slider-thumb]:w-5
+            [&::-webkit-slider-thumb]:h-5
+            [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:bg-white
+            [&::-webkit-slider-thumb]:border-2
+            [&::-webkit-slider-thumb]:border-primary
+            [&::-webkit-slider-thumb]:shadow-md
+            [&::-webkit-slider-thumb]:transition-transform
+            [&::-webkit-slider-thumb]:hover:scale-110
+            [&::-webkit-slider-thumb]:cursor-pointer
+
+            [&::-moz-range-thumb]:pointer-events-auto
+            [&::-moz-range-thumb]:w-5
+            [&::-moz-range-thumb]:h-5
+            [&::-moz-range-thumb]:border-none
+            [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:bg-white
+            [&::-moz-range-thumb]:border-2
+            [&::-moz-range-thumb]:border-primary
+            [&::-moz-range-thumb]:shadow-md
+            [&::-moz-range-thumb]:transition-transform
+            [&::-moz-range-thumb]:hover:scale-110
+            [&::-moz-range-thumb]:cursor-pointer
+            ${minValue >= maxValue - 5 ? 'z-20' : ''}
+          `}
           min={min}
           max={max}
           step={step}
           value={minValue}
           onChange={(e) => {
             const newValue = Number(e.target.value);
-            // 최소값이 최대값을 넘으면 최대값도 함께 이동
-            if (newValue > maxValue) {
-              onMaxChange(newValue);
-            }
+            if (newValue > maxValue) onMaxChange(newValue);
             onMinChange(newValue);
           }}
         />
+
+        {/* Max Thumb Slider */}
         <input
           type="range"
           aria-label={`${label} Max`}
-          className="range-slider range-max"
+          className={`
+            absolute w-full h-full appearance-none bg-transparent pointer-events-none z-10
+            focus:outline-none focus:ring-0
+            [&::-webkit-slider-thumb]:pointer-events-auto
+            [&::-webkit-slider-thumb]:appearance-none
+            [&::-webkit-slider-thumb]:w-5
+            [&::-webkit-slider-thumb]:h-5
+            [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:bg-white
+            [&::-webkit-slider-thumb]:border-2
+            [&::-webkit-slider-thumb]:border-primary
+            [&::-webkit-slider-thumb]:shadow-md
+            [&::-webkit-slider-thumb]:transition-transform
+            [&::-webkit-slider-thumb]:hover:scale-110
+            [&::-webkit-slider-thumb]:cursor-pointer
+
+            [&::-moz-range-thumb]:pointer-events-auto
+            [&::-moz-range-thumb]:w-5
+            [&::-moz-range-thumb]:h-5
+            [&::-moz-range-thumb]:border-none
+            [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:bg-white
+            [&::-moz-range-thumb]:border-2
+            [&::-moz-range-thumb]:border-primary
+            [&::-moz-range-thumb]:shadow-md
+            [&::-moz-range-thumb]:transition-transform
+            [&::-moz-range-thumb]:hover:scale-110
+            [&::-moz-range-thumb]:cursor-pointer
+          `}
           min={min}
           max={max}
           step={step}
           value={maxValue}
           onChange={(e) => {
             const newValue = Number(e.target.value);
-            // 최대값이 최소값보다 작아지면 최소값도 함께 이동
-            if (newValue < minValue) {
-              onMinChange(newValue);
-            }
+            if (newValue < minValue) onMinChange(newValue);
             onMaxChange(newValue);
           }}
         />

@@ -93,8 +93,10 @@ function App() {
   }
 
   return (
-    <>
-      <h1>{t('settingsTitle', 'Speakify YouTube Settings')}</h1>
+    <main className="w-[320px] min-h-screen p-4 bg-background text-text font-one-mobile">
+      <h1 className="text-lg font-semibold mb-3 flex items-center gap-2 text-text shadow-none">
+        {t('settingsTitle', 'Speakify YouTube Settings')}
+      </h1>
 
       {/* 기본 설정 섹션 */}
       <Section title={t('sectionBasic', 'BASIC')}>
@@ -218,19 +220,28 @@ function App() {
       </Section>
 
       {/* 개발자 옵션 섹션 */}
-      <Section title={t('sectionDeveloper', 'DEVELOPER')} className="developer-section">
+      <Section
+        title={t('sectionDeveloper', 'DEVELOPER')}
+        className="opacity-90 hover:opacity-100 transition-opacity"
+      >
         <Toggle
           label={t('debugMode', 'Debug Mode')}
           checked={settings.debugMode}
           onChange={(value) => handleSettingChange('debugMode', value)}
         />
-        <button className="reset-button" onClick={handleResetToDefaults} type="button">
+        <button
+          className="w-full mt-2 py-2 px-4 bg-gray-200/50 text-xs font-bold text-text-sub rounded-lg hover:bg-gray-200 hover:text-red-500 transition-all active:scale-95"
+          onClick={handleResetToDefaults}
+          type="button"
+        >
           {t('resetToDefaults', 'Reset to Defaults')}
         </button>
       </Section>
 
-      <div className="footer">{t('footerAutoSave', 'Settings are saved automatically')}</div>
-    </>
+      <div className="mt-6 text-center text-[10px] font-medium text-text-muted tracking-wide uppercase opacity-70">
+        {t('footerAutoSave', 'Settings are saved automatically')}
+      </div>
+    </main>
   );
 }
 
