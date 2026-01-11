@@ -23,6 +23,9 @@ export default defineContentScript({
       // Load settings
       let settings = await loadAllSettings();
 
+      // Logger 활성화 상태 설정 (디버그 모드 연동)
+      Logger.setEnabled(settings.debugMode);
+
       if (!settings.extensionEnabled) {
         Logger.info('Extension is disabled.');
         return;
@@ -31,6 +34,10 @@ export default defineContentScript({
       // Watch for settings changes (실시간 반영)
       watchSettings((newSettings) => {
         settings = { ...settings, ...newSettings };
+        // 디버그 모드 변경 시 Logger도 업데이트
+        if ('debugMode' in newSettings) {
+          Logger.setEnabled(newSettings.debugMode ?? false);
+        }
         Logger.debug('Settings updated', newSettings);
       });
 

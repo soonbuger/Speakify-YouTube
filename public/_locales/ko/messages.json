@@ -96,8 +96,8 @@
     "description": "모든 설정을 기본값으로 초기화하는 버튼"
   },
   "colorSync": {
-    "message": "스마트 컬러 동기화",
-    "description": "스마트 컬러 동기화 토글"
+    "message": "썸네일 컬러 동기화",
+    "description": "썸네일 컬러 동기화 토글"
   },
   "colorSyncStrengthL": {
     "message": "조명 강도",

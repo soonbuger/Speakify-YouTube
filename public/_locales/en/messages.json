@@ -96,8 +96,8 @@
     "description": "Button to reset all settings to default values"
   },
   "colorSync": {
-    "message": "Smart Color Sync",
-    "description": "Smart color synchronization toggle"
+    "message": "Thumbnail Color Sync",
+    "description": "Thumbnail color synchronization toggle"
   },
   "colorSyncStrengthL": {
     "message": "Lighting Intensity",

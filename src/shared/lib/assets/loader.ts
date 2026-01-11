@@ -5,7 +5,7 @@
  * @module lib/assetLoader
  */
 import { Logger } from '@/shared/lib/utils/logger';
-import { IMAGE_PATHS, ImageFolder } from '@/shared/config/constants';
+import { IMAGE_PATHS, IMAGE_COUNT, ImageFolder } from '@/shared/config/constants';
 import browser from 'webextension-polyfill';
 
 /**
@@ -53,43 +53,11 @@ export class AssetLoader {
   }
 
   /**
-   * Checks if an image exists at the given index
-   */
-  private async checkImageExistence(index: number): Promise<boolean> {
-    try {
-      const response = await fetch(this.getImageURL(index));
-      return response.ok;
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Detects the highest image index using Binary Search
+   * 이미지 개수 초기화 (IMAGE_COUNT 상수 사용)
+   * 네트워크 요청 없이 즉시 반환
    */
   async detectImageCount(): Promise<number> {
-    const INITIAL_INDEX = 4;
-    let i = INITIAL_INDEX;
-
-    // Exponential increase to find upper bound
-    while (await this.checkImageExistence(i)) {
-      i *= 2;
-    }
-
-    // Binary search for exact count
-    let min = i <= INITIAL_INDEX ? 1 : i / 2;
-    let max = i;
-
-    while (min <= max) {
-      const mid = Math.floor((min + max) / 2);
-      if (await this.checkImageExistence(mid)) {
-        min = mid + 1;
-      } else {
-        max = mid - 1;
-      }
-    }
-
-    this.highestImageIndex = max;
+    this.highestImageIndex = IMAGE_COUNT[this.folderName];
     return this.highestImageIndex;
   }
 
