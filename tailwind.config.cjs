@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./src/**/**/*.{js,ts,jsx,tsx}"
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './src/**/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -25,15 +22,15 @@ module.exports = {
         'one-mobile': ['"ONE Mobile POP"', 'Pretendard', 'sans-serif'],
       },
       borderRadius: {
-        'lg': '16px', // --radius-lg
-        'md': '10px', // --radius-md
-        'sm': '6px', // --radius-sm
+        lg: '16px', // --radius-lg
+        md: '10px', // --radius-md
+        sm: '6px', // --radius-sm
       },
       boxShadow: {
-        'glass': '0 8px 32px rgba(104, 84, 102, 0.08)', // --glass-shadow
-        'card': '0 4px 20px rgba(104, 84, 102, 0.06)', // .section box-shadow
-      }
+        glass: '0 8px 32px rgba(104, 84, 102, 0.08)', // --glass-shadow
+        card: '0 4px 20px rgba(104, 84, 102, 0.06)', // .section box-shadow
+      },
     },
   },
   plugins: [],
-}
+};
