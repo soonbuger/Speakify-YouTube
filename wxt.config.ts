@@ -23,6 +23,7 @@ export default defineConfig({
     default_locale: 'ko',
     version: packageJson.version,
     permissions: ['storage'],
+    host_permissions: ['*://*.youtube.com/*', '*://i.ytimg.com/*', '*://yt3.ggpht.com/*'],
     icons: {
       16: '/icon/16.png',
       32: '/icon/32.png',

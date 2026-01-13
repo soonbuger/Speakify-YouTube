@@ -110,5 +110,17 @@
   "overlayRotation": {
     "message": "傾き",
     "description": "오버레이 이미지 회전 각도"
+  },
+  "unitCount": {
+    "message": "個",
+    "description": "개수 단위"
+  },
+  "unitPercent": {
+    "message": "%",
+    "description": "퍼센트 단위"
+  },
+  "unitDegree": {
+    "message": "°",
+    "description": "각도 단위"
   }
 }

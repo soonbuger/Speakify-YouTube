@@ -261,6 +261,12 @@ export function applyOverlay(
   // This prevents overlay from sticking out of rounded corners
   container.style.overflow = 'hidden';
 
+  // [Prevent Duplicate] Final safety check before ID collision
+  if (container.querySelector(`#${EXTENSION_NAME}`)) {
+    Logger.warn('[SingleOverlay] Overlay already exists, skipping injection.');
+    return null;
+  }
+
   // Append overlay (using appendChild to ensure it's on top of existing content)
   container.appendChild(overlayImage);
 

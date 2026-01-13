@@ -1,82 +1,32 @@
-import { Logger } from '@/shared/lib/utils/logger';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useAppSelector } from '../store/hooks';
-import browser from 'webextension-polyfill';
-
-/**
- * i18n 메시지 타입
- */
-interface I18nMessages {
-  [key: string]: {
-    message: string;
-    description?: string;
-  };
-}
-
-/**
- * 메시지 캐시 (언어별로 한 번만 로드)
- */
-const messageCache: Record<string, I18nMessages> = {};
-
-/**
- * 메시지 파일 로드
- */
-async function loadMessages(language: string): Promise<I18nMessages> {
-  if (messageCache[language]) {
-    return messageCache[language];
-  }
-
-  try {
-    const url = browser.runtime.getURL(`_locales/${language}/messages.json`);
-    const response = await fetch(url);
-    const messages = await response.json();
-    messageCache[language] = messages;
-    return messages;
-  } catch (error) {
-    Logger.error(`[i18n] Failed to load messages for ${language}:`, error);
-    return {};
-  }
-}
+import { locales, LocaleKey } from '@/i18n/locales';
 
 /**
  * React용 i18n Hook
  * Redux의 language 상태를 구독하여 언어 변경 시 자동으로 메시지 업데이트
+ * (Network Fetch 제거 -> Bundled Locales 사용으로 Firefox 이슈 해결)
  */
 export function useI18n() {
   const language = useAppSelector((state) => state.settings.language);
-  const [messages, setMessages] = useState<I18nMessages>({});
-  const [isLoaded, setIsLoaded] = useState(false);
+  // messages 상태를 유지할 필요가 없을 수도 있지만, 기존 인터페이스 유지를 위해 그대로 둡니다.
+  // 다만, 이제는 동기적으로 로드되므로 useEffect 등이 사실상 필요 없습니다.
 
-  // 언어가 변경될 때마다 메시지 파일 로드
-  useEffect(() => {
-    let isMounted = true;
-
-    loadMessages(language).then((loadedMessages) => {
-      if (isMounted) {
-        setMessages(loadedMessages);
-        setIsLoaded(true);
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [language]);
-
-  /**
-   * 메시지 키로 번역된 텍스트 가져오기
-   * @param key 메시지 키 (예: 'settingsTitle')
-   * @param fallback 메시지가 없을 때 기본값
-   */
   const t = useCallback(
     (key: string, fallback?: string): string => {
-      const message = messages[key]?.message;
-      return message || fallback || key;
+      // 1. 현재 언어 팩 가져오기
+      const currentLocale = locales[language as keyof typeof locales] || locales.en;
+
+      // 2. 메시지 찾기
+      const messageData = currentLocale[key as LocaleKey];
+
+      // 3. 없으면 fallback (JSON 구조상 .message에 텍스트가 있음)
+      return messageData?.message || fallback || key;
     },
-    [messages],
+    [language], // language가 바뀌면 t 함수도 갱신
   );
 
-  return { t, isLoaded, language };
+  return { t, isLoaded: true, language }; // 항상 Loaded 상태
 }
 
 export default useI18n;

@@ -110,5 +110,17 @@
   "overlayRotation": {
     "message": "Rotation",
     "description": "Overlay image rotation angle"
+  },
+  "unitCount": {
+    "message": "ea",
+    "description": "Count unit"
+  },
+  "unitPercent": {
+    "message": "%",
+    "description": "Percentage unit"
+  },
+  "unitDegree": {
+    "message": "°",
+    "description": "Degree unit"
   }
 }

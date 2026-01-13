@@ -5,6 +5,8 @@
  * @module features/overlay/multiOverlay
  */
 
+import { Logger } from '@/shared/lib/utils/logger';
+
 import { generateNonOverlappingPositions } from '@/features/overlay/collision';
 import {
   extractThumbnailUrl,
@@ -206,6 +208,17 @@ export function applyMultiOverlay(
       rotation,
     };
   });
+
+  // [Prevent Duplicate] Final safety check
+  // Check if any child matches the multi-overlay ID pattern
+  const alreadyHasMulti = Array.from(thumbnailElement.children).some((child) =>
+    child.id.startsWith(`${EXTENSION_NAME}-multi-`),
+  );
+
+  if (alreadyHasMulti) {
+    Logger.warn('[MultiOverlay] Overlay already exists, skipping.');
+    return { images: [], instances: [] };
+  }
 
   // 4. 각 인스턴스를 DOM에 적용 (Progressive Enhancement)
   const createdImages: HTMLImageElement[] = [];

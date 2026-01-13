@@ -78,12 +78,11 @@ function App() {
 
   const positionOptions = useMemo(
     () => [
-      { value: 'smart', label: t('positionSmart', '스마트') },
       { value: 'random', label: t('positionRandom', '랜덤') },
+      { value: 'smart', label: t('positionSmart', '스마트') },
       { value: 'center', label: t('positionCenter', '중앙') },
       { value: 'top-left', label: t('positionTopLeft', '좌측 상단') },
       { value: 'top-right', label: t('positionTopRight', '우측 상단') },
-
       { value: 'bottom-right', label: t('positionBottomRight', '우측 하단') },
       { value: 'bottom-left', label: t('positionBottomLeft', '좌측 하단') },
     ],
@@ -130,7 +129,7 @@ function App() {
           min={0}
           max={100}
           step={1}
-          unit="%"
+          unit={t('unitPercent', '%')}
           className="mb-2.5"
         />
 
@@ -141,7 +140,7 @@ function App() {
           min={0}
           max={100}
           step={1}
-          unit="%"
+          unit={t('unitPercent', '%')}
           className="mb-0"
         />
       </Section>
@@ -170,7 +169,7 @@ function App() {
               min={1}
               max={8}
               step={1}
-              unit="개"
+              unit={t('unitCount', 'ea')}
               className="mb-2.5"
             />
           </div>
@@ -187,7 +186,7 @@ function App() {
           min={10}
           max={150}
           step={1}
-          unit="%"
+          unit={t('unitPercent', '%')}
           className="mb-2.5"
         />
 
@@ -202,7 +201,7 @@ function App() {
           min={0}
           max={180}
           step={1}
-          unit="°"
+          unit={t('unitDegree', '°')}
           className="mb-2.5"
         />
 
@@ -213,7 +212,7 @@ function App() {
           min={10}
           max={100}
           step={1}
-          unit="%"
+          unit={t('unitPercent', '%')}
           className="mb-2.5"
         />
 
@@ -234,7 +233,7 @@ function App() {
               min={0}
               max={100}
               step={1}
-              unit="%"
+              unit={t('unitPercent', '%')}
               className="mb-2.5"
             />
             <Slider
@@ -244,7 +243,7 @@ function App() {
               min={0}
               max={100}
               step={1}
-              unit="%"
+              unit={t('unitPercent', '%')}
               className="mb-0"
             />
           </>

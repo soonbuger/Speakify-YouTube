@@ -109,23 +109,23 @@ export default function Slider({
           ref={trackRef}
           className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden"
         >
-          {/* Fill Range */}
+          {/* Fill Range - Dynamic width via CSS variable */}
           <div
             className="absolute top-0 left-0 h-full bg-primary transition-none"
-            style={{ width: `${percent}%` }}
+            style={
+              { '--slider-fill': `${percent}%`, width: 'var(--slider-fill)' } as React.CSSProperties
+            }
           />
         </div>
 
-        {/* Thumb */}
+        {/* Thumb - Dynamic position via CSS variable, static centering via Tailwind */}
         <div
-          className={`absolute w-[18px] h-[18px] bg-white border-2 border-primary rounded-full shadow-md transition-transform ${
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-[18px] h-[18px] bg-white border-2 border-primary rounded-full shadow-md transition-transform ${
             isDragging ? 'scale-110 ring-2 ring-primary/30' : 'hover:scale-110'
           }`}
-          style={{
-            left: `${percent}%`,
-            top: '50%',
-            transform: `translate(-50%, -50%) ${isDragging ? 'scale(1.1)' : ''}`,
-          }}
+          style={
+            { '--thumb-left': `${percent}%`, left: 'var(--thumb-left)' } as React.CSSProperties
+          }
         />
       </div>
     </div>

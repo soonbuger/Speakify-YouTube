@@ -10,13 +10,13 @@ export type Language = 'en' | 'ko' | 'ja';
 
 /** 오버레이 위치 옵션 */
 export type OverlayPosition =
-  | 'smart'
   | 'random'
+  | 'smart'
   | 'center'
   | 'top-left'
   | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right';
+  | 'bottom-right'
+  | 'bottom-left';
 
 // ==================== 설정 ====================
 
@@ -58,10 +58,10 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   overlayCountMin: 1,
   overlayCountMax: 1,
   colorSync: true,
-  colorSyncStrengthL: 0.2, // 밝기(조명) 효과 강도
-  colorSyncStrengthAB: 0.15, // 색조(틴트) 효과 강도
-  rotationMin: 0, // 기울기 최소값 (기본: 0도 = 회전 없음)
-  rotationMax: 0, // 기울기 최대값 (기본: 0도 = 회전 없음)
+  colorSyncStrengthL: 0.2,
+  colorSyncStrengthAB: 0.15,
+  rotationMin: 0,
+  rotationMax: 0,
   debugMode: false,
 };
 
@@ -101,18 +101,17 @@ export interface RendererInterface {
 /**
  * 개별 오버레이 인스턴스 타입
  * 각 이미지는 독립적인 속성(크기, 위치, 반전 등)을 가짐
- * 미래 확장: rotation, skew 등 지원 예정
+ * 디버깅용 포함
  */
 export interface OverlayInstance {
   imageUrl: string;
-  folder: 'small' | 'big'; // 이미지 폴더 (디버그용)
-  index: number; // 이미지 인덱스 (디버그용)
-  size: number; // % (10~150)
+  folder: 'small' | 'big';
+  index: number;
+  size: number;
   flip: boolean;
-  position: { x: number; y: number }; // % (0~100)
+  position: { x: number; y: number };
   opacity?: number;
-  isGiant?: boolean; // Giant Speaki 이스터에그 (3% 확률)
-  // 미래 확장용 (Optional)
-  rotation?: number; // degrees
-  skew?: number; // degrees
+  isGiant?: boolean;
+  rotation?: number;
+  skew?: number;
 }

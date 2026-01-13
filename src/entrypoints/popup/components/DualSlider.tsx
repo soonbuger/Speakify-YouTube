@@ -63,18 +63,25 @@ export default function DualSlider({
     [min, max, step],
   );
 
-  const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    const newValue = getValueFromClientX(e.clientX);
-
-    // 더 가까운 썸 찾기
+  const determineTargetThumb = (newValue: number) => {
     const distMin = Math.abs(newValue - minValue);
     const distMax = Math.abs(newValue - maxValue);
 
-    let target: 'min' | 'max';
-    if (distMin < distMax) target = 'min';
-    else if (distMax < distMin) target = 'max';
-    else target = newValue < minValue ? 'min' : 'max'; // 동일 거리면 방향에 따름
+    if (distMin < distMax) return 'min';
+    if (distMax < distMin) return 'max';
+
+    // 거리가 같을 때 (겹쳐있거나 중간)
+    if (minValue === maxValue) {
+      if (minValue === max) return 'min'; // 오른쪽 끝이면 Min
+      if (maxValue === min) return 'max'; // 왼쪽 끝이면 Max
+    }
+    return newValue < minValue ? 'min' : 'max';
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    const newValue = getValueFromClientX(e.clientX);
+    const target = determineTargetThumb(newValue);
 
     setActiveThumb(target);
     (e.target as Element).setPointerCapture(e.pointerId);
@@ -133,38 +140,44 @@ export default function DualSlider({
           ref={trackRef}
           className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden"
         >
-          {/* Active Range Fill */}
+          {/* Active Range Fill - Dynamic position via CSS variable */}
           <div
             className="absolute top-0 h-full bg-primary"
-            style={{
-              left: `${minPercent}%`,
-              width: `${maxPercent - minPercent}%`,
-            }}
+            style={
+              {
+                '--fill-left': `${minPercent}%`,
+                '--fill-width': `${maxPercent - minPercent}%`,
+                left: 'var(--fill-left)',
+                width: 'var(--fill-width)',
+              } as React.CSSProperties
+            }
           />
         </div>
 
-        {/* Min Thumb */}
+        {/* Min Thumb - Dynamic position via CSS variable, static centering via Tailwind */}
         <div
-          className={`absolute w-[18px] h-[18px] bg-white border-2 border-primary rounded-full transition-transform z-10 ${
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-[18px] h-[18px] bg-white border-2 border-primary rounded-full transition-transform z-10 ${
             activeThumb === 'min' ? 'scale-110 ring-2 ring-primary/30 z-30' : 'hover:scale-110'
           } ${minValue === maxValue ? 'shadow-none' : 'shadow-md'}`}
-          style={{
-            left: `${minPercent}%`,
-            top: '50%',
-            transform: `translate(-50%, -50%)`,
-          }}
+          style={
+            {
+              '--min-thumb-left': `${minPercent}%`,
+              left: 'var(--min-thumb-left)',
+            } as React.CSSProperties
+          }
         />
 
-        {/* Max Thumb */}
+        {/* Max Thumb - Dynamic position via CSS variable, static centering via Tailwind */}
         <div
-          className={`absolute w-[18px] h-[18px] bg-white border-2 border-primary rounded-full shadow-md transition-transform z-20 ${
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-[18px] h-[18px] bg-white border-2 border-primary rounded-full shadow-md transition-transform z-20 ${
             activeThumb === 'max' ? 'scale-110 ring-2 ring-primary/30 z-30' : 'hover:scale-110'
           }`}
-          style={{
-            left: `${maxPercent}%`,
-            top: '50%',
-            transform: `translate(-50%, -50%)`,
-          }}
+          style={
+            {
+              '--max-thumb-left': `${maxPercent}%`,
+              left: 'var(--max-thumb-left)',
+            } as React.CSSProperties
+          }
         />
       </div>
     </div>
