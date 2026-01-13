@@ -4,7 +4,7 @@
     "description": "확장 프로그램 이름"
   },
   "extensionDescription": {
-    "message": "YouTube 썸네일에 Speaki가 출현합니다",
+    "message": "YouTubeのサムネイルにｽﾋﾟｷが出現します",
     "description": "확장 프로그램 설명"
   },
   "settingsTitle": {
@@ -12,103 +12,103 @@
     "description": "설정 페이지 제목"
   },
   "enableExtension": {
-    "message": "확장 활성화",
+    "message": "拡張機能を有効化",
     "description": "확장 활성화 토글"
   },
   "appearChance": {
-    "message": "등장 확률",
+    "message": "出現確率",
     "description": "Speaki 등장 확률"
   },
   "flipChance": {
-    "message": "좌우 반전 확률",
+    "message": "左右反転確率",
     "description": "이미지 좌우 반전 확률"
   },
   "overlayPosition": {
-    "message": "위치",
+    "message": "位置",
     "description": "오버레이 위치"
   },
   "overlaySize": {
-    "message": "크기",
+    "message": "サイズ",
     "description": "오버레이 크기"
   },
   "overlayOpacity": {
-    "message": "투명도",
+    "message": "透明度",
     "description": "오버레이 투명도"
   },
   "positionCenter": {
-    "message": "중앙",
+    "message": "中央",
     "description": "중앙 위치"
   },
   "positionTopLeft": {
-    "message": "좌측 상단",
+    "message": "左上",
     "description": "좌측 상단 위치"
   },
   "positionTopRight": {
-    "message": "우측 상단",
+    "message": "右上",
     "description": "우측 상단 위치"
   },
   "positionBottomRight": {
-    "message": "우측 하단",
+    "message": "右下",
     "description": "우측 하단 위치"
   },
   "positionBottomLeft": {
-    "message": "좌측 하단",
+    "message": "左下",
     "description": "좌측 하단 위치"
   },
   "positionRandom": {
-    "message": "랜덤",
+    "message": "ランダム",
     "description": "랜덤 위치 (가중치 적용)"
   },
   "positionSmart": {
-    "message": "스마트",
+    "message": "スマート",
     "description": "이미지 분석 기반 스마트 위치"
   },
   "debugMode": {
-    "message": "디버그 모드",
+    "message": "デバッグモード",
     "description": "디버그 모드 토글"
   },
   "language": {
-    "message": "언어",
+    "message": "言語",
     "description": "언어 선택 라벨"
   },
   "sectionBasic": {
-    "message": "기본",
+    "message": "基本",
     "description": "기본 설정 섹션 타이틀"
   },
   "sectionOverlay": {
-    "message": "오버레이",
+    "message": "オーバーレイ",
     "description": "오버레이 설정 섹션 타이틀"
   },
   "sectionDeveloper": {
-    "message": "고급",
-    "description": "고급 설정 및 초기화"
+    "message": "詳細設定",
+    "description": "詳細設定とリセット"
   },
   "footerAutoSave": {
-    "message": "설정이 자동 저장됩니다",
+    "message": "設定は自動的に保存されます",
     "description": "Footer 자동 저장 메시지"
   },
   "overlayCount": {
-    "message": "이미지 개수",
+    "message": "画像数",
     "description": "오버레이 이미지 개수 (랜덤 모드 전용)"
   },
   "resetToDefaults": {
-    "message": "기본값으로 초기화",
+    "message": "デフォルトに戻す",
     "description": "모든 설정을 기본값으로 초기화하는 버튼"
   },
   "colorSync": {
-    "message": "썸네일 컬러 동기화",
+    "message": "サムネイル色同期",
     "description": "썸네일 컬러 동기화 토글"
   },
   "colorSyncStrengthL": {
-    "message": "조명 강도",
+    "message": "照明強度",
     "description": "컬러 동기화 밝기(조명) 강도"
   },
   "colorSyncStrengthAB": {
-    "message": "색조 강도",
+    "message": "色調強度",
     "description": "컬러 동기화 색조(틴트) 강도"
   },
   "overlayRotation": {
-    "message": "기울기",
+    "message": "傾き",
     "description": "오버레이 이미지 회전 각도"
   }
 }

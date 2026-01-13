@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 안전 장치: Tailwind 로드 실패 시에도 기본 크기 확보 */
 html,
 body {
   width: 320px;
@@ -22,8 +21,20 @@ body {
 
 @font-face {
   font-family: 'ONE Mobile POP';
-  src: url('../../shared/assets/fonts/ONEMobilePOP.ttf') format('truetype');
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-POP.woff')
+    format('woff');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
+}
+
+.font-mochiy {
+  font-family: 'Mochiy Pop One', 'Pretendard', sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.font-one-mobile {
+  font-family: 'ONE Mobile POP', 'Pretendard', sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
 }

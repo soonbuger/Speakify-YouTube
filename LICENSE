@@ -1,0 +1,43 @@
+MIT License
+
+Copyright (c) 2026 soonbuger
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+EXCEPTIONS AND THIRD-PARTY RIGHTS
+--------------------------------------------------------------------------------
+
+1. GAME ASSETS (IMAGES & CHARACTERS)
+   The character "Speaki" and all related image assets included in this
+   repository are the intellectual property of EpidGames (Trickcal: Revive).
+   They are used for non-commercial fan purposes only under fan content guidelines.
+   These assets are NOT covered by the MIT License and may NOT be used for
+   commercial purposes without explicit permission from the rights holder.
+
+2. FONT (ONE Mobile POP)
+   This project uses "ONE Mobile POP" font via Webfont (CDN).
+   Licensed under the Open Font License (OFL).
+   Copyright (c) ONE Store.
+
+3. FONT (Mochiy Pop One)
+   - This project uses "Mochiy Pop One" font via Webfont (Google Fonts).
+   - Copyright 2020 The Mochiypop Project Authors (https://github.com/fontdasu/Mochiypop)
+   - Licensed under the SIL Open Font License, Version 1.1.
+   - You can use, study, modify, and redistribute this font freely as long as it is not sold by itself.

@@ -36,5 +36,9 @@ export default defineConfig({
         matches: ['*://*.youtube.com/*'],
       },
     ],
+    content_security_policy: {
+      extension_pages:
+        "script-src 'self'; object-src 'self'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
+    },
   },
 });

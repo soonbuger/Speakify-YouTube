@@ -23,7 +23,7 @@ function Section({ title, children, className = '' }: SectionProps) {
         ${className}
       `}
     >
-      <div className="text-[11px] font-semibold uppercase tracking-[1.2px] text-text-muted mb-3">
+      <div className="text-[11px] font-medium uppercase tracking-[1.2px] text-text-muted mb-3">
         {title}
       </div>
       {children}

@@ -3,6 +3,7 @@ import React from 'react';
 interface SelectOption {
   readonly value: string;
   readonly label: string;
+  readonly className?: string;
 }
 
 interface SelectProps {
@@ -33,7 +34,7 @@ function Select({ label, value, onChange, options, className = '' }: SelectProps
             appearance-none bg-white text-text text-[15px]
             border border-gray-300/50 rounded-[10px]
             cursor-pointer transition-all
-            hover:border-primary hover:bg-[#fffbf5]
+            hover:border-primary
             focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20
           "
           value={value}
@@ -41,12 +42,11 @@ function Select({ label, value, onChange, options, className = '' }: SelectProps
           aria-label={label}
         >
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} className={option.className}>
               {option.label}
             </option>
           ))}
         </select>
-        {/* 드롭다운 화살표 */}
         {/* 드롭다운 화살표 */}
         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-sub">
           <svg

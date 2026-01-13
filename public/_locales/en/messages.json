@@ -8,7 +8,7 @@
     "description": "Extension description"
   },
   "settingsTitle": {
-    "message": "Speakify YouTube Settings",
+    "message": "Speakify YouTube",
     "description": "Settings page title"
   },
   "enableExtension": {
@@ -80,8 +80,8 @@
     "description": "Overlay settings section title"
   },
   "sectionDeveloper": {
-    "message": "Developer",
-    "description": "Developer settings section title"
+    "message": "Advanced",
+    "description": "Advanced settings and reset"
   },
   "footerAutoSave": {
     "message": "Settings are saved automatically",

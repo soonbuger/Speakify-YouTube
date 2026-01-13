@@ -6,7 +6,7 @@
 // ==================== 언어 & 위치 ====================
 
 /** 지원 언어 */
-export type Language = 'en' | 'ko';
+export type Language = 'en' | 'ko' | 'ja';
 
 /** 오버레이 위치 옵션 */
 export type OverlayPosition =
@@ -51,8 +51,8 @@ export const DEFAULT_SETTINGS: SpeakifySettings = {
   extensionEnabled: true,
   appearChance: 1,
   flipChance: 0.5,
-  overlayPosition: 'smart',
-  overlaySizeMin: 10,
+  overlayPosition: 'random',
+  overlaySizeMin: 25,
   overlaySizeMax: 100,
   overlayOpacity: 1,
   overlayCountMin: 1,

@@ -69,8 +69,9 @@ function App() {
   // 옵션 목록 (i18n 적용) - useMemo로 참조 안정성 확보
   const languageOptions = useMemo(
     () => [
-      { value: 'en', label: 'English' },
-      { value: 'ko', label: '한국어' },
+      { value: 'en', label: 'English', className: 'font-one-mobile' },
+      { value: 'ko', label: '한국어', className: 'font-one-mobile' },
+      { value: 'ja', label: '日本語', className: 'font-mochiy' },
     ],
     [],
   );
@@ -96,9 +97,12 @@ function App() {
     );
   }
 
+  // 일본어는 Mochiy Pop One, 그외는 ONE Mobile 폰트 클래스
+  const fontClass = settings.language === 'ja' ? 'font-mochiy' : 'font-one-mobile';
+
   return (
-    <main className="w-[320px] min-h-screen p-4 bg-background text-text font-one-mobile">
-      <h1 className="text-lg font-semibold mb-3 flex items-center gap-2 text-text shadow-none">
+    <main className={`w-[320px] min-h-screen p-4 bg-background text-text ${fontClass}`}>
+      <h1 className="text-lg font-semibold mb-3 flex items-center gap-2 text-text shadow-none font-one-mobile">
         {t('settingsTitle', 'Speakify YouTube Settings')}
       </h1>
 
@@ -107,7 +111,7 @@ function App() {
         <Select
           label={t('language', 'Language')}
           value={settings.language}
-          onChange={(value) => handleSettingChange('language', value as 'ko' | 'en')}
+          onChange={(value) => handleSettingChange('language', value as 'ko' | 'en' | 'ja')}
           options={languageOptions}
           className="mb-3.5"
         />
