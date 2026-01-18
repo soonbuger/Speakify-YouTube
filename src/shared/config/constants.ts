@@ -24,7 +24,7 @@ export const IMAGE_COUNT = {
   /** small 폴더 이미지 개수 (public/images/) */
   small: 15,
   /** big 폴더 이미지 개수 (public/images/bigSpeaki/) */
-  big: 4,
+  big: 7,
 } as const;
 
 /** 이미지 폴더 타입 */
