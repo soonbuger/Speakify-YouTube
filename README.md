@@ -49,7 +49,7 @@ _YouTube Speakify (준비 중)_
 
 1.  **다운로드**: 이 저장소의 [Releases](https://github.com/soonbuger/Speakify-YouTube/releases) 페이지에서 최신 `YouTube-Speakify-vX.X.X.Chromium.zip` 파일을 다운로드하고 압축을 풉니다.
 2.  **확장 프로그램 관리**: 엣지(Edge) 브라우저 주소창에 `edge://extensions`를 입력하여 이동합니다.
-3.  **개발자 모드**: 좌측 메뉴 하단의 개발자 모드(Developer mode)` 스위치를 켭니다.
+3.  **개발자 모드**: 좌측 메뉴 하단의 `개발자 모드(Developer mode)` 스위치를 켭니다.
 4.  **불러오기**: 상단의 `압축 풀린 파일 로드` 버튼을 클릭합니다.
 5.  **선택**: 1번에서 압축을 푼 폴더(`YouTube-Speakify`)를 선택합니다.
 6.  **완료!**: [YouTube](https://www.youtube.com/)로 가면 스피키가 썸네일에 보입니다.
