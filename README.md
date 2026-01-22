@@ -9,6 +9,8 @@
 
 [![YouTube Speakify 시연 영상](https://img.youtube.com/vi/_kk-1tjadeA/sddefault.jpg)](https://www.youtube.com/watch?v=_kk-1tjadeA)
 
+![Speakify 예시](./public/example_speaki_00.png)
+
 유튜브 썸네일에 스피키가 출몰합니다.
 
 ## 설정
