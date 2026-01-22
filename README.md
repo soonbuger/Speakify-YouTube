@@ -57,7 +57,7 @@
 
 ### Firefox
 
-*크롬을 기준으로 만들어져 파이어폭스 환경에선 조금 불안정할 수 있습니다.
+*크롬을 기준으로 만들어져 파이어폭스 환경에선 조금 불안정할 수 있습니다.  
 *파이어폭스는 재시작하면 다시 로드해야 할 수 있습니다.
 
 1.  **다운로드**: 이 저장소의 [Releases](https://github.com/soonbuger/Speakify-YouTube/releases) 페이지에서 최신 `YouTube-Speakify-vX.X.X.Firefox.zip` 파일을 다운로드하고 압축을 풉니다.
