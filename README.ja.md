@@ -7,8 +7,7 @@
 > 本プロジェクトは**非公式ファンメイドプロジェクト**であり、EpidGamesまたはTrickcal Revive（以前のTrickcal）とは**公式的な関係はありません**。
 > EpidGamesからの要請があった場合、本リポジトリは直ちに非公開または削除される可能性があります。
 
-[![YouTube Speakify](http://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_ID_HERE)
-_YouTube Speakify (準備中)_
+[![YouTube Speakify 試演映像](https://img.youtube.com/vi/_kk-1tjadeA/sddefault.jpg)](https://www.youtube.com/watch?v=_kk-1tjadeA)
 
 YouTubeのサムネイルにｽﾋﾟｷが出没します。
 
