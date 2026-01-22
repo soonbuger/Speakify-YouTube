@@ -9,6 +9,8 @@
 
 [![YouTube Speakify demonstration video](https://img.youtube.com/vi/_kk-1tjadeA/sddefault.jpg)](https://www.youtube.com/watch?v=_kk-1tjadeA)
 
+![Speakify example](./public/example_speaki_00.png)
+
 Speaki appears on YouTube thumbnails.
 
 ## Settings
