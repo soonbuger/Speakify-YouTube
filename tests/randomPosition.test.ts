@@ -27,8 +27,6 @@ describe('RandomPosition', () => {
     });
 
     it('should prefer bottom area (y > 50% more frequently)', () => {
-      // 하단 영역 선호 테스트: 100번 중 40% 이상이 하단에 배치되어야 함
-      // (y > 33% 기준, 70% 확률로 하단 2/3 영역 선택)
       let bottomCount = 0;
       const iterations = 100;
 
