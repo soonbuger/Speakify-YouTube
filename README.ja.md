@@ -9,6 +9,8 @@
 
 [![YouTube Speakify 試演映像](https://img.youtube.com/vi/_kk-1tjadeA/sddefault.jpg)](https://www.youtube.com/watch?v=_kk-1tjadeA)
 
+![Speakify 例示](./public/example_speaki_00.png)
+
 YouTubeのサムネイルにｽﾋﾟｷが出没します。
 
 ## 設定
