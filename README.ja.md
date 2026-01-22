@@ -69,5 +69,5 @@ YouTubeのサムネイルにｽﾋﾟｷが出没します。
 ## クレジット
 
 - **コード参考**: [MrBeastify-Youtube](https://github.com/MagicJinn/MrBeastify-Youtube)
-- **キャラクター**: ｽﾋﾟｷ - [Trickcal: Revive](https://trickcal.com/) (トリッカル リバイブ)
+- **キャラクター**: ｽﾋﾟｷ - [Trickcal: Revive](https://trickcal.com/) (トリッカル・もちもちほっぺ大作戦)
 - **フォント**: [ONE Mobile POP](https://www.onestorecorp.com/sv/fordev_font/) (韓国語、英語), [Mochiy Pop One](https://github.com/fontdasu/Mochiypop) (日本語)
