@@ -7,8 +7,7 @@
 > 본 프로젝트는 **비공식 팬메이드 프로젝트**이며, EpidGames 또는 트릭컬 리바이브, Trickcal:Chibi Go와 **공식적인 관련이 없습니다**.
 > EpidGames의 요청이 있을 경우 본 저장소는 즉시 비공개 또는 삭제될 수 있습니다.
 
-[![YouTube Speakify](http://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_ID_HERE)
-_YouTube Speakify (준비 중)_
+[![YouTube Speakify](https://www.youtube.com/watch?v=_kk-1tjadeA)
 
 유튜브 썸네일에 스피키가 출몰합니다.
 
