@@ -57,7 +57,7 @@ YouTubeのサムネイルにｽﾋﾟｷが出没します。
 
 ### Firefox
 
-*Chromeを基準に作られているため、Firefox環境では少し不安定な場合があります。
+*Chromeを基準に作られているため、Firefox環境では少し不安定な場合があります。  
 *Firefoxは再起動すると再度読み込む必要がある場合があります。
 
 1.  **ダウンロード**: このリポジトリの [Releases](https://github.com/soonbuger/Speakify-YouTube/releases) ページから最新の `YouTube-Speakify-vX.X.X.Firefox.zip` ファイルをダウンロードして解凍します。
