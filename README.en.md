@@ -7,8 +7,7 @@
 > This project is an **Unofficial Fan-made Project** and has **no official affiliation** with EpidGames, Trickcal Revive, or Trickcal:Chibi Go.
 > This repository may be made private or deleted immediately upon request from EpidGames.
 
-[![YouTube Speakify](http://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_ID_HERE)
-_YouTube Speakify (Coming Soon)_
+[![YouTube Speakify demonstration video](https://img.youtube.com/vi/_kk-1tjadeA/sddefault.jpg)](https://www.youtube.com/watch?v=_kk-1tjadeA)
 
 Speaki appears on YouTube thumbnails.
 
