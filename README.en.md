@@ -69,5 +69,5 @@ Speaki appears on YouTube thumbnails.
 ## Credits
 
 - **Code Reference**: [MrBeastify-Youtube](https://github.com/MagicJinn/MrBeastify-Youtube)
-- **Character**: Speaki - [Trickcal: Revive](https://trickcal.com/) (Trickcal Revive)
+- **Character**: Speaki - [Trickcal: Revive](https://trickcal.com/) (Trickcal:Chibi Go)
 - **Fonts**: [ONE Mobile POP](https://www.onestorecorp.com/sv/fordev_font/)(Korean, English), [Mochiy Pop One](https://github.com/fontdasu/Mochiypop)(Japanese)
