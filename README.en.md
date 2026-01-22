@@ -57,7 +57,7 @@ Speaki appears on YouTube thumbnails.
 
 ### Firefox
 
-*Created based on Chrome, so it may be slightly unstable in the Firefox environment.
+*Created based on Chrome, so it may be slightly unstable in the Firefox environment.  
 *Firefox may need to be reloaded if restarted.
 
 1.  **Download**: Download the latest `YouTube-Speakify-vX.X.X.Firefox.zip` file from the [Releases](https://github.com/soonbuger/Speakify-YouTube/releases) page of this repository and unzip it.
